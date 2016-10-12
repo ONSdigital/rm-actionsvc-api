@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -22,27 +21,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@Table(name = "actionplan", schema = "action")
-public class ActionPlan implements Serializable {
+@Table(name = "survey", schema = "action")
+public class Survey implements Serializable {
 
-  private static final long serialVersionUID = 3621028547635970347L;
+  private static final long serialVersionUID = -7954883336064186610L;
 
   @Id
-  @GeneratedValue
-  @Column(name = "actionplanid")
-  private Integer actionPlanId;
-
   @Column(name = "surveyid")
   private Integer surveyId;
 
+  @Column(name = "name")
   private String name;
 
-  private String description;
+  @Column(name = "surveystartdate")
+  private Timestamp surveyStartDate;
 
-  @Column(name = "createdby")
-  private String createdBy;
-
-  @Column(name = "lastrundatetime")
-  private Timestamp lastRunDateTime;
-
+  @Column(name = "surveyenddate")
+  private Timestamp surveyEndDate;
 }
