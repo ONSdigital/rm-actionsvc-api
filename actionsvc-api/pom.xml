@@ -4,24 +4,40 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>actionsvc-api</artifactId>
-  <version>10.37.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>CTP : ResponseManagement : ActionSvcApi</name>
-  <description>CTP : ResponseManagement : ActionSvcApi</description>
+  <name>CTP : ActionService: ActionSvcApi</name>
+  <description>CTP : ActionService: ActionSvcApi</description>
 
   <parent>
     <groupId>uk.gov.ons.ctp.product</groupId>
-    <artifactId>responsemanagement</artifactId>
-    <version>10.37.0-SNAPSHOT</version>
+    <artifactId>actionservice</artifactId>
+    <version>10.38.0-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
   <dependencies>
     <dependency>
+      <groupId>uk.gov.ons.ctp.common</groupId>
+      <artifactId>framework</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>uk.gov.ons.ctp.common</groupId>
+      <artifactId>test-framework</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>net.codesup.util</groupId>
       <artifactId>jaxb2-rich-contract-plugin</artifactId>
       <version>1.15.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
