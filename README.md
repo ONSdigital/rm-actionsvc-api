@@ -8,14 +8,11 @@ feedback messages indicating successful downstream processing of the action or o
 The action service is agnostic of what any given handler will actually do with the action sent to it, and as such, will send the same format of ActionInstruction message to each handler.
 It is upto the handler to pick out what information is relevant to it from the instruction sent to it by this service.
 
+## Running
 
-* to run actionsvc
-
-      cd code/rm-action-service
-      mvn clean install
-      cd actionsvc
-      ./mvnw spring-boot:run
-
+    mvn clean install
+    cd actionsvc
+    ./mvnw spring-boot:run
 
 ## API
 See [API.md](https://github.com/ONSdigital/rm-action-service/blob/master/API.md) for API documentation.
