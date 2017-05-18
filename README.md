@@ -1,21 +1,24 @@
-# Case Service
-<<<<<<< HEAD
-This repository contains the Case service. This microservice is a RESTful web service implemented using [Spring Boot](http://projects.spring.io/spring-boot/). It manages cases, where a case represents an expected response from an sample unit such as a business or a household. Every sample unit in the survey sample must have at least one associated case. Each case can have multiple questionnaires associated with it, but it must have at least one. Each questionnaire has a question set and a Unique Access Code (UAC). Interesting things that happen during the life cycle of a case are recorded as case events. Case life cycle transitions are published as JMS messages for interested parties to subscribe to.
+# Action Service
+This repository contains the Action service. This microservice is a RESTful web service implemented using [Spring Boot](http://projects.spring.io/spring-boot/).
+It receives actionLifeCycle event messages via RabbitMQ from the action Service, which indicates what has happened to a action ie activation, deactivation etc
+The action service will execute an action plan for each action that is actionable, off of which actions are created.
+Each action follows a state transition model or path, which involves distribution of the actions to handlers, and for some types of actions, the service will expect
+feedback messages indicating successful downstream processing of the action or otherwise by the handler.
 
-* Receive and act upon Case Creation messages on a Rabbit queue
-* Receive CaseEvent instructions via RESTful requests and act accordingly
-* As a result of CaseEvents, call one or more of IAC Service, CollectionExercise Service, Action Service, Party Service, and orchestrate survey collection exercise cases
+The action service is agnostic of what any given handler will actually do with the action sent to it, and as such, will send the same format of ActionInstruction message to each handler.
+It is upto the handler to pick out what information is relevant to it from the instruction sent to it by this service.
 
-* to run casesvc
 
-      cd code/rm-sample-service
+* to run actionsvc
+
+      cd code/rm-action-service
       mvn clean install
-      cd samplesvc
+      cd actionsvc
       ./mvnw spring-boot:run
 
 
 ## API
-See [API.md](https://github.com/ONSdigital/rm-case-service/blob/master/API.md) for API documentation.
+See [API.md](https://github.com/ONSdigital/rm-action-service/blob/master/API.md) for API documentation.
 
 ## Copyright
 Copyright (C) 2017 Crown Copyright (Office for National Statistics)
