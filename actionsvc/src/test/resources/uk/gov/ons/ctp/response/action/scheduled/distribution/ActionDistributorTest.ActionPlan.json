@@ -1,7 +1,6 @@
 [
 {  
   "actionPlanId": 1,
-  "surveyId": 1,
   "name": "plan_name",
   "description": "plan desc",
   "createdBy": "SYSTEM",

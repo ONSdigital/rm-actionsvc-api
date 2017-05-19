@@ -1,6 +1,6 @@
 [
 	{
-		"caseId": 1,
+		"id": 1,
 		"caseGroupId": 1,
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
@@ -13,7 +13,7 @@
 		"responses": []
 	},
 	{
-		"caseId": 2,
+		"id": 2,
 		"caseGroupId": 1,
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
@@ -31,7 +31,7 @@
 		]
 	},
 	{
-		"caseId": 3,
+		"id": 3,
 		"caseGroupId": 1,
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
@@ -44,7 +44,7 @@
 		"responses": []
 	},
 	{
-		"caseId": 4,
+		"id": 4,
 		"caseGroupId": 1,
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",

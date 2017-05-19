@@ -10,10 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.Survey;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
-import uk.gov.ons.ctp.response.action.domain.repository.SurveyRepository;
 import uk.gov.ons.ctp.response.action.service.ActionService;
 import uk.gov.ons.ctp.response.action.service.CaseNotificationService;
 import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
@@ -38,9 +36,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
   @Autowired
   private ActionService actionService;
 
-  @Autowired
-  private SurveyRepository surveyRepo;
-
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
   public void acceptNotification(List<CaseNotification> notifications) {
@@ -52,8 +47,9 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
-          Survey survey = surveyRepo.findOne(actionPlan.getSurveyId());
-          actionCase.setActionPlanStartDate(survey.getSurveyStartDate());
+          // TODO BRES start date will now need to come from the CaseLifecycle msg
+//          Survey survey = surveyRepo.findOne(actionPlan.getSurveyId());
+//          actionCase.setActionPlanStartDate(survey.getSurveyStartDate());
           checkAndSaveCase(actionCase);
           break;
         case DISABLED:

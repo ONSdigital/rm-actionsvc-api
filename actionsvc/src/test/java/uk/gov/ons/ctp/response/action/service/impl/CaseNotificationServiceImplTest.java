@@ -20,10 +20,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.Survey;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
-import uk.gov.ons.ctp.response.action.domain.repository.SurveyRepository;
 import uk.gov.ons.ctp.response.action.service.ActionService;
 import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
 
@@ -42,8 +40,6 @@ public class CaseNotificationServiceImplTest {
   @Mock 
   private ActionService actionService;
   
-  @Mock
-  private SurveyRepository surveyRepo;
 
   @InjectMocks
   private CaseNotificationServiceImpl caseNotificationService;
@@ -55,7 +51,6 @@ public class CaseNotificationServiceImplTest {
   public void testAcceptNotification() throws Exception {
 
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
-    List<Survey> surveys = FixtureHelper.loadClassFixtures(Survey[].class);
 
     // Setup Test data
     List<CaseNotification> lifeCycleEvents = new ArrayList<CaseNotification>();
@@ -66,7 +61,6 @@ public class CaseNotificationServiceImplTest {
 
     Mockito.when(actionPlanRepo.findOne(3)).thenReturn(actionPlans.get(0));
     Mockito.when(actionPlanRepo.findOne(4)).thenReturn(actionPlans.get(1));
-    Mockito.when(surveyRepo.findOne(1)).thenReturn(surveys.get(0));
 
     // Call method
     caseNotificationService.acceptNotification(lifeCycleEvents);

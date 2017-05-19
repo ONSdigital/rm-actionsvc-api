@@ -30,9 +30,6 @@ public class ActionPlan implements Serializable {
   @Column(name = "actionplanid")
   private Integer actionPlanId;
 
-  @Column(name = "surveyid")
-  private Integer surveyId;
-
   private String name;
 
   private String description;
