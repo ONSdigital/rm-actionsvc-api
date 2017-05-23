@@ -6,9 +6,10 @@ databaseChangeLog:
       changes:
         - sqlFile:
             comment: Action foundation schema
-            path: ACTION_foundation_schema.sql
+            path: action_foundation_schema.sql
             relativeToChangelogFile: true
             splitStatements: false
+
 
   - changeSet:
       id: 10.37.0-2
@@ -16,12 +17,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             comment: BRES Action seeddata
-            path: BRES_ACTION_seeddata.sql
+            path: BRES_action_seeddata.sql
             relativeToChangelogFile: true
             splitStatements: false
-      
-
-
-
-
 
