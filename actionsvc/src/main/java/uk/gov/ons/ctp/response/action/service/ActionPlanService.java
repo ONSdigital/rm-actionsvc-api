@@ -19,24 +19,24 @@ public interface ActionPlanService extends CTPService {
 
   /**
    * This method returns the action plan for the specified action plan id.
-   * @param actionPlanId This is the action plan id
+   * @param actionPlanKey This is the action plan id
    * @return ActionPlan This returns the associated action plan.
    */
-  ActionPlan findActionPlan(Integer actionPlanId);
+  ActionPlan findActionPlan(Integer actionPlanKey);
 
   /**
    * This method returns the action plan after it has been updated. Note that only the description and
    * the lastGoodRunDatetime can be updated.
-   * @param actionPlanId This is the action plan id of the action plan to be updated
+   * @param actionPlanKey This is the action plan id of the action plan to be updated
    * @param actionPlan This is the action plan containing the potentially new description and lastGoodRunDatetime
    * @return ActionPlan This returns the updated action plan.
    */
-  ActionPlan updateActionPlan(Integer actionPlanId, ActionPlan actionPlan);
+  ActionPlan updateActionPlan(Integer actionPlanKey, ActionPlan actionPlan);
 
   /**
    * Returns all action rules for the given action plan id.
-   * @param actionPlanId the given action plan id
+   * @param actionPlanKey the given action plan id
    * @return Returns all action rules for the given action plan id.
    */
-  List<ActionRule> findActionRulesForActionPlan(Integer actionPlanId);
+  List<ActionRule> findActionRulesForActionPlan(Integer actionPlanKey);
 }

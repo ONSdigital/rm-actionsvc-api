@@ -26,8 +26,8 @@ public class ActionType implements Serializable {
   private static final long serialVersionUID = -581549382631976704L;
 
   @Id
-  @Column(name = "actiontypeid")
-  private Integer actionTypeId;
+  @Column(name = "actiontypepk")
+  private Integer actionTypePK;
 
   private String name;
   private String description;

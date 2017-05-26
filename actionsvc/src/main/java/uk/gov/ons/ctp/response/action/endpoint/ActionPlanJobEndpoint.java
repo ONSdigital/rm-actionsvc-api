@@ -1,26 +1,30 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.endpoint.CTPEndpoint;
 import uk.gov.ons.ctp.common.error.CTPException;
-import uk.gov.ons.ctp.common.error.InvalidRequestException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
-
-import javax.validation.Valid;
 
 /**
  * The REST endpoint controller for ActionPlanJobs.
@@ -77,23 +81,26 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    * @throws CTPException summats went wrong
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.POST, consumes = "application/json")
-  public final ResponseEntity<?> executeActionPlan(@PathVariable("actionplanid") final Integer actionPlanId,
+  public final ResponseEntity<?> executeActionPlan(@PathVariable("actionplanid") final UUID actionPlanId,
       final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult) throws CTPException {
-    log.info("Entering executeActionPlan with {}", actionPlanId);
+    //TODO BRES needs to finf the action plan by UUID, take that plans PK and create job with it 
 
-    if (bindingResult.hasErrors()) {
-      throw new InvalidRequestException("Binding errors for execute action plan: ", bindingResult);
-    }
-
-    if (actionPlanJobDTO == null) {
-      throw new CTPException(CTPException.Fault.VALIDATION_FAILED, "Provided json is incorrect.");
-    }
-
-    ActionPlanJob job = mapperFacade.map(actionPlanJobDTO, ActionPlanJob.class);
-    job.setActionPlanId(actionPlanId);
-    Optional<ActionPlanJob> actionPlanJob = actionPlanJobService.createAndExecuteActionPlanJob(job);
-    return ResponseEntity.created(URI.create("TODO")).body(
-            mapperFacade.map(actionPlanJob.orElseThrow(() -> new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND,
-            "ActionPlan not found for id %s", actionPlanId)), ActionPlanJobDTO.class));
+//    log.info("Entering executeActionPlan with {}", actionPlanId);
+//
+//    if (bindingResult.hasErrors()) {
+//      throw new InvalidRequestException("Binding errors for execute action plan: ", bindingResult);
+//    }
+//
+//    if (actionPlanJobDTO == null) {
+//      throw new CTPException(CTPException.Fault.VALIDATION_FAILED, "Provided json is incorrect.");
+//    }
+//
+//    ActionPlanJob job = mapperFacade.map(actionPlanJobDTO, ActionPlanJob.class);
+//    job.setActionPlanId(actionPlanId);
+//    Optional<ActionPlanJob> actionPlanJob = actionPlanJobService.createAndExecuteActionPlanJob(job);
+//    return ResponseEntity.created(URI.create("TODO")).body(
+//            mapperFacade.map(actionPlanJob.orElseThrow(() -> new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND,
+//            "ActionPlan not found for id %s", actionPlanId)), ActionPlanJobDTO.class));
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
   }
 }

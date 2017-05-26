@@ -2,6 +2,7 @@ package uk.gov.ons.ctp.response.action.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   private RestClient caseSvcClient;
 
   @Override
-  public PartyDTO getParty(final String partyId) {
+  public PartyDTO getParty(final UUID partyId) {
     PartyDTO partyDTO = null;
 
 //    AddressDTO addressDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getAddressByUprnGetPath(),
@@ -41,14 +42,14 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   }
 
   @Override
-  public CaseDTO getCase(final Integer caseId) {
+  public CaseDTO getCase(final UUID caseId) {
     CaseDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
         CaseDTO.class, caseId);
     return caseDTO;
   } 
   
   @Override
-  public CaseGroupDTO getCaseGroup(final Integer caseGroupId) {
+  public CaseGroupDTO getCaseGroup(final UUID caseGroupId) {
     CaseGroupDTO caseGroupDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseGroupPath(),
         CaseGroupDTO.class, caseGroupId);
     return caseGroupDTO;
@@ -56,7 +57,7 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   
 
   @Override
-  public List<CaseEventDTO> getCaseEvents(final Integer caseId) {
+  public List<CaseEventDTO> getCaseEvents(final UUID caseId) {
     List<CaseEventDTO> caseEventDTOs = caseSvcClient.getResources(
         appConfig.getCaseSvc().getCaseEventsByCaseGetPath(),
         CaseEventDTO[].class, caseId);
@@ -65,7 +66,7 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
 
   @Override
   public CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryType actionCategory) {
-    log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getActionId(),
+    log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getId(),
         actionCategory);
     CaseEventDTO caseEventDTO = new CaseEventDTO();
     caseEventDTO.setCaseId(action.getCaseId());

@@ -2,6 +2,7 @@ package uk.gov.ons.ctp.response.action.service;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.UUID;
 
 import uk.gov.ons.ctp.common.service.CTPService;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -47,7 +48,14 @@ public interface ActionService extends CTPService {
    * @param actionId This is the action id
    * @return Action Returns the action for the specified action id.
    */
-  Action findActionByActionId(BigInteger actionId);
+  Action findActionByActionPK(BigInteger actionKey);
+
+  /**
+   * Find an action by its UUID id
+   * @param actionId the UUID
+   * @return the action
+   */
+  Action findActionById(UUID actionId);
 
   /**
    * Find all actions for the specified Case Id.
@@ -55,7 +63,7 @@ public interface ActionService extends CTPService {
    * @param caseId This is the case id
    * @return List<Action> Returns all actions for the specified Case Id.
    */
-  List<Action> findActionsByCaseId(Integer caseId);
+  List<Action> findActionsByCaseId(UUID caseId);
 
   /**
    * Cancel all the actions for a given caseId.
@@ -65,7 +73,7 @@ public interface ActionService extends CTPService {
    * @return List<Action> Returns list of all actions for the case that were
    *         cancelled. Not all actions are cancellable!
    */
-  List<Action> cancelActions(Integer caseId);
+  List<Action> cancelActions(UUID caseId);
 
   /**
    * Create an action.

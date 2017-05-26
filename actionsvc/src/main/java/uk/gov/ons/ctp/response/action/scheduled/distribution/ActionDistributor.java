@@ -156,7 +156,7 @@ public class ActionDistributor {
         if (actions != null && !actions.isEmpty()) {
           log.debug("Dealing with actions {}",
               actions.stream()
-                  .map(a -> a.getActionId().toString())
+                  .map(a -> a.getActionPK().toString())
                   .collect(Collectors.joining(",")));
 
           actions.forEach(action -> {
@@ -170,7 +170,7 @@ public class ActionDistributor {
               // db changes rolled back
               log.error(
                   "Exception {} thrown processing action {}. Processing will be retried at next scheduled distribution",
-                  e.getMessage(), action.getActionId());
+                  e.getMessage(), action.getActionPK());
             }
             if ((actionRequests.size() + actionCancels.size()) == appConfig.getActionDistribution()
                 .getDistributionMax()) {
@@ -268,14 +268,14 @@ public class ActionDistributor {
     excludedActionIds.add(BigInteger.valueOf(IMPOSSIBLE_ACTION_ID));
 
     actions = actionRepo
-        .findByActionTypeNameAndStateInAndActionIdNotIn(actionType.getName(),
+        .findByActionTypeNameAndStateInAndActionPKNotIn(actionType.getName(),
             Arrays.asList(ActionState.SUBMITTED, ActionState.CANCEL_SUBMITTED), excludedActionIds, pageable);
     if (!actions.isEmpty()) {
-      log.debug("RETRIEVED action ids {}", actions.stream().map(a -> a.getActionId().toString())
+      log.debug("RETRIEVED action ids {}", actions.stream().map(a -> a.getActionPK().toString())
           .collect(Collectors.joining(",")));
       // try and save our list to the distributed store
       actionDistributionListManager.saveList(actionType.getName(), actions.stream()
-          .map(action -> action.getActionId())
+          .map(action -> action.getActionPK())
           .collect(Collectors.toList()), true);
     }
     return actions;
@@ -292,8 +292,8 @@ public class ActionDistributor {
    *         ActionInstruction
    */
   private ActionRequest processActionRequest(final Action action) {
-    log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionId(),
-        action.getCaseId(), action.getActionPlanId());
+    log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionPK(),
+        action.getCaseId(), action.getActionPlanFK());
     return transactionTemplate.execute(new TransactionCallback<ActionRequest>() {
       // the code in this method executes in a transactional context
       public ActionRequest doInTransaction(final TransactionStatus status) {
@@ -319,13 +319,13 @@ public class ActionDistributor {
    *         ActionInstruction
    */
   private ActionCancel processActionCancel(final Action action) {
-    log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionId(),
-        action.getCaseId(), action.getActionPlanId());
+    log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionPK(),
+        action.getCaseId(), action.getActionPlanFK());
     return transactionTemplate.execute(new TransactionCallback<ActionCancel>() {
       // the code in this method executes in a transactional context
       public ActionCancel doInTransaction(final TransactionStatus status) {
         ActionCancel actionCancel = null;
-        log.debug("Preparing action {} for distribution", action.getActionId());
+        log.debug("Preparing action {} for distribution", action.getActionPK());
 
         // update our actions state in db
         transitionAction(action, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
@@ -364,10 +364,10 @@ public class ActionDistributor {
    */
   private ActionRequest prepareActionRequest(final Action action) {
     log.debug("constructing ActionRequest to publish to downstream handler for action id {} and case id {}",
-        action.getActionId(), action.getCaseId());
+        action.getActionPK(), action.getCaseId());
     // now call caseSvc for the following
-    ActionPlan actionPlan = (action.getActionPlanId() == null) ? null
-        : actionPlanRepo.findOne(action.getActionPlanId());
+    ActionPlan actionPlan = (action.getActionPlanFK() == null) ? null
+        : actionPlanRepo.findOne(action.getActionPlanFK());
     CaseDTO caseDTO = caseSvcClientService.getCase(action.getCaseId());
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
@@ -390,9 +390,9 @@ public class ActionDistributor {
    */
   private ActionCancel prepareActionCancel(final Action action) {
     log.debug("constructing ActionCancel to publish to downstream handler for action id {} and case id {}",
-        action.getActionId(), action.getCaseId());
+        action.getActionPK(), action.getCaseId());
     ActionCancel actionCancel = new ActionCancel();
-    actionCancel.setActionId(action.getActionId());
+    actionCancel.setActionId(action.getId().toString());
     actionCancel.setResponseRequired(true);
     actionCancel.setReason("Action cancelled by Response Management");
     return actionCancel;
@@ -406,7 +406,7 @@ public class ActionDistributor {
    * @param actionPlan the persistent ActionPlan obj from the db
    * @param caseDTO the Case representation from the CaseSvc
    * @param PartyDTO the Party containing the Address representation from the PartySvc
-   * @param caseEventDTOs the list of CaseEvent represenations from the CaseSvc
+   * @param caseEventDTOs the list of CaseEvent representations from the CaseSvc
    * @return the shiney new Action Request
    */
   private ActionRequest createActionRequest(final Action action, final ActionPlan actionPlan, final CaseDTO caseDTO,
@@ -414,13 +414,13 @@ public class ActionDistributor {
       final List<CaseEventDTO> caseEventDTOs) {
     ActionRequest actionRequest = new ActionRequest();
     // populate the request
-    actionRequest.setActionId(action.getActionId());
+    actionRequest.setActionId(action.getId().toString());
     actionRequest.setActionPlan((actionPlan == null) ? null : actionPlan.getName());
     actionRequest.setActionType(action.getActionType().getName());
     // TODO BRES where does questionSet come from now?!
 //    actionRequest.setQuestionSet(caseTypeDTO.getQuestionSet());
     actionRequest.setResponseRequired(action.getActionType().getResponseRequired());
-    actionRequest.setCaseId(Integer.valueOf(action.getCaseId()));
+    actionRequest.setCaseId(action.getCaseId().toString());
 
     // TODO BRES contact guff needs to be picked out of PartyDTO
 //    ContactDTO contactDTO = caseDTO.getContact();

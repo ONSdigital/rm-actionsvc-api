@@ -17,6 +17,6 @@ public interface ActionPlanJobRepository extends JpaRepository<ActionPlanJob, In
    * @param actionPlanId the plan id
    * @return the jobs
    */
-  List<ActionPlanJob> findByActionPlanId(Integer actionPlanId);
+  List<ActionPlanJob> findByActionPlanFK(Integer actionPlanFK);
 
 }

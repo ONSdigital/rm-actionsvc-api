@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.response.action.domain.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -34,9 +35,16 @@ public interface ActionCaseRepository extends JpaRepository<ActionCase, Integer>
   List<ActionCase> findByActionPlanId(Integer actionPlanId);
 
   /**
+   * find a case by its id - the uuid which is not the primary key btw
+   * @param caseId the UUID of the case to retrieve
+   * @return the case
+   */
+  ActionCase findById(UUID caseId);
+  
+  /**
    * just count cases for an actionplan
    * @param actionPlanId the plan id
    * @return how many cases for that plan
    */
-  Long countByActionPlanId(Integer actionPlanId);
+  Long countByActionPlanFK(Integer actionPlanKey);
 }

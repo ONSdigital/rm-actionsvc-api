@@ -1,5 +1,7 @@
 package uk.gov.ons.ctp.response.action.service;
 
+import java.util.UUID;
+
 import uk.gov.ons.ctp.common.service.CTPService;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 
@@ -12,5 +14,5 @@ public interface ActionCaseService extends CTPService {
    * @param caseId the given id
    * @return the case
    */
-  ActionCase findActionCase(Integer caseId);
+  ActionCase findActionCase(UUID caseId);
 }

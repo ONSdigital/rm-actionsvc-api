@@ -119,7 +119,8 @@ public class CsvLine {
   @Pattern(regexp = NON_BLANK_INTEGER_RE)
   private String uprn;
 
-  @Pattern(regexp = NON_BLANK_INTEGER_RE)
+  // TODO BRES - regex for UUID needed
+  //@Pattern(regexp = NON_BLANK_INTEGER_RE)
   private String caseId;
 
   @Pattern(regexp = NON_BLANK_ALPHANUM_RE)

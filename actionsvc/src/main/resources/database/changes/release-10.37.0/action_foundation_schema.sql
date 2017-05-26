@@ -3,12 +3,11 @@
 SET SCHEMA 'action';
 
 
--- create postgres extension to allow generation of v4 UUID
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 
 
 -- Function: action.createactions(integer)
-
+p_actionplanjobid
 -- DROP FUNCTION action.createactions(integer);
 
 CREATE OR REPLACE FUNCTION action.createactions(p_actionplanjobPK integer)
@@ -70,7 +69,7 @@ BEGIN
       SELECT  
          gen_random_uuid()
         ,nextval('action.actionPKseq')
-        ,l.caseId
+        ,l.id
         ,l.casePK
         ,l.actionplanFk
         ,l.actionrulePK
@@ -82,7 +81,7 @@ BEGIN
         ,v_currentdatetime
         ,v_currentdatetime        
        FROM 
-        (SELECT c.caseId
+        (SELECT c.id
                ,c.casePK
                ,r.actionplanFK
                ,r.actionrulePK
@@ -269,7 +268,7 @@ CREATE TABLE actiontype (
 
 CREATE TABLE "case" (
     actionplanId        uuid NOT NULL,
-    caseId              uuid NOT NULL,
+    id	                uuid NOT NULL,
     casePK              bigint NOT NULL,
     actionplanFK        integer NOT NULL,
     actionplanstartdate timestamp with time zone NOT NULL,
@@ -333,4 +332,5 @@ ALTER TABLE ONLY "case"             ADD CONSTRAINT actionplanFK_fkey       FOREI
 -- Add index   
 ALTER TABLE action     ADD CONSTRAINT actionid_uuid_key     UNIQUE (id);
 ALTER TABLE actionplan ADD CONSTRAINT actionplanid_uuid_key UNIQUE (id);
+ALTER TABLE "case" ADD CONSTRAINT id_uuid_key UNIQUE (id);
 

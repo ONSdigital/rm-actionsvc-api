@@ -64,56 +64,56 @@ public class CaseSvcClientServiceImplTest {
   }
 
 
-  /**
-   * Yep - another test
-   */
-  @Test
-  public void testCreateNewCaseEvent() {
-    CaseSvc caseSvcConfig = new CaseSvc();
-    caseSvcConfig.setCaseEventsByCasePostPath("cases/{caseid}/events");
-    Mockito.when(appConfig.getCaseSvc()).thenReturn(caseSvcConfig);
-    RestTemplate restTemplate = this.restClient.getRestTemplate();
-
-    Action action = new Action();
-    action.setActionId(BigInteger.valueOf(1));
-    action.setActionPlanId(2);
-    action.setActionRuleId(3);
-    
-    ActionType actionType = new ActionType();
-    actionType.setActionTypeId(4);
-    actionType.setHandler("Field");
-    actionType.setName("HouseholdVisit");
-    actionType.setDescription("desc");
-    action.setActionType(actionType);
-    action.setCreatedBy("me");
-    action.setCaseId(5);
-    action.setSituation("situ");
-
-    MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
-    mockServer.expect(requestTo("http://localhost:8080/cases/5/events"))
-        .andExpect(method(HttpMethod.POST))
-        .andExpect(content().string(containsString("\"caseId\":" + action.getCaseId() + ",")))
-        .andExpect(content().string(containsString("\"caseEventId\":null,")))
-        .andExpect(content()
-            .string(containsString("\"category\":\"" + CategoryDTO.CategoryType.ACTION_COMPLETED.name() + "\"")))
-        .andExpect(content().string(containsString("\"subCategory\":\"" + action.getActionType().getName() + "\"")))
-        .andExpect(content().string(containsString("\"createdBy\":\"" + action.getCreatedBy() + "\"")))
-        .andExpect(content().string(containsString("\"description\":\"" + action.getActionType().getDescription() + " (" + action.getSituation() + ")\"")))
-        .andRespond(withSuccess("{"
-            + "\"createdDateTime\":1460736159699,"
-            + "\"caseEventId\":1,"
-            + "\"caseId\":1,"
-            + "\"category\":\"ACTION_COMPLETED\","
-            + "\"subCategory\":\"subcat\","
-            + "\"createdBy\":\"me\","
-            + "\"description\":\"desc\""
-            + "}", MediaType.APPLICATION_JSON));
-
-    CaseEventDTO caseEventDTO = caseSvcClientService.createNewCaseEvent(action,
-        CategoryDTO.CategoryType.ACTION_COMPLETED);
-    assertTrue(caseEventDTO != null);
-    mockServer.verify();
-  }
-  
-	  
+//  /**
+//   * Yep - another test
+//   */
+//  @Test
+//  public void testCreateNewCaseEvent() {
+//    CaseSvc caseSvcConfig = new CaseSvc();
+//    caseSvcConfig.setCaseEventsByCasePostPath("cases/{caseid}/events");
+//    Mockito.when(appConfig.getCaseSvc()).thenReturn(caseSvcConfig);
+//    RestTemplate restTemplate = this.restClient.getRestTemplate();
+//
+//    Action action = new Action();
+//    action.setActionId(BigInteger.valueOf(1));
+//    action.setActionPlanId(2);
+//    action.setActionRuleId(3);
+//    
+//    ActionType actionType = new ActionType();
+//    actionType.setActionTypeId(4);
+//    actionType.setHandler("Field");
+//    actionType.setName("HouseholdVisit");
+//    actionType.setDescription("desc");
+//    action.setActionType(actionType);
+//    action.setCreatedBy("me");
+//    action.setCaseId(5);
+//    action.setSituation("situ");
+//
+//    MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
+//    mockServer.expect(requestTo("http://localhost:8080/cases/5/events"))
+//        .andExpect(method(HttpMethod.POST))
+//        .andExpect(content().string(containsString("\"caseId\":" + action.getCaseId() + ",")))
+//        .andExpect(content().string(containsString("\"caseEventId\":null,")))
+//        .andExpect(content()
+//            .string(containsString("\"category\":\"" + CategoryDTO.CategoryType.ACTION_COMPLETED.name() + "\"")))
+//        .andExpect(content().string(containsString("\"subCategory\":\"" + action.getActionType().getName() + "\"")))
+//        .andExpect(content().string(containsString("\"createdBy\":\"" + action.getCreatedBy() + "\"")))
+//        .andExpect(content().string(containsString("\"description\":\"" + action.getActionType().getDescription() + " (" + action.getSituation() + ")\"")))
+//        .andRespond(withSuccess("{"
+//            + "\"createdDateTime\":1460736159699,"
+//            + "\"caseEventId\":1,"
+//            + "\"caseId\":1,"
+//            + "\"category\":\"ACTION_COMPLETED\","
+//            + "\"subCategory\":\"subcat\","
+//            + "\"createdBy\":\"me\","
+//            + "\"description\":\"desc\""
+//            + "}", MediaType.APPLICATION_JSON));
+//
+//    CaseEventDTO caseEventDTO = caseSvcClientService.createNewCaseEvent(action,
+//        CategoryDTO.CategoryType.ACTION_COMPLETED);
+//    assertTrue(caseEventDTO != null);
+//    mockServer.verify();
+//  }
+//  
+//	  
 }

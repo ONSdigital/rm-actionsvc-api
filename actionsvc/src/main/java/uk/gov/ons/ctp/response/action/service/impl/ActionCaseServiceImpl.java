@@ -1,7 +1,10 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
@@ -18,7 +21,7 @@ public class ActionCaseServiceImpl implements ActionCaseService {
   private ActionCaseRepository actionCaseRepo;
 
   @Override
-  public ActionCase findActionCase(Integer caseId) {
-    return actionCaseRepo.findOne(caseId);
+  public ActionCase findActionCase(UUID caseId) {
+    return actionCaseRepo.findById(caseId);
   }
 }

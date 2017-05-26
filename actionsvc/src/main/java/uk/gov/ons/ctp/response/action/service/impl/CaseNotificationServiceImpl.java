@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,10 +41,12 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
   public void acceptNotification(List<CaseNotification> notifications) {
     notifications.forEach((notif) -> {
-      ActionPlan actionPlan = actionPlanRepo.findOne(notif.getActionPlanId());
+      UUID actionPlanId = UUID.fromString(notif.getActionPlanId());
+      UUID caseId = UUID.fromString(notif.getCaseId());
+      ActionPlan actionPlan = actionPlanRepo.findById(actionPlanId);
 
       if (actionPlan != null) {
-        ActionCase actionCase = ActionCase.builder().actionPlanId(notif.getActionPlanId()).caseId(notif.getCaseId()).build();
+        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId).id(caseId).build();
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
@@ -54,7 +57,7 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
           break;
         case DISABLED:
         case DEACTIVATED:
-          actionService.cancelActions(notif.getCaseId());
+          actionService.cancelActions(caseId);
           actionCaseRepo.delete(actionCase);
           break;
         default:
@@ -76,8 +79,8 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
    * @param actionCase the case to check and save
    */
   private void checkAndSaveCase(ActionCase actionCase) {
-    if (actionCaseRepo.exists(actionCase.getCaseId())) {
-      log.error("CaseNotification illiciting case creation for an existing case id {}", actionCase.getCaseId()); 
+    if (actionCaseRepo.findById(actionCase.getId()) != null) {
+      log.error("CaseNotification illiciting case creation for an existing case id {}", actionCase.getId()); 
     } else {
       actionCaseRepo.save(actionCase);
     }

@@ -62,7 +62,7 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
   @Override
   public List<ActionPlanJob> findActionPlanJobsForActionPlan(final Integer actionPlanId) {
     log.debug("Entering findActionPlanJobsForActionPlan with {}", actionPlanId);
-    return actionPlanJobRepo.findByActionPlanId(actionPlanId);
+    return actionPlanJobRepo.findByActionPlanFK(actionPlanId);
   }
 
   @Override
@@ -71,7 +71,7 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
     List<ActionPlanJob> executedJobs = new ArrayList<>();
     actionPlanRepo.findAll().forEach(actionPlan -> {
       ActionPlanJob job = new ActionPlanJob();
-      job.setActionPlanId(actionPlan.getActionPlanId());
+      job.setActionPlanFK(actionPlan.getActionPlanPK());
       job.setCreatedBy(CREATED_BY_SYSTEM);
       createAndExecuteActionPlanJob(job, false).ifPresent(j -> executedJobs.add(j));
     });
@@ -99,11 +99,11 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   private Optional<ActionPlanJob> createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob,
       boolean forcedExecution) {
-    Integer actionPlanId = actionPlanJob.getActionPlanId();
+    Integer actionPlanPK = actionPlanJob.getActionPlanFK();
 
     ActionPlanJob createdJob = null;
     // load the action plan
-    ActionPlan actionPlan = actionPlanRepo.findOne(actionPlanId);
+    ActionPlan actionPlan = actionPlanRepo.findOne(actionPlanPK);
     if (actionPlan != null) {
 
       if (actionPlanExecutionLockManager.lock(actionPlan.getName())) {
@@ -115,14 +115,14 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
 
             if (actionPlan.getLastRunDateTime() != null
                 && actionPlan.getLastRunDateTime().after(lastExecutionTime)) {
-              log.debug("Job for plan {} has been run since last wake up - skipping", actionPlanId);
+              log.debug("Job for plan {} has been run since last wake up - skipping", actionPlanPK);
               return Optional.empty();
             }
           }
 
           // if no cases for actionplan why bother?
-          if (actionCaseRepo.countByActionPlanId(actionPlanId) == 0) {
-            log.debug("No open cases for action plan {} - skipping", actionPlanId);
+          if (actionCaseRepo.countByActionPlanFK(actionPlanPK) == 0) {
+            log.debug("No open cases for action plan {} - skipping", actionPlanPK);
             return Optional.empty();
           }
 
@@ -132,16 +132,16 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
           actionPlanJob.setUpdatedDateTime(now);
           // save the new job record
           createdJob = actionPlanJobRepo.save(actionPlanJob);
-          log.info("Running actionplanjobid {} actionplanid {}", createdJob.getActionPlanJobId(),
-              createdJob.getActionPlanId());
+          log.info("Running actionplanjobid {} actionplanid {}", createdJob.getActionPlanJobPK(),
+              createdJob.getActionPlanFK());
           // get the repo to call sql function to create actions
-          actionCaseRepo.createActions(createdJob.getActionPlanJobId());
+          actionCaseRepo.createActions(createdJob.getActionPlanJobPK());
         } finally {
-          log.debug("Releasing lock on action plan {}", actionPlanId);
+          log.debug("Releasing lock on action plan {}", actionPlanPK);
           actionPlanExecutionLockManager.unlock(actionPlan.getName());
         }
       } else {
-        log.debug("Could not get lock on action plan {}", actionPlanId);
+        log.debug("Could not get lock on action plan {}", actionPlanPK);
       }
     }
 

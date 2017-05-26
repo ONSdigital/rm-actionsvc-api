@@ -40,15 +40,16 @@ public class ActionPlanJob {
               @Parameter(name = "increment_size", value = "1")
       }
   )
-  @Column(name = "actionplanjobid")
-  private Integer actionPlanJobId;
+  @Column(name = "actionplanjobpk")
+  private Integer actionPlanJobPK;
 
-  @Column(name = "actionplanid")
-  private Integer actionPlanId;
+  @Column(name = "actionplanfk")
+  private Integer actionPlanFK;
 
   @Column(name = "createdby")
   private String createdBy;
 
+  @Column(name = "statefk")
   @Enumerated(EnumType.STRING)
   private ActionPlanJobDTO.ActionPlanJobState state;
 

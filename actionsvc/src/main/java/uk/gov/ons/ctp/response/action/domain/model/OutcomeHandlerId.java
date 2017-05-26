@@ -20,9 +20,9 @@ public class OutcomeHandlerId implements Serializable {
 	private static final long serialVersionUID = 3161993644341999008L;
 
   @Enumerated(EnumType.STRING)
-	@Column(name="actionoutcome")
+	@Column(name="actionoutcomepk")
 	private ActionEvent actionOutcome;
 
-	@Column(name="handler")
+	@Column(name="handlerpk")
 	private String handler;
 }

@@ -16,5 +16,5 @@ public interface ActionRuleRepository extends JpaRepository<ActionRule, Integer>
    * @param actionPlanId the given action plan id
    * @return Returns all action rules for the given action plan id.
    */
-  List<ActionRule> findByActionPlanId(Integer actionPlanId);
+  List<ActionRule> findByActionPlanFK(Integer actionPlanFK);
 }
