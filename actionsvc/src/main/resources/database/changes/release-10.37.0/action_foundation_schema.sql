@@ -7,7 +7,6 @@ SET SCHEMA 'action';
 
 
 -- Function: action.createactions(integer)
-p_actionplanjobid
 -- DROP FUNCTION action.createactions(integer);
 
 CREATE OR REPLACE FUNCTION action.createactions(p_actionplanjobPK integer)
