@@ -44,10 +44,10 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
   private ActionService actionService;
   
   @Autowired
-  private CaseSvcClientService caseSvcClientServiceImpl;
+  private CaseSvcClientService caseSvcClientService;
  
   @Autowired
-  private CollectionExerciseClientService collectionSvcClientServiceImpl;
+  private CollectionExerciseClientService collectionSvcClientService;
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
@@ -62,8 +62,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
-          // TODO BRES start date will now need to come from the CaseLifecycle msg
-
           actionCase.setActionPlanStartDate(getSurveyStartDate(notif));
           actionCase.setActionPlanEndDate(getSurveyEndDate(notif));
           checkAndSaveCase(actionCase);
@@ -90,25 +88,20 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
  * @return 
    */
   private Timestamp getSurveyStartDate(CaseNotification notification){
-	 
-	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
-	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
-	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
-	 log.debug("start date ",collectionExercise.getScheduledStartDateTime());
+	 CaseDTO caseDTO = caseSvcClientService.getCase(UUID.fromString(notification.getCaseId()));
+	 CaseGroupDTO caseGroup = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
+	 CollectionExerciseDTO collectionExercise = collectionSvcClientService.getCollectionExercise(caseGroup.getCollectionExerciseId());
 	 return collectionExercise.getScheduledStartDateTime();
   }
-  
   
   /**
    * This method is to retrive the survey start date from the collection excerise
  * @return 
    */
   private Timestamp getSurveyEndDate(CaseNotification notification){
-	 
-	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
-	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
-	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
-	 log.debug("end date ",collectionExercise.getScheduledEndDateTime());
+	 CaseDTO caseDTO = caseSvcClientService.getCase(UUID.fromString(notification.getCaseId()));
+	 CaseGroupDTO caseGroup = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
+	 CollectionExerciseDTO collectionExercise = collectionSvcClientService.getCollectionExercise(caseGroup.getCollectionExerciseId());
 	 return collectionExercise.getScheduledEndDateTime();
   }
   

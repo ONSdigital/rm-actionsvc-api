@@ -25,14 +25,13 @@ public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
   @ServiceActivator(inputChannel = "caseNotificationTransformed", adviceChain = "caseNotificationRetryAdvice")
   public void acceptNotification(CaseNotifications caseNotifications) {
     try {
-		log.debug("Receiving case notifications for case ids {}", caseNotifications.getCaseNotifications().stream()
+      log.debug("Receiving case notifications for case ids {}", caseNotifications.getCaseNotifications().stream()
 		              .map(cn -> cn.getCaseId().toString())
 		              .collect(Collectors.joining(",")));
-		caseNotificationService.acceptNotification(caseNotifications.getCaseNotifications());
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		log.error("failed rec", e);
-		throw e;
+      caseNotificationService.acceptNotification(caseNotifications.getCaseNotifications());
+    } catch (Exception e) {
+      log.error("Case Notification Error:", e);
+      throw e;
 	}
   }
 }
