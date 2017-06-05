@@ -6,11 +6,16 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +38,13 @@ public class ActionCase implements Serializable {
 
   private static final long serialVersionUID = 7970373271889255844L;
 
+  
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "caseseq_gen")
+  @GenericGenerator(name = "caseseq_gen", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+      @Parameter(name = "sequence_name", value = "actionsvc.casepkseq"),
+      @Parameter(name = "increment_size", value = "1")
+  })
   @Column(name = "casepk")
   private Integer casePK;
 
