@@ -1,11 +1,7 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
@@ -18,9 +14,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.distributed.LockingException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
@@ -34,18 +27,19 @@ import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionTypeRepository;
 import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionEvent;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.ctp.response.action.message.instruction.Priority;
+import uk.gov.ons.ctp.response.action.message.instruction.*;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
+import uk.gov.ons.ctp.response.action.service.PartySvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
+
+import java.math.BigInteger;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the 'service' class that distributes actions to downstream services
@@ -110,6 +104,9 @@ public class ActionDistributor {
 
   @Autowired
   private CaseSvcClientService caseSvcClientService;
+
+  @Autowired
+  private PartySvcClientService partySvcClientService;
 
   @Autowired
   private ActionTypeRepository actionTypeRepo;
@@ -372,9 +369,9 @@ public class ActionDistributor {
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
 
-//    AddressDTO addressDTO = caseSvcClientService.getAddress(caseGroupDTO.getUprn());
-    // TODO BRES replace use of AddressDTO with PartyDTO, by fetching latter from PartySvc
-    PartyDTO partyDTO = null;
+    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getPartyId());
+    log.debug("PARTYDTO: " + partyDTO.toString());
+
     List<CaseEventDTO> caseEventDTOs = caseSvcClientService.getCaseEvents(action.getCaseId());
 
     return createActionRequest(action, actionPlan, caseDTO, partyDTO, caseEventDTOs);
@@ -405,12 +402,12 @@ public class ActionDistributor {
    * @param action the persistent Action obj from the db
    * @param actionPlan the persistent ActionPlan obj from the db
    * @param caseDTO the Case representation from the CaseSvc
-   * @param PartyDTO the Party containing the Address representation from the PartySvc
+   * @param partyDTO the Party containing the Address representation from the PartySvc
    * @param caseEventDTOs the list of CaseEvent representations from the CaseSvc
    * @return the shiney new Action Request
    */
   private ActionRequest createActionRequest(final Action action, final ActionPlan actionPlan, final CaseDTO caseDTO,
-      final PartyDTO addressDTO,
+      final PartyDTO partyDTO,
       final List<CaseEventDTO> caseEventDTOs) {
     ActionRequest actionRequest = new ActionRequest();
     // populate the request
@@ -422,17 +419,16 @@ public class ActionDistributor {
     actionRequest.setResponseRequired(action.getActionType().getResponseRequired());
     actionRequest.setCaseId(action.getCaseId().toString());
 
-    // TODO BRES contact guff needs to be picked out of PartyDTO
-//    ContactDTO contactDTO = caseDTO.getContact();
-//    if (contactDTO != null) {
-//      ActionContact actionContact = new ActionContact();
-//      actionContact.setTitle(contactDTO.getTitle());
-//      actionContact.setForename(contactDTO.getForename());
-//      actionContact.setSurname(contactDTO.getSurname());
-//      actionContact.setPhoneNumber(contactDTO.getPhoneNumber());
-//      actionContact.setEmailAddress(contactDTO.getEmailAddress());
-//      actionRequest.setContact(actionContact);
-//    }
+    Map<String, String> partyMap = partyDTO.getAttributes();
+
+    ActionContact actionContact = new ActionContact();
+    //actionContact.setTitle(partyMap.get("title")); //TODO Not in Party Swagger Spec.
+    actionContact.setForename(partyMap.get("firstName"));
+    actionContact.setSurname(partyMap.get("lastName"));
+    actionContact.setPhoneNumber(partyMap.get("telephone"));
+    actionContact.setEmailAddress(partyMap.get("emailAddress"));
+    actionRequest.setContact(actionContact);
+
     ActionEvent actionEvent = new ActionEvent();
     caseEventDTOs.forEach((caseEventDTO) -> actionEvent.getEvents().add(formatCaseEvent(caseEventDTO)));
     actionRequest.setEvents(actionEvent);
@@ -440,7 +436,7 @@ public class ActionDistributor {
     actionRequest.setPriority(Priority.fromValue(ActionPriority.valueOf(action.getPriority()).getName()));
     actionRequest.setCaseRef(caseDTO.getCaseRef());
 
-    ActionAddress actionAddress = mapperFacade.map(addressDTO, ActionAddress.class);
+    ActionAddress actionAddress = mapperFacade.map(partyDTO, ActionAddress.class);
     actionRequest.setAddress(actionAddress);
     return actionRequest;
   }

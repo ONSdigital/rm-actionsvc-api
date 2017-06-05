@@ -1,53 +1,35 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import ma.glasnost.orika.MapperFacade;
-import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
+import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.response.action.config.ActionDistribution;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.config.CaseSvc;
-import uk.gov.ons.ctp.response.action.domain.model.Action;
-import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.ActionType;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionTypeRepository;
 import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
-import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.action.service.impl.PartySvcClientServiceImpl;
+import uk.gov.ons.ctp.response.party.representation.PartyDTO;
+
+import java.math.BigInteger;
+import java.util.UUID;
 
 /**
  * Test the action distributor
@@ -58,8 +40,15 @@ public class ActionDistributorTest {
   private static final int I_HATE_CHECKSTYLE_TEN = 10;
 
 
-  @Spy
-  private AppConfig appConfig = new AppConfig();
+/*  @Spy
+  private AppConfig appConfig = new AppConfig();*/
+
+  @Mock
+  private AppConfig appConfig;
+
+  @Mock
+  private RestClient partySvcClient;
+
 
   @Mock
   private InstructionPublisher instructionPublisher;
@@ -98,6 +87,9 @@ public class ActionDistributorTest {
   @Mock
   private PlatformTransactionManager platformTransactionManager;
 
+  @Spy
+  private PartySvcClientServiceImpl partySvcClientService = new PartySvcClientServiceImpl();
+
   @InjectMocks
   private ActionDistributor actionDistributor;
 
@@ -118,6 +110,32 @@ public class ActionDistributorTest {
 
     MockitoAnnotations.initMocks(this);
   }
+
+  @Test
+  public void getPartyObject() {
+
+    //Mockito.when(partySvcClientService.getParty(UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"))).thenReturn(partyDTO);
+    PartyDTO partyDTO = partySvcClientService.getParty(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992"));
+
+    //UUID partyId = UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87");
+
+    //PartyDTO partyDTO = partySvcClient.getResource(appConfig.getPartySvc().getPartyByIdPath(), PartyDTO.class, partyId);
+
+
+    System.out.println("PARTY PARTY PARTY1 " + partyDTO.toString());
+
+    /* Map<String, String> partyMap = partyDTO.getAttributes();
+
+    ActionContact actionContact = new ActionContact();
+    actionContact.setForename(partyMap.get("firstName"));
+    actionContact.setSurname(partyMap.get("lastName"));
+    actionContact.setPhoneNumber(partyMap.get("telephone"));
+    actionContact.setEmailAddress(partyMap.get("emailAddress"));
+
+    System.out.println("TEST: " + actionContact.toString()); */
+
+  }
+
 
 //  /**
 //   * Test that when we fail at first hurdle to load ActionTypes we do not go on

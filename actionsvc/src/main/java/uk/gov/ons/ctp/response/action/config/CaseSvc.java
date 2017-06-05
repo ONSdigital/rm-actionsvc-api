@@ -17,4 +17,5 @@ public class CaseSvc {
   private String caseEventsByCasePostPath;
   private String addressByUprnGetPath;
   private String caseTypeByIdPath;
+
 }
