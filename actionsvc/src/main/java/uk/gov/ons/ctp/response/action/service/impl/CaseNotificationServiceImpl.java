@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +16,12 @@ import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.service.ActionService;
 import uk.gov.ons.ctp.response.action.service.CaseNotificationService;
+import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
+import uk.gov.ons.ctp.response.action.service.CollectionExerciseClientService;
 import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
+import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 
 /**
  * Save to Action.Case table for case creation life cycle events, delete for
@@ -36,6 +42,12 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
 
   @Autowired
   private ActionService actionService;
+  
+  @Autowired
+  private CaseSvcClientService caseSvcClientServiceImpl;
+ 
+  @Autowired
+  private CollectionExerciseClientService collectionSvcClientServiceImpl;
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
@@ -46,14 +58,16 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
       ActionPlan actionPlan = actionPlanRepo.findById(actionPlanId);
 
       if (actionPlan != null) {
-        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId).id(caseId).build();
+        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId).actionPlanFK(actionPlan.getActionPlanPK()).id(caseId).casePK(1).build();
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
           // TODO BRES start date will now need to come from the CaseLifecycle msg
-//          Survey survey = surveyRepo.findOne(actionPlan.getSurveyId());
-//          actionCase.setActionPlanStartDate(survey.getSurveyStartDate());
+
+          actionCase.setActionPlanStartDate(getSurveyStartDate(notif));
+          actionCase.setActionPlanEndDate(getSurveyEndDate(notif));
           checkAndSaveCase(actionCase);
+          log.debug("saved action");
           break;
         case DISABLED:
         case DEACTIVATED:
@@ -72,6 +86,33 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
   }
   
   /**
+   * This method is to retrive the survey start date from the collection excerise
+ * @return 
+   */
+  private Timestamp getSurveyStartDate(CaseNotification notification){
+	 
+	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
+	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
+	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
+	 log.debug("start date ",collectionExercise.getScheduledStartDateTime());
+	 return collectionExercise.getScheduledStartDateTime();
+  }
+  
+  
+  /**
+   * This method is to retrive the survey start date from the collection excerise
+ * @return 
+   */
+  private Timestamp getSurveyEndDate(CaseNotification notification){
+	 
+	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
+	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
+	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
+	 log.debug("end date ",collectionExercise.getScheduledEndDateTime());
+	 return collectionExercise.getScheduledEndDateTime();
+  }
+  
+  /**
    * In the event that the actions service is incorrectly sent a notification that indicates we should create a case
    * for an already existing caseid, quietly error else save it as a new entry.
    * If we were to allow the save to go ahead we would get a JPA exception, which would result in the notification going back to the queue
@@ -82,6 +123,7 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
     if (actionCaseRepo.findById(actionCase.getId()) != null) {
       log.error("CaseNotification illiciting case creation for an existing case id {}", actionCase.getId()); 
     } else {
+      log.debug("here");
       actionCaseRepo.save(actionCase);
     }
   }

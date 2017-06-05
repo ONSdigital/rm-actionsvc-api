@@ -9,7 +9,7 @@ info:
 # ie -Dlogging.level.org.springframework=DEBUG
 logging:
   level:
-    uk.gov.ons.ctp: WARN
+    uk.gov.ons.ctp: DEBUG
     org.springframework.cloud.sleuth.instrument.messaging.MessagingSpanExtractor: ERROR
     org.springframework.context.annotation.ConfigurationClassPostProcessor: ERROR
 
@@ -108,11 +108,11 @@ data-grid:
   # where is redis
   address: localhost:6379
   # when we create a list of actions being distib, how long should the list remain in redis after app death
-  list-time-to-live-seconds: 600
+  list-time-to-live-seconds: 10
   # when we try and create a list of ids being distrib how long should we wait to get the lock
-  list-time-to-wait-seconds: 600
+  list-time-to-wait-seconds: 10
   #  after app death how long should the lock on all lists remain
-  lock-time-to-live-seconds: 600
+  lock-time-to-live-seconds: 10
 
 # the thread that sends actions to handlers
 action-distribution:
@@ -149,6 +149,18 @@ case-svc:
     # time to estab connection
     connect-timeout-milli-seconds: 5000
     # time to read response
+    read-timeout-milli-seconds: 5000
+
+ # calling the collectionexercise svc endpoints
+collection-exercise-svc:
+  collection-by-collection-exercise-get-path: /collectionexercises/{id}
+  connection-config:
+    scheme: http
+    host: localhost
+    port: 8145
+    retry-attempts: 10
+    retry-pause-milli-seconds: 5000
+    connect-timeout-milli-seconds: 5000
     read-timeout-milli-seconds: 5000
 
  # looking for the ingest file

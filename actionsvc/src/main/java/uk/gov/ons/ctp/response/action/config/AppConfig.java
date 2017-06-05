@@ -15,6 +15,7 @@ import lombok.Data;
 @Data
 public class AppConfig {
   private CaseSvc caseSvc;
+  private CollectionExerciseSvc collectionExerciseSvc;
   private ActionDistribution actionDistribution;
   private PlanExecution planExecution;
   private CsvIngest csvIngest;

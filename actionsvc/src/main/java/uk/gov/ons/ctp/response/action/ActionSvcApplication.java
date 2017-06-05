@@ -6,6 +6,7 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -76,11 +77,24 @@ public class ActionSvcApplication {
    * @return the service client
    */
   @Bean
+  @Qualifier("caseSvcClient")
   public RestClient caseClient() {
     RestClient restHelper = new RestClient(appConfig.getCaseSvc().getConnectionConfig());
     return restHelper;
   }
-
+  
+  /**
+   * Bean used to access case frame service through REST calls
+   * 
+   * @return the service client
+   */
+  @Bean
+  @Qualifier("collectionExerciseSvcClient")
+  public RestClient CollectionClient() {
+    RestClient restHelper = new RestClient(appConfig.getCollectionExerciseSvc().getConnectionConfig());
+    return restHelper;
+  }
+  
   @Autowired
   private StateTransitionManagerFactory actionSvcStateTransitionManagerFactory;
 

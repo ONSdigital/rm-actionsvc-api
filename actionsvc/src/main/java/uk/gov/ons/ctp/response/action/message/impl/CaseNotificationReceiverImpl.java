@@ -24,9 +24,15 @@ public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
   @Override
   @ServiceActivator(inputChannel = "caseNotificationTransformed", adviceChain = "caseNotificationRetryAdvice")
   public void acceptNotification(CaseNotifications caseNotifications) {
-    log.debug("Receiving case notifications for case ids {}", caseNotifications.getCaseNotifications().stream()
-                  .map(cn -> cn.getCaseId().toString())
-                  .collect(Collectors.joining(",")));
-    caseNotificationService.acceptNotification(caseNotifications.getCaseNotifications());
+    try {
+		log.debug("Receiving case notifications for case ids {}", caseNotifications.getCaseNotifications().stream()
+		              .map(cn -> cn.getCaseId().toString())
+		              .collect(Collectors.joining(",")));
+		caseNotificationService.acceptNotification(caseNotifications.getCaseNotifications());
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		log.error("failed rec", e);
+		throw e;
+	}
   }
 }

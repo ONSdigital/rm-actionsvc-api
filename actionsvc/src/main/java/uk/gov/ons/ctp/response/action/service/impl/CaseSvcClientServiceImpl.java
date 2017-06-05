@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +31,7 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   private AppConfig appConfig;
 
   @Autowired
+  @Qualifier("caseSvcClient")
   private RestClient caseSvcClient;
 
   @Override
