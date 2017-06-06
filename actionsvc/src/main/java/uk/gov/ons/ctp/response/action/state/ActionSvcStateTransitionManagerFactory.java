@@ -1,12 +1,12 @@
 package uk.gov.ons.ctp.response.action.state;
 
 import org.springframework.stereotype.Component;
+
 import uk.gov.ons.ctp.common.state.BasicStateTransitionManager;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.state.StateTransitionManagerFactory;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
-
 import java.util.HashMap;
 import java.util.Map;
 

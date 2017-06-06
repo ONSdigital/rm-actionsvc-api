@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,8 +20,6 @@ import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.action.service.FeedbackService;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
-
-import java.util.UUID;
 
 /**
  * Accept feedback from handlers

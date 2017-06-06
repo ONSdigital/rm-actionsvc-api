@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import ma.glasnost.orika.MapperFacade;
+import java.math.BigInteger;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,8 @@ import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
@@ -26,10 +29,6 @@ import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.action.service.impl.PartySvcClientServiceImpl;
-import uk.gov.ons.ctp.response.party.representation.PartyDTO;
-
-import java.math.BigInteger;
-import java.util.UUID;
 
 /**
  * Test the action distributor
@@ -38,11 +37,6 @@ import java.util.UUID;
 public class ActionDistributorTest {
 
   private static final int I_HATE_CHECKSTYLE_TEN = 10;
-
-
-/*  @Spy
-  private AppConfig appConfig = new AppConfig();*/
-
   @Mock
   private AppConfig appConfig;
 
@@ -113,16 +107,12 @@ public class ActionDistributorTest {
 
   @Test
   public void getPartyObject() {
-
     //Mockito.when(partySvcClientService.getParty(UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"))).thenReturn(partyDTO);
-    PartyDTO partyDTO = partySvcClientService.getParty(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992"));
+//    PartyDTO partyDTO = partySvcClientService.getParty(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992"));
 
     //UUID partyId = UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87");
 
     //PartyDTO partyDTO = partySvcClient.getResource(appConfig.getPartySvc().getPartyByIdPath(), PartyDTO.class, partyId);
-
-
-    System.out.println("PARTY PARTY PARTY1 " + partyDTO.toString());
 
     /* Map<String, String> partyMap = partyDTO.getAttributes();
 

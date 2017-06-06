@@ -43,10 +43,10 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
   private ActionService actionService;
 
   @Autowired
-  private CaseSvcClientService caseSvcClientService;
+  private CaseSvcClientService caseSvcClientServiceImpl;
 
   @Autowired
-  private CollectionExerciseClientService collectionSvcClientService;
+  private CollectionExerciseClientService collectionSvcClientServiceImpl;
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
@@ -62,10 +62,10 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
-          actionCase.setActionPlanStartDate(getSurveyStartDate(notif));
-          actionCase.setActionPlanEndDate(getSurveyEndDate(notif));
+          CollectionExerciseDTO collectionExercise = getCollectionExercise(notif);
+          actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
+          actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
           checkAndSaveCase(actionCase);
-          log.debug("saved action");
           break;
         case DISABLED:
         case DEACTIVATED:
@@ -89,9 +89,9 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
    * @return Timestamp Timestamp of Scheduled Start Date Time
    */
   private Timestamp getSurveyStartDate(CaseNotification notification) {
-    CaseDTO caseDTO = caseSvcClientService.getCase(UUID.fromString(notification.getCaseId()));
-    CaseGroupDTO caseGroup = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
-    CollectionExerciseDTO collectionExercise = collectionSvcClientService
+    CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
+    CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
+    CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl
             .getCollectionExercise(caseGroup.getCollectionExerciseId());
     return collectionExercise.getScheduledStartDateTime();
   }
@@ -102,11 +102,24 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
    * @return Timestamp Timestamp of Scheduled Start Date Time
    */
   private Timestamp getSurveyEndDate(CaseNotification notification) {
-    CaseDTO caseDTO = caseSvcClientService.getCase(UUID.fromString(notification.getCaseId()));
-    CaseGroupDTO caseGroup = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
-    CollectionExerciseDTO collectionExercise = collectionSvcClientService
+    CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
+    CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
+    CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl
             .getCollectionExercise(caseGroup.getCollectionExerciseId());
     return collectionExercise.getScheduledEndDateTime();
+  }
+
+  /**
+   * This method is to retrive the collection excerise
+   * @param notification CaseNotification containing case id
+   * @return Timestamp Timestamp of Scheduled Start Date Time
+   */
+  private CollectionExerciseDTO getCollectionExercise(CaseNotification notification) {
+  CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
+  CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
+  CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl
+          .getCollectionExercise(caseGroup.getCollectionExerciseId());
+  return collectionExercise;
   }
 
   /**
@@ -120,7 +133,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
     if (actionCaseRepo.findById(actionCase.getId()) != null) {
       log.error("CaseNotification illiciting case creation for an existing case id {}", actionCase.getId());
     } else {
-      log.debug("here");
       actionCaseRepo.save(actionCase);
     }
   }
