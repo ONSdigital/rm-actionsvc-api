@@ -87,7 +87,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
    * @return 
    */
   private CollectionExerciseDTO getCollectionExercise(CaseNotification notification){
-	 
 	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
 	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
 	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
