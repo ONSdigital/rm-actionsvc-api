@@ -1,15 +1,10 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -18,7 +13,10 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
-import uk.gov.ons.ctp.response.party.representation.PartyDTO;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Impl of the service that centralizes all REST calls to the Case service
@@ -33,15 +31,6 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   @Autowired
   @Qualifier("caseSvcClient")
   private RestClient caseSvcClient;
-
-  @Override
-  public PartyDTO getParty(final UUID partyId) {
-    PartyDTO partyDTO = null;
-
-//    AddressDTO addressDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getAddressByUprnGetPath(),
-//        AddressDTO.class, uprn);
-    return partyDTO;
-  }
 
   @Override
   public CaseDTO getCase(final UUID caseId) {

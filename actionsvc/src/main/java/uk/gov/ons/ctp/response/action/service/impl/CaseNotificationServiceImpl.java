@@ -62,9 +62,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
-          // TODO BRES start date will now need to come from the CaseLifecycle msg
-
-        	
           CollectionExerciseDTO collectionExercise = getCollectionExercise(notif);
           actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
           actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
@@ -89,7 +86,7 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
   
   /**
    * This method is to retrive the survey start date from the collection excerise
- * @return 
+   * @return 
    */
   private CollectionExerciseDTO getCollectionExercise(CaseNotification notification){
 	 
@@ -98,8 +95,7 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
 	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
 	 return collectionExercise;
   }
-  
-  
+
   /**
    * In the event that the actions service is incorrectly sent a notification that indicates we should create a case
    * for an already existing caseid, quietly error else save it as a new entry.
