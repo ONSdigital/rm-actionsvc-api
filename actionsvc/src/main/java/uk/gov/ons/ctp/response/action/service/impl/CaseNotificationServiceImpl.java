@@ -64,8 +64,10 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
         case ACTIVATED:
           // TODO BRES start date will now need to come from the CaseLifecycle msg
 
-          actionCase.setActionPlanStartDate(getSurveyStartDate(notif));
-          actionCase.setActionPlanEndDate(getSurveyEndDate(notif));
+        	
+          CollectionExerciseDTO collectionExercise = getCollectionExercise(notif);
+          actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
+          actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
           checkAndSaveCase(actionCase);
           log.debug("saved action");
           break;
@@ -89,28 +91,14 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
    * This method is to retrive the survey start date from the collection excerise
  * @return 
    */
-  private Timestamp getSurveyStartDate(CaseNotification notification){
+  private CollectionExerciseDTO getCollectionExercise(CaseNotification notification){
 	 
 	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
 	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
 	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
-	 log.debug("start date ",collectionExercise.getScheduledStartDateTime());
-	 return collectionExercise.getScheduledStartDateTime();
+	 return collectionExercise;
   }
   
-  
-  /**
-   * This method is to retrive the survey start date from the collection excerise
- * @return 
-   */
-  private Timestamp getSurveyEndDate(CaseNotification notification){
-	 
-	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
-	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
-	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
-	 log.debug("end date ",collectionExercise.getScheduledEndDateTime());
-	 return collectionExercise.getScheduledEndDateTime();
-  }
   
   /**
    * In the event that the actions service is incorrectly sent a notification that indicates we should create a case
@@ -123,7 +111,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
     if (actionCaseRepo.findById(actionCase.getId()) != null) {
       log.error("CaseNotification illiciting case creation for an existing case id {}", actionCase.getId()); 
     } else {
-      log.debug("here");
       actionCaseRepo.save(actionCase);
     }
   }
