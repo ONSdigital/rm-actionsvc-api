@@ -1,6 +1,5 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;

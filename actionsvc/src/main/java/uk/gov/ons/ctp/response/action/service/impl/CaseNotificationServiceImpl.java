@@ -1,6 +1,5 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,7 +65,6 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
           actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
           actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
           checkAndSaveCase(actionCase);
-          log.debug("saved action");
           break;
         case DISABLED:
         case DEACTIVATED:

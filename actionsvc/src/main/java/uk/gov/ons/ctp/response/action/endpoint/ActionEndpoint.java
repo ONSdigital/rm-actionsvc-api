@@ -1,6 +1,5 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;

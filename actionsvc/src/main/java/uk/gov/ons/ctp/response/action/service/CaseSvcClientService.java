@@ -1,13 +1,13 @@
 package uk.gov.ons.ctp.response.action.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * A Service which utilises the CaseSvc via RESTful client calls
