@@ -38,11 +38,6 @@ import java.util.UUID;
 public class ActionDistributorTest {
 
   private static final int I_HATE_CHECKSTYLE_TEN = 10;
-
-
-/*  @Spy
-  private AppConfig appConfig = new AppConfig();*/
-
   @Mock
   private AppConfig appConfig;
 
@@ -113,16 +108,12 @@ public class ActionDistributorTest {
 
   @Test
   public void getPartyObject() {
-
     //Mockito.when(partySvcClientService.getParty(UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87"))).thenReturn(partyDTO);
-    PartyDTO partyDTO = partySvcClientService.getParty(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992"));
+//    PartyDTO partyDTO = partySvcClientService.getParty(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992"));
 
     //UUID partyId = UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87");
 
     //PartyDTO partyDTO = partySvcClient.getResource(appConfig.getPartySvc().getPartyByIdPath(), PartyDTO.class, partyId);
-
-
-    System.out.println("PARTY PARTY PARTY1 " + partyDTO.toString());
 
     /* Map<String, String> partyMap = partyDTO.getAttributes();
 
