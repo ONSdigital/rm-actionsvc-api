@@ -27,7 +27,12 @@ import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionTypeRepository;
 import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
-import uk.gov.ons.ctp.response.action.message.instruction.*;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionContact;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionEvent;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
+import uk.gov.ons.ctp.response.action.message.instruction.Priority;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
@@ -38,7 +43,10 @@ import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -116,7 +124,7 @@ public class ActionDistributor {
 
   /**
    * Constructor into which the Spring PlatformTransactionManager is injected
-   * 
+   *
    * @param transactionManager provided by Spring
    */
   @Autowired
@@ -182,7 +190,8 @@ public class ActionDistributor {
             actionDistributionListManager.deleteList(actionType.getName(), true);
           } catch (LockingException e) {
             log.error(
-                "Failed to remove the list of actions just processed from distributed list - actions distributed OK, but underlying problem may remain");
+                "Failed to remove the list of actions just processed from distributed list - "
+                        + "actions distributed OK, but underlying problem may remain");
           }
         }
 
@@ -250,6 +259,7 @@ public class ActionDistributor {
    *
    * @param actionType the type
    * @return list of actions
+   * @throws LockingException LockingException thrown
    */
   private List<Action> retrieveActions(ActionType actionType) throws LockingException {
     List<Action> actions = new ArrayList<>();

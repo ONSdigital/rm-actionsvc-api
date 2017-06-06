@@ -1,11 +1,10 @@
 package uk.gov.ons.ctp.response.action.domain.repository;
 
-import java.util.UUID;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
+
+import java.util.UUID;
 
 /**
  * JPA Data Repository.
@@ -13,5 +12,12 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 @Repository
 public interface ActionPlanRepository extends JpaRepository<ActionPlan, Integer> {
 
-  public ActionPlan findById(UUID id);
+  /**
+   * Return all actions for the specified actionTypeName.
+   *
+   * @param id UUID id for ActionPlan
+   * @return ActionPlan returns ActionPlan for associated id
+   */
+  ActionPlan findById(UUID id);
+
 }

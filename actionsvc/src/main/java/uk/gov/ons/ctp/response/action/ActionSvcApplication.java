@@ -48,19 +48,37 @@ public class ActionSvcApplication {
   @Autowired
   private AppConfig appConfig;
 
+  /**
+   * Bean used to access Distributed List Manager
+   *
+   * @param redissonClient Redisson Client
+   * @return the Distributed List Manager
+   */
   @Bean
   public DistributedListManager<BigInteger> actionDistributionListManager(RedissonClient redissonClient) {
-    return new DistributedListManagerRedissonImpl<BigInteger>(ActionSvcApplication.ACTION_DISTRIBUTION_LIST, redissonClient,
+    return new DistributedListManagerRedissonImpl<BigInteger>(ActionSvcApplication.ACTION_DISTRIBUTION_LIST,
+            redissonClient,
         appConfig.getDataGrid().getListTimeToWaitSeconds(),
         appConfig.getDataGrid().getListTimeToLiveSeconds());
   }
 
+  /**
+   * Bean used to access Distributed Lock Manager
+   *
+   * @param redissonClient Redisson Client
+   * @return the Distributed Lock Manager
+   */
   @Bean
   public DistributedLockManager actionPlanExecutionLockManager(RedissonClient redissonClient) {
     return new DistributedLockManagerRedissonImpl(ActionSvcApplication.ACTION_EXECUTION_LOCK, redissonClient,
         appConfig.getDataGrid().getLockTimeToLiveSeconds());
   }
 
+  /**
+   * Bean used to create and configure Redisson Client
+   *
+   * @return the Redisson client
+   */
   @Bean
   public RedissonClient redissonClient() {
     Config config = new Config();
@@ -72,7 +90,7 @@ public class ActionSvcApplication {
 
   /**
    * Bean used to access case frame service through REST calls
-   * 
+   *
    * @return the service client
    */
   @Bean
@@ -81,19 +99,24 @@ public class ActionSvcApplication {
     RestClient restHelper = new RestClient(appConfig.getCaseSvc().getConnectionConfig());
     return restHelper;
   }
-  
+
   /**
    * Bean used to access case frame service through REST calls
-   * 
+   *
    * @return the service client
    */
   @Bean
   @Qualifier("collectionExerciseSvcClient")
-  public RestClient CollectionClient() {
+  public RestClient collectionClient() {
     RestClient restHelper = new RestClient(appConfig.getCollectionExerciseSvc().getConnectionConfig());
     return restHelper;
   }
 
+  /**
+   * Bean used to access party frame service through REST calls
+   *
+   * @return the service client
+   */
   @Bean
   @Qualifier("partySvcClient")
   public RestClient partyClient() {
@@ -106,7 +129,7 @@ public class ActionSvcApplication {
 
   /**
    * Bean to allow application to make controlled state transitions of Actions
-   * 
+   *
    * @return the state transition manager specifically for Actions
    */
   @Bean
@@ -115,13 +138,23 @@ public class ActionSvcApplication {
         ActionSvcStateTransitionManagerFactory.ACTION_ENTITY);
   }
 
+  /**
+   * Rest Exception Handler
+   *
+   * @return a Rest Exception Handler
+   */
   @Bean
   public RestExceptionHandler restExceptionHandler() {
     return new RestExceptionHandler();
   }
 
+  /**
+   * Custom Object Mapper
+   *
+   * @return a customer object mapper
+   */
   @Bean @Primary
-  public CustomObjectMapper CustomObjectMapper() {
+  public CustomObjectMapper customObjectMapper() {
     return new CustomObjectMapper();
   }
 

@@ -1,16 +1,17 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.ons.ctp.common.endpoint.CTPEndpoint;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.InvalidRequestException;
@@ -19,6 +20,8 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionRuleDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
+
+import java.util.List;
 
 /**
  * The REST endpoint controller for ActionPlans.
@@ -45,8 +48,8 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     log.info("Entering findActionPlans...");
     List<ActionPlan> actionPlans = actionPlanService.findActionPlans();
     List<ActionPlanDTO> actionPlanDTOs = mapperFacade.mapAsList(actionPlans, ActionPlanDTO.class);
-    return CollectionUtils.isEmpty(actionPlanDTOs) ?
-            ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanDTOs);
+    return CollectionUtils.isEmpty(actionPlanDTOs)
+            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanDTOs);
   }
 
   /**
@@ -74,6 +77,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    *
    * @param actionPlanId This is the action plan id
    * @param requestObject The object created by ActionPlanDTOMessageBodyReader from the json found in the request body
+   * @param bindingResult collects errors thrown by update
    * @return ActionPlanDTO This returns the updated action plan.
    * @throws CTPException if the json provided is incorrect or if the action plan id does not exist.
    */
@@ -90,7 +94,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
         mapperFacade.map(requestObject, ActionPlan.class));
     if (actionPlan == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "ActionPlan not found for id %s", actionPlanId);
-    } 
+    }
     return mapperFacade.map(actionPlan, ActionPlanDTO.class);
   }
 
@@ -112,8 +116,8 @@ public class ActionPlanEndpoint implements CTPEndpoint {
 
     List<ActionRule> actionRules = actionPlanService.findActionRulesForActionPlan(actionPlanId);
     List<ActionRuleDTO> actionRuleDTOs = mapperFacade.mapAsList(actionRules, ActionRuleDTO.class);
-    return CollectionUtils.isEmpty(actionRuleDTOs) ?
-            ResponseEntity.noContent().build() : ResponseEntity.ok(actionRuleDTOs);
+    return CollectionUtils.isEmpty(actionRuleDTOs)
+            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionRuleDTOs);
   }
 
 }

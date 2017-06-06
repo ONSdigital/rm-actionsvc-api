@@ -40,7 +40,7 @@ public interface CaseSvcClientService {
    * @return the Case we fetched
    */
   CaseDTO getCase(final UUID caseId);
-  
+
   /**
    * Call CaseSvc using REST to get the CaseEvents for the Case MAY throw a
    * RuntimeException if the call fails

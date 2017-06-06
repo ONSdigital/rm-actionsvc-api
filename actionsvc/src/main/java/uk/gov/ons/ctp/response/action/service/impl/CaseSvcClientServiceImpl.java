@@ -37,15 +37,14 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
     CaseDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
         CaseDTO.class, caseId);
     return caseDTO;
-  } 
-  
+  }
+
   @Override
   public CaseGroupDTO getCaseGroup(final UUID caseGroupId) {
     CaseGroupDTO caseGroupDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseGroupPath(),
         CaseGroupDTO.class, caseGroupId);
     return caseGroupDTO;
   }
-  
 
   @Override
   public List<CaseEventDTO> getCaseEvents(final UUID caseId) {

@@ -1,11 +1,7 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -17,14 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.endpoint.CTPEndpoint;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The REST endpoint controller for ActionPlanJobs.
@@ -69,21 +67,22 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
     log.info("Entering findAllActionPlanJobsByActionPlanId with {}", actionPlanId);
     List<ActionPlanJob> actionPlanJobs = actionPlanJobService.findActionPlanJobsForActionPlan(actionPlanId);
     List<ActionPlanJobDTO> actionPlanJobDTOs = mapperFacade.mapAsList(actionPlanJobs, ActionPlanJobDTO.class);
-    return CollectionUtils.isEmpty(actionPlanJobDTOs) ?
-            ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanJobDTOs);
+    return CollectionUtils.isEmpty(actionPlanJobDTOs)
+            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanJobDTOs);
   }
 
   /**
    * To create a new Action Plan Job having received an action plan id and some json
    * @param actionPlanId the given action plan id.
    * @param actionPlanJobDTO the ActionPlanJobDTO representation of the provided json
+   * @param bindingResult collects errors thrown by update
    * @return the created ActionPlanJobDTO
    * @throws CTPException summats went wrong
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.POST, consumes = "application/json")
   public final ResponseEntity<?> executeActionPlan(@PathVariable("actionplanid") final UUID actionPlanId,
       final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult) throws CTPException {
-    //TODO BRES needs to finf the action plan by UUID, take that plans PK and create job with it 
+    //TODO BRES needs to finf the action plan by UUID, take that plans PK and create job with it
 
 //    log.info("Entering executeActionPlan with {}", actionPlanId);
 //

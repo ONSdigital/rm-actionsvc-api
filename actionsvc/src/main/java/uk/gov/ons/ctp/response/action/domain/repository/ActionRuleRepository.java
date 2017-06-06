@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface ActionRuleRepository extends JpaRepository<ActionRule, Integer> {
   /**
-   * Returns all action rules for the given action plan id
-   * @param actionPlanId the given action plan id
-   * @return Returns all action rules for the given action plan id.
+   * Returns all action rules for the given action plan fk
+   * @param actionPlanFK the given action plan fk
+   * @return Returns all action rules for the given action plan fk.
    */
   List<ActionRule> findByActionPlanFK(Integer actionPlanFK);
 }

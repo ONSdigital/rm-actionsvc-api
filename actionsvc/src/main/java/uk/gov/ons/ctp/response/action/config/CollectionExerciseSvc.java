@@ -10,8 +10,7 @@ import uk.gov.ons.ctp.common.rest.RestClientConfig;
  */
 @Data
 public class CollectionExerciseSvc {
-	
-	  private RestClientConfig connectionConfig;
-	  private String collectionByCollectionExerciseGetPath;
+  private RestClientConfig connectionConfig;
+  private String collectionByCollectionExerciseGetPath;
 
 }

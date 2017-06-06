@@ -1,8 +1,11 @@
 package uk.gov.ons.ctp.response.action.domain.model;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,14 +16,9 @@ import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Domain model object.
@@ -38,7 +36,6 @@ public class ActionCase implements Serializable {
 
   private static final long serialVersionUID = 7970373271889255844L;
 
-  
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "caseseq_gen")
   @GenericGenerator(name = "caseseq_gen", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

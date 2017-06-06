@@ -1,14 +1,14 @@
 package uk.gov.ons.ctp.response.action.state;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.stereotype.Component;
 import uk.gov.ons.ctp.common.state.BasicStateTransitionManager;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.state.StateTransitionManagerFactory;
-import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
+import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is the state transition manager factory for the actionsvc. It intended
@@ -35,9 +35,9 @@ public class ActionSvcStateTransitionManagerFactory implements StateTransitionMa
     {
       Map<ActionEvent, ActionState> transitionMapForSubmitted = new HashMap<>();
       transitionMapForSubmitted.put(ActionEvent.REQUEST_DISTRIBUTED, ActionState.PENDING);
-      
+
       transitionMapForSubmitted.put(ActionEvent.REQUEST_COMPLETED, ActionState.COMPLETED);
-     
+
       transitionMapForSubmitted.put(ActionEvent.REQUEST_CANCELLED, ActionState.ABORTED);
 
       transitions.put(ActionState.SUBMITTED, transitionMapForSubmitted);
@@ -47,13 +47,13 @@ public class ActionSvcStateTransitionManagerFactory implements StateTransitionMa
     {
       Map<ActionEvent, ActionState> transitionMapForPending = new HashMap<>();
       transitionMapForPending.put(ActionEvent.REQUEST_FAILED, ActionState.SUBMITTED);
-      
+
       transitionMapForPending.put(ActionEvent.REQUEST_CANCELLED, ActionState.CANCEL_SUBMITTED);
 
       transitionMapForPending.put(ActionEvent.REQUEST_ACCEPTED, ActionState.ACTIVE);
 
       transitionMapForPending.put(ActionEvent.REQUEST_DECLINED, ActionState.DECLINED);
-      
+
       transitionMapForPending.put(ActionEvent.REQUEST_COMPLETED, ActionState.COMPLETED);
       transitionMapForPending.put(ActionEvent.REQUEST_COMPLETED_DEACTIVATE, ActionState.COMPLETED);
       transitionMapForPending.put(ActionEvent.REQUEST_COMPLETED_DISABLE, ActionState.COMPLETED);
@@ -66,20 +66,20 @@ public class ActionSvcStateTransitionManagerFactory implements StateTransitionMa
       transitionMapForActive.put(ActionEvent.REQUEST_FAILED, ActionState.SUBMITTED);
 
       transitionMapForActive.put(ActionEvent.REQUEST_CANCELLED, ActionState.CANCEL_SUBMITTED);
-      
+
       transitionMapForActive.put(ActionEvent.REQUEST_COMPLETED, ActionState.COMPLETED);
       transitionMapForActive.put(ActionEvent.REQUEST_COMPLETED_DEACTIVATE, ActionState.COMPLETED);
       transitionMapForActive.put(ActionEvent.REQUEST_COMPLETED_DISABLE, ActionState.COMPLETED);
       transitions.put(ActionState.ACTIVE, transitionMapForActive);
     }
-    
+
     // COMPLETED
     {
       Map<ActionEvent, ActionState> transitionMapForCompleted = new HashMap<>();
       transitionMapForCompleted.put(ActionEvent.REQUEST_CANCELLED, ActionState.COMPLETED);
       transitions.put(ActionState.COMPLETED, transitionMapForCompleted);
     }
-    
+
     // CANCEL_SUBMITTED
     {
       Map<ActionEvent, ActionState> transitionMapForCancelSubmitted = new HashMap<>();
@@ -94,7 +94,7 @@ public class ActionSvcStateTransitionManagerFactory implements StateTransitionMa
       transitionMapForCancelSubmitted.put(ActionEvent.CANCELLATION_DISTRIBUTED, ActionState.CANCEL_PENDING);
       transitions.put(ActionState.CANCEL_SUBMITTED, transitionMapForCancelSubmitted);
     }
-    
+
     // CANCEL_PENDING
     {
       Map<ActionEvent, ActionState> transitionMapForCancelPending = new HashMap<>();
@@ -112,7 +112,7 @@ public class ActionSvcStateTransitionManagerFactory implements StateTransitionMa
       transitionMapForCancelPending.put(ActionEvent.CANCELLATION_COMPLETED, ActionState.CANCELLED);
       transitions.put(ActionState.CANCEL_PENDING, transitionMapForCancelPending);
     }
-    
+
     // CANCELLING
     {
       Map<ActionEvent, ActionState> transitionMapForCancelling = new HashMap<>();
@@ -130,7 +130,7 @@ public class ActionSvcStateTransitionManagerFactory implements StateTransitionMa
       transitionMapForCancelled.put(ActionEvent.REQUEST_CANCELLED, ActionState.CANCELLED);
       transitions.put(ActionState.CANCELLED, transitionMapForCancelled);
     }
-    
+
     StateTransitionManager<ActionState, ActionEvent> actionStateTransitionManager =
         new BasicStateTransitionManager<>(transitions);
 

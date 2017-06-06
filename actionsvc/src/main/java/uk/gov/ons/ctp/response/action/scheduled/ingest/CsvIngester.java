@@ -1,5 +1,28 @@
 package uk.gov.ons.ctp.response.action.scheduled.ingest;
 
+import com.google.common.collect.Lists;
+import liquibase.util.csv.CSVReader;
+import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
+import liquibase.util.csv.opencsv.bean.CsvToBean;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
+import org.springframework.integration.annotation.MessageEndpoint;
+import org.springframework.integration.annotation.ServiceActivator;
+import uk.gov.ons.ctp.response.action.config.AppConfig;
+import uk.gov.ons.ctp.response.action.domain.model.Action.ActionPriority;
+import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
+import uk.gov.ons.ctp.response.action.message.instruction.Priority;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.math.BigDecimal;
@@ -7,7 +30,6 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,32 +37,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
-import org.springframework.integration.annotation.MessageEndpoint;
-import org.springframework.integration.annotation.ServiceActivator;
-
-import com.google.common.collect.Lists;
-
-import liquibase.util.csv.CSVReader;
-import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
-import liquibase.util.csv.opencsv.bean.CsvToBean;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import uk.gov.ons.ctp.response.action.config.AppConfig;
-import uk.gov.ons.ctp.response.action.domain.model.Action.ActionPriority;
-import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.ctp.response.action.message.instruction.Priority;
 
 /**
  * The ingester is configured from the spring integration xml. It is called, by
@@ -246,8 +242,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
    * build an ActionCancel from a line in the csv
    *
    * @param csvLine the line
-   * @param executionStamp the generated time stamp for the CSV ingest execution
-   * @param lineNum the line number in the CSV
    * @return the built cancel
    */
   private ActionCancel buildCancel(CsvLine csvLine) {
@@ -261,8 +255,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
    * build an ActionRequest from a line in the csv
    *
    * @param csvLine the line
-   * @param executionStamp the generated time stamp for the CSV ingest execution
-   * @param lineNum the line number in the CSV
    * @return the built request
    */
   private ActionRequest buildRequest(CsvLine csvLine) {

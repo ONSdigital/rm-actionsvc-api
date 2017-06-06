@@ -11,5 +11,5 @@ import uk.gov.ons.ctp.response.action.domain.model.OutcomeHandlerId;
  */
 @Repository
 public interface OutcomeCategoryRepository extends JpaRepository<OutcomeCategory, OutcomeHandlerId> {
- 
+
 }
