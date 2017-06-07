@@ -1,13 +1,13 @@
 package uk.gov.ons.ctp.response.action.service;
 
-import java.util.List;
-import java.util.UUID;
-
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * A Service which utilises the CaseSvc via RESTful client calls
@@ -39,8 +39,13 @@ public interface CaseSvcClientService {
    * @param caseId identifies the Case to fetch
    * @return the Case we fetched
    */
+<<<<<<< HEAD
   CaseDetailsDTO getCase(final UUID caseId);
   
+=======
+  CaseDTO getCase(final UUID caseId);
+
+>>>>>>> ab222e84a3e2bb0f9e4971809a607267e01b8285
   /**
    * Call CaseSvc using REST to get the CaseEvents for the Case MAY throw a
    * RuntimeException if the call fails

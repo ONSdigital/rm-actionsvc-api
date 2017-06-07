@@ -126,7 +126,7 @@ public class ActionDistributor {
 
   /**
    * Constructor into which the Spring PlatformTransactionManager is injected
-   * 
+   *
    * @param transactionManager provided by Spring
    */
   @Autowired
@@ -192,7 +192,8 @@ public class ActionDistributor {
             actionDistributionListManager.deleteList(actionType.getName(), true);
           } catch (LockingException e) {
             log.error(
-                "Failed to remove the list of actions just processed from distributed list - actions distributed OK, but underlying problem may remain");
+                "Failed to remove the list of actions just processed from distributed list - "
+                        + "actions distributed OK, but underlying problem may remain");
           }
         }
 
@@ -260,6 +261,7 @@ public class ActionDistributor {
    *
    * @param actionType the type
    * @return list of actions
+   * @throws LockingException LockingException thrown
    */
   private List<Action> retrieveActions(ActionType actionType) throws LockingException {
     List<Action> actions = new ArrayList<>();

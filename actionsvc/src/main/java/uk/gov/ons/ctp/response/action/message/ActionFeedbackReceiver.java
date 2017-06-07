@@ -14,6 +14,7 @@ public interface ActionFeedbackReceiver {
    * handlers
    *
    * @param feedback the java representation of the AMQ message body
+   * @throws CTPException CTPException thrown
    */
   void acceptFeedback(ActionFeedback feedback) throws CTPException;
 

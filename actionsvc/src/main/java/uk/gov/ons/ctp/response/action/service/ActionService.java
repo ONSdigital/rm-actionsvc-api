@@ -1,13 +1,13 @@
 package uk.gov.ons.ctp.response.action.service;
 
-import java.math.BigInteger;
-import java.util.List;
-import java.util.UUID;
-
 import uk.gov.ons.ctp.common.service.CTPService;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The Action Service interface defines all business behaviours for operations
@@ -45,7 +45,7 @@ public interface ActionService extends CTPService {
   /**
    * Find Action entity by specified action id.
    *
-   * @param actionId This is the action id
+   * @param actionKey This is the action id
    * @return Action Returns the action for the specified action id.
    */
   Action findActionByActionPK(BigInteger actionKey);

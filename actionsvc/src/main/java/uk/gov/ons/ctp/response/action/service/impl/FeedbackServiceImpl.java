@@ -1,13 +1,11 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.time.DateTimeUtil;
@@ -88,7 +86,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
   /**
    * Update the action
-   * 
+   *
    * @param action the action to update
    * @param nextState the state to transition to
    * @param situation the situation provided by the feedback

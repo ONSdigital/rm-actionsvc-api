@@ -11,6 +11,7 @@ public interface FeedbackService {
   /**
    * take feedback. do somethng with it.
    * @param feedback you know. like feedback man.
+   * @throws CTPException CTPException thrown
    */
- void acceptFeedback(ActionFeedback feedback) throws CTPException;
+  void acceptFeedback(ActionFeedback feedback) throws CTPException;
 }

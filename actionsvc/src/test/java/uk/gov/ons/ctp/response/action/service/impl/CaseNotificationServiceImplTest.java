@@ -39,6 +39,8 @@ import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExer
 @RunWith(MockitoJUnitRunner.class)
 public class CaseNotificationServiceImplTest {
 
+  private static final String DUMMY_UUID = "7bc5d41b-0549-40b3-ba76-42f6d4cf3991";
+
   @Mock
   private ActionCaseRepository actionCaseRepo;
 
@@ -77,8 +79,8 @@ public class CaseNotificationServiceImplTest {
   @Test
   public void testAcceptNotification() throws Exception {
 	  CaseNotification caseNotification = new CaseNotification();
-	  caseNotification.setActionPlanId("7bc5d41b-0549-40b3-ba76-42f6d4cf3991");  
-	  caseNotification.setCaseId("7bc5d41b-0549-40b3-ba76-42f6d4cf3991");
+	  caseNotification.setActionPlanId(DUMMY_UUID);  
+	  caseNotification.setCaseId(DUMMY_UUID);
 	  caseNotification.setNotificationType(NotificationType.ACTIVATED);
 	  
 	  ActionPlan actionPlan = new ActionPlan();
@@ -93,7 +95,7 @@ public class CaseNotificationServiceImplTest {
 	  List<CollectionExerciseDTO> collectionExerciseJson = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
 	  
 	  
-	  when(caseSvcClientServiceImpl.getCase(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3991"))).thenReturn(caseJson.get(0));
+	  when(caseSvcClientServiceImpl.getCase(UUID.fromString(DUMMY_UUID))).thenReturn(caseJson.get(0));
 	  when(caseSvcClientServiceImpl.getCaseGroup(caseJson.get(0).getCaseGroupId())).thenReturn(caseGroupJson.get(0));
 	  when(collectionSvcClientServiceImpl.getCollectionExercise(caseGroupJson.get(0).getCollectionExerciseId())).thenReturn(collectionExerciseJson.get(0));
 	  
@@ -108,10 +110,10 @@ public class CaseNotificationServiceImplTest {
 	  
 	  verify(actionCaseRepo, times(1)).flush();
 	  
-	  assertEquals(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3991") , caze.get(0).getActionPlanId());
+	  assertEquals(UUID.fromString(DUMMY_UUID) , caze.get(0).getActionPlanId());
 	  assertTrue(caze.get(0).getActionPlanStartDate()!=null);
 	  assertTrue(caze.get(0).getActionPlanEndDate()!=null);
-	  assertEquals(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3991") , caze.get(0).getId());
+	  assertEquals(UUID.fromString(DUMMY_UUID) , caze.get(0).getId());
 	  
   }
 }

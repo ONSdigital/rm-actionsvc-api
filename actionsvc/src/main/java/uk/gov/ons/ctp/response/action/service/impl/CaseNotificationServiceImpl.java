@@ -57,7 +57,8 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
       ActionPlan actionPlan = actionPlanRepo.findById(actionPlanId);
 
       if (actionPlan != null) {
-        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId).actionPlanFK(actionPlan.getActionPlanPK()).id(caseId).build();
+        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId)
+               .actionPlanFK(actionPlan.getActionPlanPK()).id(caseId).build();
         switch (notif.getNotificationType()) {
         case REPLACED:
         case ACTIVATED:
@@ -90,7 +91,8 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
 	 
 	 CaseDetailsDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
 	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
-	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
+	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl
+	     .getCollectionExercise(caseGroup.getCollectionExerciseId());
 	 return collectionExercise;
   }
 

@@ -1,19 +1,18 @@
 package uk.gov.ons.ctp.response.action.message.impl;
 
-import java.util.List;
-
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.messaging.handler.annotation.Header;
-
 import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancels;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequests;
+
+import java.util.List;
 
 /**
  * This class is used to publish a list of action request objects to the
@@ -33,6 +32,15 @@ public class InstructionPublisherImpl implements InstructionPublisher {
   private static final String ACTION = "Action.";
   private static final String BINDING = ".binding";
 
+  /**
+   * The implementation will be responsible for publishing ActionRequests to the
+   * SpringIntegration outbound flow
+   *
+   * @param handler the handler that the outbound flow should send to - taken
+   *          directly from the Actions ActionType
+   * @param actionRequests the requests to publish
+   * @param actionCancels the cancels to publish
+   */
   public void sendInstructions(@Header("HANDLER") String handler, List<ActionRequest> actionRequests,
       List<ActionCancel> actionCancels) {
     ActionInstruction instruction = new ActionInstruction();
