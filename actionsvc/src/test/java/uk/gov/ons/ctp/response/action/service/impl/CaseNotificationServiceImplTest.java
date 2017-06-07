@@ -29,6 +29,7 @@ import uk.gov.ons.ctp.response.action.service.CollectionExerciseClientService;
 import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
 import uk.gov.ons.ctp.response.casesvc.message.notification.NotificationType;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 
@@ -87,7 +88,7 @@ public class CaseNotificationServiceImplTest {
 	  
 	  List<CaseNotification> notification = Arrays.asList(caseNotification);
 	  
-	  List<CaseDTO> caseJson = FixtureHelper.loadClassFixtures(CaseDTO[].class);
+	  List<CaseDetailsDTO> caseJson = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
 	  List<CaseGroupDTO> caseGroupJson = FixtureHelper.loadClassFixtures(CaseGroupDTO[].class);
 	  List<CollectionExerciseDTO> collectionExerciseJson = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
 	  

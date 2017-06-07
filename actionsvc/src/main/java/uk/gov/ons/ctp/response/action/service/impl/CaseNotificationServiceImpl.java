@@ -18,7 +18,7 @@ import uk.gov.ons.ctp.response.action.service.CaseNotificationService;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.action.service.CollectionExerciseClientService;
 import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 
@@ -88,7 +88,7 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
    */
   private CollectionExerciseDTO getCollectionExercise(CaseNotification notification){
 	 
-	 CaseDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
+	 CaseDetailsDTO caseDTO = caseSvcClientServiceImpl.getCase(UUID.fromString(notification.getCaseId()));
 	 CaseGroupDTO caseGroup = caseSvcClientServiceImpl.getCaseGroup(caseDTO.getCaseGroupId());
 	 CollectionExerciseDTO collectionExercise = collectionSvcClientServiceImpl.getCollectionExercise(caseGroup.getCollectionExerciseId());
 	 return collectionExercise;

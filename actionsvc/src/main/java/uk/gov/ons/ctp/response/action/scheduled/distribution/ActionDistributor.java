@@ -46,6 +46,7 @@ import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.action.service.PartySvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
@@ -374,7 +375,7 @@ public class ActionDistributor {
     // now call caseSvc for the following
     ActionPlan actionPlan = (action.getActionPlanFK() == null) ? null
         : actionPlanRepo.findOne(action.getActionPlanFK());
-    CaseDTO caseDTO = caseSvcClientService.getCase(action.getCaseId());
+    CaseDetailsDTO caseDTO = caseSvcClientService.getCase(action.getCaseId());
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
 
@@ -415,7 +416,7 @@ public class ActionDistributor {
    * @param caseEventDTOs the list of CaseEvent representations from the CaseSvc
    * @return the shiney new Action Request
    */
-  private ActionRequest createActionRequest(final Action action, final ActionPlan actionPlan, final CaseDTO caseDTO,
+  private ActionRequest createActionRequest(final Action action, final ActionPlan actionPlan, final CaseDetailsDTO caseDTO,
       final PartyDTO partyDTO,
       final List<CaseEventDTO> caseEventDTOs) {
     ActionRequest actionRequest = new ActionRequest();

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import uk.gov.ons.ctp.response.action.domain.model.Action;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
@@ -39,7 +39,7 @@ public interface CaseSvcClientService {
    * @param caseId identifies the Case to fetch
    * @return the Case we fetched
    */
-  CaseDTO getCase(final UUID caseId);
+  CaseDetailsDTO getCase(final UUID caseId);
   
   /**
    * Call CaseSvc using REST to get the CaseEvents for the Case MAY throw a

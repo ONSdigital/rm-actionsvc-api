@@ -15,6 +15,7 @@ import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
@@ -34,9 +35,9 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   private RestClient caseSvcClient;
 
   @Override
-  public CaseDTO getCase(final UUID caseId) {
-    CaseDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
-        CaseDTO.class, caseId);
+  public CaseDetailsDTO getCase(final UUID caseId) {
+	  CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+			  CaseDetailsDTO.class, caseId);
     return caseDTO;
   } 
   
