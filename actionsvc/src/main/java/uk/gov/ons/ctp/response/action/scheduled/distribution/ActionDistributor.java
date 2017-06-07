@@ -314,7 +314,7 @@ public class ActionDistributor {
         // create the request, filling in details by GETs from casesvc
         actionRequest = prepareActionRequest(action);
         // advise casesvc to create a corresponding caseevent for our action
-        caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryType.ACTION_CREATED);
+        caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CREATED);
         return actionRequest;
       }
     });
@@ -341,7 +341,7 @@ public class ActionDistributor {
         // create the request, filling in details by GETs from casesvc
         actionCancel = prepareActionCancel(action);
         // advise casesvc to create a corresponding caseevent for our action
-        caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryType.ACTION_CANCELLATION_CREATED);
+        caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CANCELLATION_CREATED);
         return actionCancel;
       }
     });

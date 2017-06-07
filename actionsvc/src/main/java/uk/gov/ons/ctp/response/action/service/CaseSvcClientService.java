@@ -21,7 +21,7 @@ public interface CaseSvcClientService {
    * @param actionCategory the category for the event
    * @return the newly created caseeventdto
    */
-  CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryType actionCategory);
+  CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory);
 
   /**
    * Call CaseSvc using REST to get the CaseGroups details MAY throw a

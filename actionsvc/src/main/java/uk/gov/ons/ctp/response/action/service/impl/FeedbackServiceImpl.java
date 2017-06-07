@@ -69,7 +69,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             .build();
         OutcomeCategory outcomeCategory = outcomeCategoryRepository.findOne(outcomeHandlerId);
         if (outcomeCategory != null) {
-          CategoryDTO.CategoryType category = CategoryDTO.CategoryType.valueOf(outcomeCategory.getEventCategory());
+          CategoryDTO.CategoryName category = CategoryDTO.CategoryName.valueOf(outcomeCategory.getEventCategory());
           caseSvcClientService.createNewCaseEvent(action, category);
         }
       } else {
