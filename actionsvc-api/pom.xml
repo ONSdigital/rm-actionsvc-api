@@ -66,14 +66,14 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <bindingDirectory>src/main/resources/xsd</bindingDirectory>
+              <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
               <bindingIncludes>
                 <include>actionFeedback.xjb</include>
               </bindingIncludes>
               <bindingExcludes>
                 <include>actionInstruction.xjb</include>
               </bindingExcludes>
-              <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+              <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
               <schemaIncludes>
                 <include>actionFeedback.xsd</include>
               </schemaIncludes>
@@ -105,14 +105,14 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <bindingDirectory>src/main/resources/xsd</bindingDirectory>
+              <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
               <bindingIncludes>
                 <include>actionInstruction.xjb</include>
               </bindingIncludes>
               <bindingExcludes>
                 <include>actionFeedback.xjb</include>
               </bindingExcludes>
-              <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+              <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
               <schemaIncludes>
                 <include>actionInstruction.xsd</include>
               </schemaIncludes>
