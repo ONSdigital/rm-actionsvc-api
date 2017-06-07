@@ -39,7 +39,7 @@ public class ActionCase implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "caseseq_gen")
   @GenericGenerator(name = "caseseq_gen", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-      @Parameter(name = "sequence_name", value = "actionsvc.casepkseq"),
+      @Parameter(name = "sequence_name", value = "action.casepkseq"),
       @Parameter(name = "increment_size", value = "1")
   })
   @Column(name = "casepk")
