@@ -1,0 +1,13 @@
+---
+applications:
+- name: actionsvc
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  instances: 1
+  host: actionsvc
+  memory: 1024M
+  path: actionsvc/target/actionsvc.jar
+  timeout: 180
+  services:
+    - actionsvc-pg-db
+    - rm-redis
+    - rm-rabbitmq
