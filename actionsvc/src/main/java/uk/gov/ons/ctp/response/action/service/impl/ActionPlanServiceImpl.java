@@ -4,11 +4,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
@@ -37,17 +38,17 @@ public class ActionPlanServiceImpl implements ActionPlanService {
   }
 
   @Override
-  public ActionPlan findActionPlan(final Integer actionPlanId) {
-    log.debug("Entering findActionPlan with {}", actionPlanId);
-    return actionPlanRepo.findOne(actionPlanId);
+  public ActionPlan findActionPlan(final Integer actionPlanKey) {
+    log.debug("Entering findActionPlan with {}", actionPlanKey);
+    return actionPlanRepo.findOne(actionPlanKey);
   }
 
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
-  public ActionPlan updateActionPlan(final Integer actionPlanId, final ActionPlan actionPlan) {
-    log.debug("Entering updateActionPlan with {}", actionPlanId);
-    ActionPlan existingActionPlan = actionPlanRepo.findOne(actionPlanId);
+  public ActionPlan updateActionPlan(final Integer actionPlanKey, final ActionPlan actionPlan) {
+    log.debug("Entering updateActionPlan with {}", actionPlanKey);
+    ActionPlan existingActionPlan = actionPlanRepo.findOne(actionPlanKey);
     if (existingActionPlan != null) {
       boolean needsUpdate = false;
 
@@ -66,7 +67,7 @@ public class ActionPlanServiceImpl implements ActionPlanService {
       }
 
       if (needsUpdate) {
-        log.debug("about to update the action plan with id {}", actionPlanId);
+        log.debug("about to update the action plan with id {}", actionPlanKey);
         existingActionPlan = actionPlanRepo.save(existingActionPlan);
       }
     }
@@ -74,8 +75,8 @@ public class ActionPlanServiceImpl implements ActionPlanService {
   }
 
   @Override
-  public List<ActionRule> findActionRulesForActionPlan(final Integer actionPlanId) {
-    return actionRuleRepository.findByActionPlanId(actionPlanId);
+  public List<ActionRule> findActionRulesForActionPlan(final Integer actionPlanKey) {
+    return actionRuleRepository.findByActionPlanFK(actionPlanKey);
   }
 
 }

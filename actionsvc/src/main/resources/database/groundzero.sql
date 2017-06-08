@@ -14,3 +14,6 @@ REVOKE CONNECT ON DATABASE postgres FROM PUBLIC;
 GRANT CONNECT ON DATABASE postgres TO actionsvc;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA action TO actionsvc;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA action TO actionsvc;
+
+-- create postgres extension to allow generation of v4 UUID
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";

@@ -30,7 +30,7 @@
     <int-amqp:outbound-channel-adapter id="invalidCaseNotificationOutboundAmqp" channel="caseLifecycleEventsInvalidXml" exchange-name="case-invalid-exchange" routing-key="Case.LifecycleEvents.binding" />
     <!-- Option to be used in Debug/Test: throw-exception-on-rejection="true" -->
     <int-xml:validating-filter id="caseLifecycleEventsValidator" input-channel="caseLifecycleEventsXml"
-                               output-channel="caseLifecycleEventsXmlValid" schema-location="classpath:xsd/caseNotification.xsd" discard-channel="caseLifecycleEventsInvalidXml"/>
+                               output-channel="caseLifecycleEventsXmlValid" schema-location="classpath:casesvc/xsd/outbound/caseNotification.xsd" discard-channel="caseLifecycleEventsInvalidXml"/>
 
     <!-- The now validated xml is transformed into the jaxb generated object model -->
     <bean id="caseNotificationMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">

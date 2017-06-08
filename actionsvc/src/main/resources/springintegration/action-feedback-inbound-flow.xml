@@ -31,7 +31,7 @@
     <int-amqp:outbound-channel-adapter id="invalidActionFeedbackOutboundAmqp" channel="actionFeedbackInvalidXml" exchange-name="action-invalid-exchange" routing-key="Action.Feedback.binding" />
     <!-- Option to be used in Debug/Test: throw-exception-on-rejection="true" -->
     <int-xml:validating-filter id="actionFeedbackValidator" input-channel="actionFeedbackXml"
-                               output-channel="actionFeedbackXmlValid" schema-location="classpath:xsd/actionFeedback.xsd" discard-channel="actionFeedbackInvalidXml"/>
+                               output-channel="actionFeedbackXmlValid" schema-location="classpath:actionsvc/xsd/actionFeedback.xsd" discard-channel="actionFeedbackInvalidXml"/>
 
     <!-- The now validated xml is transformed into the jaxb generated object model -->
     <bean id="actionFeedbackMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">

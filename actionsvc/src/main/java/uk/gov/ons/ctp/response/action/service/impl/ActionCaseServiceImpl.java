@@ -6,6 +6,8 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
 
+import java.util.UUID;
+
 /**
  * An ActionService implementation which encapsulates all business logic
  * operating on the Action entity model.
@@ -18,7 +20,7 @@ public class ActionCaseServiceImpl implements ActionCaseService {
   private ActionCaseRepository actionCaseRepo;
 
   @Override
-  public ActionCase findActionCase(Integer caseId) {
-    return actionCaseRepo.findOne(caseId);
+  public ActionCase findActionCase(UUID caseId) {
+    return actionCaseRepo.findById(caseId);
   }
 }

@@ -1,11 +1,11 @@
 package uk.gov.ons.ctp.response.action.scheduled.ingest;
 
+import lombok.Data;
+import lombok.Getter;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import lombok.Data;
-import lombok.Getter;
 
 /**
  * Each line in the ingested CSV is initially mapped to this POJO, whose primary
@@ -41,12 +41,13 @@ public class CsvLine {
   // TODO BRES - can we incorporate these into PartySvc API somehow - can PartySvc tell us these?
   // either at runtime or with some sort of XSD definition about Party attributes?
   // the following were all lifted from the old ContactDTO ? how do we determine these now with PartySvc?
-  public static final String EMAIL_RE = "^$|[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
+  public static final String EMAIL_RE = "^$|[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)"
+          + "*(\\.[A-Za-z]{2,})";
   public static final String TELEPHONE_RE = "[\\d]{0,11}";
   public static final int TITLE_MAX_LEN = 20;
   public static final int FORENAME_MAX_LEN = 35;
   public static final int SURNAME_MAX_LEN = 35;
-  
+
   @Pattern(regexp = HANDLER_TYPE_RE)
   private String handler;
 
@@ -88,16 +89,16 @@ public class CsvLine {
 
   @Size(min = 0, max = TITLE_MAX_LEN)
   private String title;
-  
+
   @Size(min = 0, max = FORENAME_MAX_LEN)
   private String forename;
-  
+
   @Size(min = 0, max = SURNAME_MAX_LEN)
   private String surname;
-  
+
   @Pattern(regexp = EMAIL_RE)
   private String emailAddress;
-  
+
   @Pattern(regexp = TELEPHONE_RE)
   private String telephoneNumber;
 
@@ -119,7 +120,8 @@ public class CsvLine {
   @Pattern(regexp = NON_BLANK_INTEGER_RE)
   private String uprn;
 
-  @Pattern(regexp = NON_BLANK_INTEGER_RE)
+  // TODO BRES - regex for UUID needed
+  //@Pattern(regexp = NON_BLANK_INTEGER_RE)
   private String caseId;
 
   @Pattern(regexp = NON_BLANK_ALPHANUM_RE)

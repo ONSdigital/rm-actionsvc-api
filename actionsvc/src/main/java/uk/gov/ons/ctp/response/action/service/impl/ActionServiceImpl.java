@@ -1,15 +1,10 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.time.DateTimeUtil;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -21,6 +16,11 @@ import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.ActionService;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * An ActionService implementation which encapsulates all business logic
@@ -40,7 +40,8 @@ public class ActionServiceImpl implements ActionService {
   private ActionTypeRepository actionTypeRepo;
 
   @Autowired
-  private StateTransitionManager<ActionState, uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent> actionSvcStateTransitionManager;
+  private StateTransitionManager<ActionState,
+          uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent> actionSvcStateTransitionManager;
 
   @Override
   public List<Action> findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(final String actionTypeName,
@@ -62,27 +63,33 @@ public class ActionServiceImpl implements ActionService {
   }
 
   @Override
-  public Action findActionByActionId(final BigInteger actionId) {
-    log.debug("Entering findActionByActionId with {}", actionId);
-    return actionRepo.findOne(actionId);
+  public Action findActionByActionPK(final BigInteger actionKey) {
+    log.debug("Entering findActionByActionPK with {}", actionKey);
+    return actionRepo.findOne(actionKey);
   }
 
   @Override
-  public List<Action> findActionsByCaseId(final Integer caseId) {
+  public Action findActionById(final UUID actionId) {
+    log.debug("Entering findActionById with {}", actionId);
+    return actionRepo.findById(actionId);
+  }
+
+  @Override
+  public List<Action> findActionsByCaseId(final UUID caseId) {
     log.debug("Entering findActionsByCaseId with {}", caseId);
     return actionRepo.findByCaseIdOrderByCreatedDateTimeDesc(caseId);
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
   @Override
-  public List<Action> cancelActions(final Integer caseId) {
+  public List<Action> cancelActions(final UUID caseId) {
     log.debug("Entering cancelAction with {}", caseId);
 
     List<Action> flushedActions = new ArrayList<>();
     List<Action> actions = actionRepo.findByCaseId(caseId);
     for (Action action : actions) {
       if (action.getActionType().getCanCancel()) {
-        log.debug("Cancelling action {} of type {}", action.getActionId(), action.getActionType().getName());
+        log.debug("Cancelling action {} of type {}", action.getId(), action.getActionType().getName());
         ActionDTO.ActionState nextState = actionSvcStateTransitionManager.transition(action.getState(),
             ActionEvent.REQUEST_CANCELLED);
         action.setState(nextState);
@@ -98,9 +105,9 @@ public class ActionServiceImpl implements ActionService {
   @Override
   public Action feedBackAction(ActionFeedback actionFeedback) {
     log.debug("Entering feedBackAction with {}", actionFeedback.getActionId());
-    Action action = null;
 
-    action = actionRepo.findOne(actionFeedback.getActionId());
+    Action action = actionRepo.findById(UUID.fromString(actionFeedback.getActionId()));
+
     if (action != null) {
       ActionDTO.ActionEvent event = ActionDTO.ActionEvent.valueOf(actionFeedback.getOutcome().name());
       action.setSituation(actionFeedback.getSituation());
@@ -122,7 +129,7 @@ public class ActionServiceImpl implements ActionService {
     ActionType actionType = actionTypeRepo.findByName(action.getActionType().getName());
     // guard against the caller providing an id - we would perform an update
     // otherwise
-    action.setActionId(null);
+    action.setActionPK(null);
     action.setActionType(actionType);
     action.setManuallyCreated(true);
     action.setCreatedDateTime(DateTimeUtil.nowUTC());
@@ -134,7 +141,7 @@ public class ActionServiceImpl implements ActionService {
   @Override
   public Action updateAction(final Action action) {
     log.debug("Entering updateAction with {}", action);
-    Action existingAction = actionRepo.findOne(action.getActionId());
+    Action existingAction = actionRepo.findOne(action.getActionPK());
     if (existingAction != null) {
       boolean needsUpdate = false;
 

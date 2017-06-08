@@ -1,10 +1,12 @@
 [
 {  
-   "actionPlanId":1,
-   "caseId":1
+   "actionPlanId":"381DF436-7317-4B01-BABA-70F00A4338E5",
+   "actionPlanFK":"A640A9DE-761E-4BC5-AFE3-6DC0444CB629",
+   "casePK":"7C5773ED-7391-4F70-8B72-86F924465A41"
 },
 {  
-   "actionPlanId":2,
-   "caseId":2
+   "actionPlanId":"EB115596-1F73-4ABD-AE35-3E1D8CD8B358",
+   "actionPlanFK":"B5866E75-2311-4BB3-BB58-BCE9B3F694FF",
+   "casePK":"6ADB5378-52A3-4E13-9FF4-2EBA40D83A19"
 }
 ]

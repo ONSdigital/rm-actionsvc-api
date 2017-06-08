@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -97,17 +98,22 @@ public class Action implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "actionid")
-  private BigInteger actionId;
+  @Column(name = "actionpk")
+  private BigInteger actionPK;
+
+  private UUID id;
 
   @Column(name = "caseid")
-  private Integer caseId;
+  private UUID caseId;
 
-  @Column(name = "actionplanid")
-  private Integer actionPlanId;
+  @Column(name = "casefk")
+  private Integer caseFK;
 
-  @Column(name = "actionruleid")
-  private Integer actionRuleId;
+  @Column(name = "actionplanfk")
+  private Integer actionPlanFK;
+
+  @Column(name = "actionrulefk")
+  private Integer actionRuleFK;
 
   @Column(name = "createdby")
   private String createdBy;
@@ -116,7 +122,7 @@ public class Action implements Serializable {
   private Boolean manuallyCreated;
 
   @ManyToOne
-  @JoinColumn(name = "actiontypeid")
+  @JoinColumn(name = "actiontypefk")
   private ActionType actionType;
 
   private Integer priority;
@@ -124,6 +130,7 @@ public class Action implements Serializable {
   private String situation;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "statefk")
   private ActionDTO.ActionState state;
 
   @Column(name = "createddatetime")

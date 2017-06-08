@@ -1,22 +1,23 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
-import uk.gov.ons.ctp.response.party.representation.PartyDTO;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Impl of the service that centralizes all REST calls to the Case service
@@ -29,34 +30,25 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   private AppConfig appConfig;
 
   @Autowired
+  @Qualifier("caseSvcClient")
   private RestClient caseSvcClient;
 
   @Override
-  public PartyDTO getParty(final String partyId) {
-    PartyDTO partyDTO = null;
-
-//    AddressDTO addressDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getAddressByUprnGetPath(),
-//        AddressDTO.class, uprn);
-    return partyDTO;
+  public CaseDetailsDTO getCase(final UUID caseId) {
+	  CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+			  CaseDetailsDTO.class, caseId);
+    return caseDTO;
   }
 
   @Override
-  public CaseDTO getCase(final Integer caseId) {
-    CaseDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
-        CaseDTO.class, caseId);
-    return caseDTO;
-  } 
-  
-  @Override
-  public CaseGroupDTO getCaseGroup(final Integer caseGroupId) {
+  public CaseGroupDTO getCaseGroup(final UUID caseGroupId) {
     CaseGroupDTO caseGroupDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseGroupPath(),
         CaseGroupDTO.class, caseGroupId);
     return caseGroupDTO;
   }
-  
 
   @Override
-  public List<CaseEventDTO> getCaseEvents(final Integer caseId) {
+  public List<CaseEventDTO> getCaseEvents(final UUID caseId) {
     List<CaseEventDTO> caseEventDTOs = caseSvcClient.getResources(
         appConfig.getCaseSvc().getCaseEventsByCaseGetPath(),
         CaseEventDTO[].class, caseId);
@@ -64,8 +56,8 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   }
 
   @Override
-  public CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryType actionCategory) {
-    log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getActionId(),
+  public CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory) {
+    log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getId(),
         actionCategory);
     CaseEventDTO caseEventDTO = new CaseEventDTO();
     caseEventDTO.setCaseId(action.getCaseId());

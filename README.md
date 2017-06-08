@@ -1,3 +1,5 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3a24e234068a4a1396ff5f3ff9ab64d9)](https://www.codacy.com/app/sdcplatform/rm-action-service?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/rm-action-service&amp;utm_campaign=Badge_Grade)
+
 # Action Service
 This repository contains the Action service. This microservice is a RESTful web service implemented using [Spring Boot](http://projects.spring.io/spring-boot/).
 It receives actionLifeCycle event messages via RabbitMQ from the action Service, which indicates what has happened to a action ie activation, deactivation etc
