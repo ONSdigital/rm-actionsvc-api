@@ -6,7 +6,7 @@
   http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
   http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 
-	<rabbit:connection-factory id="connectionFactory" 
+	<rabbit:connection-factory id="connectionFactory"
 	                           host="${rabbitmq.host}"
 	                           username="${rabbitmq.username}"
 							   virtual-host="${rabbitmq.virtualhost}"
@@ -14,6 +14,7 @@
 	                           password="${rabbitmq.password}" />
 
 	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" />
+	<rabbit:admin id="amqpAdmin" connection-factory="connectionFactory"/>
 
 	<!-- Start of Queues -->
 	<rabbit:queue name="Action.Field" durable="true">
@@ -95,5 +96,3 @@
 	<!-- End of Exchanges -->
 
 </beans>
-
-
