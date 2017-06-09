@@ -1,10 +1,6 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
-
-import java.math.BigInteger;
-import java.sql.Timestamp;
-
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,14 +9,17 @@ import org.mockito.Spy;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
 import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
 import uk.gov.ons.ctp.response.action.service.ActionService;
+
+import java.math.BigInteger;
+import java.sql.Timestamp;
+
+import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
 
 /**
  * ActionEndpoint Unit tests
@@ -40,17 +39,6 @@ public final class ActionEndpointUnitTest {
   private MapperFacade mapperFacade = new ActionBeanMapper();
 
   private MockMvc mockMvc;
-
-  @Before
-  public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
-
-    this.mockMvc = MockMvcBuilders
-            .standaloneSetup(actionEndpoint)
-            .setHandlerExceptionResolvers(mockAdviceFor(RestExceptionHandler.class))
-            .setMessageConverters(new MappingJackson2HttpMessageConverter(new CustomObjectMapper()))
-            .build();
-  }
 
   private static final ActionDTO.ActionState ACTION1_ACTIONSTATE = ActionDTO.ActionState.ACTIVE;
   private static final ActionDTO.ActionState ACTION2_ACTIONSTATE = ActionDTO.ActionState.COMPLETED;
@@ -113,6 +101,17 @@ public final class ActionEndpointUnitTest {
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"priority\": " + ACTION2_PRIORITY + ","
           + "\"state\": \"" + ACTION2_ACTIONSTATE + "\"}";
+
+  @Before
+  public void setUp() throws Exception {
+    MockitoAnnotations.initMocks(this);
+
+    this.mockMvc = MockMvcBuilders
+            .standaloneSetup(actionEndpoint)
+            .setHandlerExceptionResolvers(mockAdviceFor(RestExceptionHandler.class))
+            .setMessageConverters(new MappingJackson2HttpMessageConverter(new CustomObjectMapper()))
+            .build();
+  }
 
 //  /**
 //   * Test requesting Actions filtered by action type name and state found.

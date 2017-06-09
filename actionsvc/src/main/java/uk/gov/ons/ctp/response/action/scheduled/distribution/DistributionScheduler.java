@@ -17,17 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DistributionScheduler implements HealthIndicator {
 
+  private DistributionInfo distributionInfo = new DistributionInfo();
+
+  @Autowired
+  private ActionDistributor actionDistributorImpl;
+
   @Override
   public Health health() {
     return Health.up()
         .withDetail("distributionInfo", distributionInfo)
         .build();
   }
-
-  @Autowired
-  private ActionDistributor actionDistributorImpl;
-
-  private DistributionInfo distributionInfo = new DistributionInfo();
 
   /**
    * Scheduled execution of the Action Distributor

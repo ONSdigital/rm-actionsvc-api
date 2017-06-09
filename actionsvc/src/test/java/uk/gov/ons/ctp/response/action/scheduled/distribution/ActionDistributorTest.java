@@ -1,7 +1,6 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import java.math.BigInteger;
-
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +13,6 @@ import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
@@ -29,6 +26,8 @@ import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.action.service.impl.PartySvcClientServiceImpl;
+
+import java.math.BigInteger;
 
 /**
  * Test the action distributor

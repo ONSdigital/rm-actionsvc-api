@@ -1,9 +1,6 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
-
-import java.sql.Timestamp;
-
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -12,17 +9,20 @@ import org.mockito.Spy;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
 import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
+import java.sql.Timestamp;
+
+import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
+
 /**
  * Unit tests for ActionPlan endpoint
  */
 public class ActionPlanEndpointUnitTest {
+
   private static final boolean ACTIONTYPE_CANCANCEL = true;
   private static final boolean ACTIONTYPE_RESPONSEREQUIRED = true;
 
