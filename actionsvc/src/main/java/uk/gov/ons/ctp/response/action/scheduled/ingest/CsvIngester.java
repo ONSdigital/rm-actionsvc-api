@@ -27,15 +27,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -98,6 +90,9 @@ public class CsvIngester extends CsvToBean<CsvLine> {
           LONGITUDE, UPRN, CASE_ID, CASE_REF, PRIORITY, IAC, EVENTS, ACTION_PLAN, QUESTION_SET, TITLE, FORENAME,
           SURNAME, EMAIL, TELEPHONE};
 
+  @Autowired
+  private Tracer tracer;
+
   /**
    * Inner class to encapsulate the request and cancel data as they do not have
    * common parentage
@@ -108,9 +103,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
     private List<ActionRequest> actionRequests = new ArrayList<>();
     private List<ActionCancel> actionCancels = new ArrayList<>();
   }
-
-  @Autowired
-  private Tracer tracer;
 
   @Autowired
   private AppConfig appConfig;
@@ -150,7 +142,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
   public void ingest(File csvFile) {
     log.debug("INGESTED {}", csvFile.toString());
     Span ingestSpan = tracer.createSpan(CSV_INGESTER_SPAN);
-    SimpleDateFormat fmt = new SimpleDateFormat(DATE_FORMAT);
     CSVReader reader = null;
     Map<String, InstructionBucket> handlerInstructionBuckets = new HashMap<>();
 
@@ -183,7 +174,7 @@ public class CsvIngester extends CsvToBean<CsvLine> {
 
             } else if (csvLine.getInstructionType().equals(CANCEL_INSTRUCTION)) {
               // store the cancel in the handlers bucket
-              handlerInstructionBucket.getActionCancels().add(buildCancel(csvLine));
+              handlerInstructionBucket.getActionCancels().add(buildCancel());
             }
           }
         }
@@ -241,10 +232,9 @@ public class CsvIngester extends CsvToBean<CsvLine> {
   /**
    * build an ActionCancel from a line in the csv
    *
-   * @param csvLine the line
    * @return the built cancel
    */
-  private ActionCancel buildCancel(CsvLine csvLine) {
+  private ActionCancel buildCancel() {
     return ActionCancel.builder()
         .withActionId(UUID.randomUUID().toString())
         .withReason(REASON)
