@@ -8,6 +8,6 @@ applications:
   path: actionsvc/target/actionsvc.jar
   timeout: 180
   services:
-    - actionsvc-pg-db
+    - rm-pg-db
     - rm-redis
     - rm-rabbitmq
