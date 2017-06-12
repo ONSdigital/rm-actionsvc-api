@@ -28,7 +28,7 @@ This page documents the Action service API endpoints. These endpoints will be se
 
 An `HTTP 204 No Content` status code is returned if there are no actions.
 
-## List Actions for Case
+## List Actions for Case
 * `GET /actions/caseid/7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb` will return a list of actions for the case with an ID of `7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb`.
 
 ### Example JSON Response
@@ -56,7 +56,7 @@ An `HTTP 404 Not Found` status code is returned if the case with the specified I
 ## Get Action
 * `GET /actions/d24b3f17-bbf8-4c71-b2f0-a4334125d78d` will return the details of the action with an ID of `d24b3f17-bbf8-4c71-b2f0-a4334125d78d`.
 
-### Example JSON Response
+### Example JSON Response
 ```json
 {
   "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
@@ -104,7 +104,7 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 An `HTTP 201 Created` status code is returned if the action creation was a success. An `HTTP 400 Bad Request` is returned if any of the required parameters are missing.
 
 
-## Update Action
+## Update Action
 * `PUT /actions/d24b3f17-bbf8-4c71-b2f0-a4334125d78d` will update the details of the action with an ID of `d24b3f17-bbf8-4c71-b2f0-a4334125d78d`.
 
 *Optional parameters:* `priority` as the action priority (1 = highest, 5 = lowest) as passed to the remote handler, `situation` as the action status as recorded by the remote handler.
