@@ -127,4 +127,31 @@ An `HTTP 201 Created` status code is returned if the action creation was a succe
 }
 ```
 
-An `HTTP 404 Not Found` status code is returned if the action with the specified ID could not be found. An `HTTP 400 Bad Request` status code is returned if any of the parameters are invalid. 
+An `HTTP 404 Not Found` status code is returned if the action with the specified ID could not be found. An `HTTP 400 Bad Request` status code is returned if any of the parameters are invalid.
+
+## Update Action Feedback
+* `PUT /actions/d24b3f17-bbf8-4c71-b2f0-a4334125d78d/feedback` will transition the state of the action with an ID of `d24b3f17-bbf8-4c71-b2f0-a4334125d78d`.
+
+**Required parameters**: `situation` as the action status as recorded by the remote handler, `outcome` as the outcome of the action within the context of the remote handler.
+
+*Optional parameters:* `notes` as a text description of the remote handler's feedback.
+
+### Example JSON Response
+```json
+{
+  "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+  "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
+  "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
+  "actionRuleId": 120,
+  "actionTypeName": "HouseholdCreateVisit",
+  "createdBy": "SYSTEM",
+  "manuallyCreated": false,
+  "priority": 1,
+  "situation": null,
+  "state": "SUBMITTED",
+  "createdDateTime": "2017-05-15T10:00:00Z",
+  "updatedDateTime": "2017-05-15T10:00:00Z"
+}
+```
+
+An `HTTP 404 Not Found` status code is returned if the action with the specified ID could not be found. An `HTTP 400 Bad Request` status code is returned if any of the parameters are invalid.
