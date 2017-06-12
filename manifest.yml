@@ -11,3 +11,7 @@ applications:
     - rm-pg-db
     - rm-redis
     - rm-rabbitmq
+  env:
+    caseSvc_connectionConfig_host: casesvc.apps.mvp.onsclofo.uk
+    caseSvc_connectionConfig_port: "80"
+    caseSvc_connectionConfig_scheme: http
