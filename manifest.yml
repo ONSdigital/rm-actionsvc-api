@@ -15,9 +15,9 @@ applications:
     partySvc_connectionConfig_host: ras-party-v2.apps.mvp.onsclofo.uk
     partySvc_connectionConfig_port: "80"
     partySvc_connectionConfig_scheme: http
-    collectionExerviseSvc_connectionConfig_host: collectionexervisesvc.apps.mvp.onsclofo.uk
-    collectionExerviseSvc_connectionConfig_port: "80"
-    collectionExerviseSvc_connectionConfig_scheme: http
+    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc.apps.mvp.onsclofo.uk
+    collectionExerciseSvc_connectionConfig_port: "80"
+    collectionExerciseSvc_connectionConfig_scheme: http
     caseSvc_connectionConfig_host: casesvc.apps.mvp.onsclofo.uk
     caseSvc_connectionConfig_port: "80"
     caseSvc_connectionConfig_scheme: http
