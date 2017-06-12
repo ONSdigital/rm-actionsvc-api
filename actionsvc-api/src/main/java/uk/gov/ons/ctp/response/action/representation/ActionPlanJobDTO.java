@@ -1,15 +1,13 @@
 package uk.gov.ons.ctp.response.action.representation;
 
-import java.util.Date;
-import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * Domain model object for representation.
@@ -29,8 +27,8 @@ public class ActionPlanJobDTO {
     SUBMITTED, STARTED, COMPLETED, FAILED;
   }
 
-  private UUID actionPlanJobId;
-  private UUID actionPlanId;
+  private Integer actionPlanJobPK;
+  private Integer actionPlanFK;
 
   @NotNull
   @Size(min = CREATED_BY_MIN, max = CREATED_BY_MAX)

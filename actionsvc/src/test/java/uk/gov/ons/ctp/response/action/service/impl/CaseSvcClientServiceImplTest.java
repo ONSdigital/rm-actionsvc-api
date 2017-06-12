@@ -1,7 +1,5 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import static org.mockito.Matchers.any;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -12,9 +10,10 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
-
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
+
+import static org.mockito.Matchers.any;
 
 /**
  * A test of the case frame service client service
@@ -58,7 +57,7 @@ public class CaseSvcClientServiceImplTest {
 //
 //    Action action = new Action();
 //    action.setActionId(BigInteger.valueOf(1));
-//    action.setActionPlanId(2);
+//    action.setActionPlanFK(2);
 //    action.setActionRuleId(3);
 //    
 //    ActionType actionType = new ActionType();
