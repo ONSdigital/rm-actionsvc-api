@@ -1,11 +1,11 @@
 package uk.gov.ons.ctp.response.action.representation;
 
-import java.util.UUID;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 /**
  * Domain model object for representation.
@@ -15,10 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ActionRuleDTO {
 
-  private UUID actionRuleId;
   private UUID actionPlanId;
   private Integer priority;
-  private Integer surveyDateDaysOffset;
+  private Integer daysOffset;
 
   private String actionTypeName;
   private String name;

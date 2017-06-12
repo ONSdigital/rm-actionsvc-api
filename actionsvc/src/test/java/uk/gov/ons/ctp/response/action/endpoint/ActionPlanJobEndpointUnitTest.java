@@ -1,9 +1,6 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
-
-import java.sql.Timestamp;
-
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -12,13 +9,15 @@ import org.mockito.Spy;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
 import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
+
+import java.sql.Timestamp;
+
+import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
 
 public class ActionPlanJobEndpointUnitTest {
 
@@ -79,7 +78,7 @@ public class ActionPlanJobEndpointUnitTest {
 //            .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
 //            .andExpect(handler().methodName("findActionPlanJobById"))
 //            .andExpect(jsonPath("$.actionPlanJobId", is(ACTIONPLANJOBID)))
-//            .andExpect(jsonPath("$.actionPlanId", is(ACTIONPLANJOBID_ACTIONPLANID)))
+//            .andExpect(jsonPath("$.id", is(ACTIONPLANJOBID_ACTIONPLANID)))
 //            .andExpect(jsonPath("$.createdBy", is(ACTIONPLANJOBID_CREATED_BY)))
 //            .andExpect(jsonPath("$.state", is(ACTIONPLANJOBID_STATE.name())))
 //            .andExpect(jsonPath("$.createdDateTime", is(CREATED_DATE_TIME)))
@@ -141,7 +140,7 @@ public class ActionPlanJobEndpointUnitTest {
 //            .andExpect(handler().methodName("findAllActionPlanJobsByActionPlanId"))
 //            .andExpect(jsonPath("$", Matchers.hasSize(3)))
 //            .andExpect(jsonPath("$[*].actionPlanJobId", containsInAnyOrder(1, 2, 3)))
-//            .andExpect(jsonPath("$[*].actionPlanId", containsInAnyOrder(ACTIONPLANID, ACTIONPLANID, ACTIONPLANID)))
+//            .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTIONPLANID, ACTIONPLANID, ACTIONPLANID)))
 //            .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(ACTIONPLANJOBID_CREATED_BY, ACTIONPLANJOBID_CREATED_BY, ACTIONPLANJOBID_CREATED_BY)))
 //            .andExpect(jsonPath("$[*].createdDateTime", containsInAnyOrder(CREATED_DATE_TIME, CREATED_DATE_TIME, CREATED_DATE_TIME)))
 //            .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(UPDATED_DATE_TIME, UPDATED_DATE_TIME, UPDATED_DATE_TIME)));
@@ -176,7 +175,7 @@ public class ActionPlanJobEndpointUnitTest {
 //            .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
 //            .andExpect(handler().methodName("executeActionPlan"))
 //            .andExpect(jsonPath("$.actionPlanJobId", is(ACTIONPLANJOBID)))
-//            .andExpect(jsonPath("$.actionPlanId", is(ACTIONPLANJOBID_ACTIONPLANID)))
+//            .andExpect(jsonPath("$.id", is(ACTIONPLANJOBID_ACTIONPLANID)))
 //            .andExpect(jsonPath("$.createdBy", is(ACTIONPLANJOBID_CREATED_BY)))
 //            .andExpect(jsonPath("$.state", is(ACTIONPLANJOBID_STATE.name())))
 //            .andExpect(jsonPath("$.createdDateTime", is(CREATED_DATE_TIME)))

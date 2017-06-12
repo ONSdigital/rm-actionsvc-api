@@ -84,7 +84,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
       final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult) throws CTPException {
     //TODO BRES needs to finf the action plan by UUID, take that plans PK and create job with it
 
-//    log.info("Entering executeActionPlan with {}", actionPlanId);
+//    log.info("Entering executeActionPlan with {}", id);
 //
 //    if (bindingResult.hasErrors()) {
 //      throw new InvalidRequestException("Binding errors for execute action plan: ", bindingResult);
@@ -95,11 +95,11 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
 //    }
 //
 //    ActionPlanJob job = mapperFacade.map(actionPlanJobDTO, ActionPlanJob.class);
-//    job.setActionPlanId(actionPlanId);
+//    job.setId(id);
 //    Optional<ActionPlanJob> actionPlanJob = actionPlanJobService.createAndExecuteActionPlanJob(job);
 //    return ResponseEntity.created(URI.create("TODO")).body(
 //            mapperFacade.map(actionPlanJob.orElseThrow(() -> new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND,
-//            "ActionPlan not found for id %s", actionPlanId)), ActionPlanJobDTO.class));
+//            "ActionPlan not found for id %s", id)), ActionPlanJobDTO.class));
     return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
   }
 }
