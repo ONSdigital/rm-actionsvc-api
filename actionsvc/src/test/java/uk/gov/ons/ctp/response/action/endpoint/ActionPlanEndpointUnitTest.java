@@ -1,11 +1,13 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
+import ma.glasnost.orika.MapperFacade;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
+import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 import uk.gov.ons.ctp.response.action.domain.model.ActionType;
@@ -42,7 +45,7 @@ public class ActionPlanEndpointUnitTest {
   private static final boolean ACTIONTYPE_CANCANCEL = true;
   private static final boolean ACTIONTYPE_RESPONSEREQUIRED = true;
 
-  private static final Integer ACTIONPLANPK = 3;
+  private static final Integer ACTIONPLANPK = 1;
 
   private static final Integer ACTIONRULE_PRIORITY = 1;
   private static final Integer ACTIONRULE_SURVEYDATEDAYSOFFSET = 1;
@@ -83,6 +86,9 @@ public class ActionPlanEndpointUnitTest {
   private ActionPlanService actionPlanService;
 
   private MockMvc mockMvc;
+
+  @Spy
+  private MapperFacade mapperFacade = new ActionBeanMapper();
 
   @Before
   public void setUp() throws Exception {
