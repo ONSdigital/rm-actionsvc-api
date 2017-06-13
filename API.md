@@ -12,7 +12,7 @@ This page documents the Action service API endpoints. These endpoints will be se
 ```json
 [
   {
-    "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+    "id": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
     "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
     "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
     "actionRuleId": 120,
@@ -37,7 +37,7 @@ An `HTTP 204 No Content` status code is returned if there are no actions.
 ```json
 [
   {
-    "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+    "id": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
     "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
     "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
     "actionRuleId": 120,
@@ -62,7 +62,7 @@ An `HTTP 404 Not Found` status code is returned if the case with the specified I
 ```json
 [
   {
-    "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+    "id": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
     "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
     "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
     "actionRuleId": 120,
@@ -86,7 +86,7 @@ An `HTTP 404 Not Found` status code is returned if the case with the specified I
 ### Example JSON Response
 ```json
 {
-  "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+  "id": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
   "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
   "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
   "actionRuleId": 120,
@@ -113,7 +113,7 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 ### Example JSON Response
 ```json
 {
-  "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+  "id": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
   "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
   "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
   "actionRuleId": 120,
@@ -166,7 +166,7 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 ### Example JSON Response
 ```json
 {
-  "actionId": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
+  "id": "d24b3f17-bbf8-4c71-b2f0-a4334125d78d",
   "caseId": "7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb",
   "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
   "actionRuleId": 120,
