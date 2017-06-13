@@ -423,7 +423,8 @@ public class ActionDistributor {
 //    actionRequest.setQuestionSet(caseTypeDTO.getQuestionSet());
     actionRequest.setResponseRequired(action.getActionType().getResponseRequired());
     actionRequest.setCaseId(action.getCaseId().toString());
-
+    actionRequest.setSampleUnitRef(caseDTO.getCaseGroup().getSampleUnitRef());
+    
     Map<String, String> partyMap = partyDTO.getAttributes();
 
     ActionContact actionContact = new ActionContact();
