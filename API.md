@@ -182,3 +182,80 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 ```
 
 An `HTTP 404 Not Found` status code is returned if the action with the specified ID could not be found. An `HTTP 400 Bad Request` status code is returned if any of the parameters are invalid.
+
+## List Action Plans
+* `GET /actionplans` will return a list of all action plans, most recent first.
+
+### Example JSON Response
+```json
+[
+  {
+    "id": "5381731e-e386-41a1-8462-26373744db86",
+    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+    "name": "C1O331D10E",
+    "description": "Component 1 - England/online/field day ten/three reminders",
+    "createdBy": "SYSTEM",
+    "createdDateTime": "2017-05-15T10:00:00Z",
+    "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
+  }
+]
+```
+
+An `HTTP 204 No Content` status code is returned if there are no action plans.
+
+## Get Action Plan
+* `GET /actionplans/5381731e-e386-41a1-8462-26373744db86` will return the details of the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
+
+### Example JSON Response
+```json
+{
+  "id": "5381731e-e386-41a1-8462-26373744db86",
+  "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+  "name": "C1O331D10E",
+  "description": "Component 1 - England/online/field day ten/three reminders",
+  "createdBy": "SYSTEM",
+  "createdDateTime": "2017-05-15T10:00:00Z",
+  "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
+}
+```
+
+An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found.
+
+## Update Action Plan
+* `PUT /actionplans/5381731e-e386-41a1-8462-26373744db86` will update the details of the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
+
+*Optional parameters:* `description` as the action plan description, `lastGoodRunDateTime` as the date/time the action plan was last successfully run.
+
+### Example JSON Response
+```json
+{
+  "id": "5381731e-e386-41a1-8462-26373744db86",
+  "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
+  "name": "C1O331D10E",
+  "description": "Component 1 - England/online/field day ten/three reminders",
+  "createdBy": "SYSTEM",
+  "createdDateTime": "2017-05-15T10:00:00Z",
+  "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
+}
+```
+
+An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 400 Bad Request` status code is returned if any of the parameters are invalid.
+
+## List Action Plan Rules
+* `GET /actionplans/5381731e-e386-41a1-8462-26373744db86/rules` will return a list of action plan rules (earliest first) for the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
+
+### Example JSON Response
+```json
+[
+  {
+    "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
+    "actionTypeName": "HouseholdCreateVisit",
+    "name": "HH_CV-4",
+    "description": "Create Household Visit(SD-4)",
+    "surveyDateDaysOffet": -4,
+    "priority": 3
+  }
+]
+```
+
+An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 204 No Content` status code is returned if there are no rules for the action plan.
