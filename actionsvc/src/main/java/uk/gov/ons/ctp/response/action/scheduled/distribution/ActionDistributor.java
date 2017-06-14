@@ -440,7 +440,7 @@ public class ActionDistributor {
     actionRequest.setEvents(actionEvent);
     actionRequest.setIac(caseDTO.getIac());
     actionRequest.setPriority(Priority.fromValue(ActionPriority.valueOf(action.getPriority()).getName()));
-    actionRequest.setCaseRef(caseDTO.getCaseRef());
+  //  actionRequest.setCaseRef(caseDTO.getCaseRef());
 
     ActionAddress actionAddress = mapperFacade.map(partyDTO, ActionAddress.class);
     actionRequest.setAddress(actionAddress);

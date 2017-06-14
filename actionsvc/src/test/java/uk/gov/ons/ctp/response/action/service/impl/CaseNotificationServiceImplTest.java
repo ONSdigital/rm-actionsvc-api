@@ -91,13 +91,11 @@ public class CaseNotificationServiceImplTest {
 	  List<CaseNotification> notification = Arrays.asList(caseNotification);
 	  
 	  List<CaseDetailsDTO> caseJson = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
-	  List<CaseGroupDTO> caseGroupJson = FixtureHelper.loadClassFixtures(CaseGroupDTO[].class);
 	  List<CollectionExerciseDTO> collectionExerciseJson = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
 	  
 	  
 	  when(caseSvcClientServiceImpl.getCase(UUID.fromString(DUMMY_UUID))).thenReturn(caseJson.get(0));
-	  when(caseSvcClientServiceImpl.getCaseGroup(caseJson.get(0).getCaseGroupId())).thenReturn(caseGroupJson.get(0));
-	  when(collectionSvcClientServiceImpl.getCollectionExercise(caseGroupJson.get(0).getCollectionExerciseId())).thenReturn(collectionExerciseJson.get(0));
+	  when(collectionSvcClientServiceImpl.getCollectionExercise(caseJson.get(0).getCaseGroup().getCollectionExerciseId())).thenReturn(collectionExerciseJson.get(0));
 	  
 	  caseNotificationService.acceptNotification(notification);
 	  

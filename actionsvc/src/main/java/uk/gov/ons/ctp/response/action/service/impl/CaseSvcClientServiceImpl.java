@@ -59,7 +59,6 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
     log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getId(),
         actionCategory);
     CaseEventDTO caseEventDTO = new CaseEventDTO();
-    caseEventDTO.setCaseId(action.getCaseId());
     caseEventDTO.setCategory(actionCategory);
     caseEventDTO.setCreatedBy(action.getCreatedBy());
     caseEventDTO.setCreatedDateTime(new Date());
