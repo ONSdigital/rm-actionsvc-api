@@ -1,5 +1,3 @@
-_WORK IN PROGRESS_
-
 # Action Service API
 This page documents the Action service API endpoints. These endpoints will be secured using HTTP basic authentication initially. All endpoints return an `HTTP 200 OK` status code except where noted otherwise.
 
@@ -106,9 +104,9 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 ## Create Action
 * `POST /actions` will create an action.
 
-**Required parameters**: `caseId` as the ID of the case this action is for, `actionTypeName` as the name of the action type this action is for and `createdBy` as the creator of the action.
+**Required parameters**: `caseId` as the ID of the case the action is for, `actionTypeName` as the name of the action type the action is for and `createdBy` as the creator of the action.
 
-*Optional parameters:* `priority` as the action priority (1 = highest, 5 = lowest) as passed to the remote handler
+*Optional parameters:* `priority` as the action priority (1 = highest, 5 = lowest) as passed to the remote handler.
 
 ### Example JSON Response
 ```json
@@ -259,3 +257,58 @@ An `HTTP 404 Not Found` status code is returned if the action plan with the spec
 ```
 
 An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 204 No Content` status code is returned if there are no rules for the action plan.
+
+## List Action Plan Jobs
+* `GET /actionplans/5381731e-e386-41a1-8462-26373744db86/jobs` will return a list of action plan jobs (most recent first) for the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
+
+### Example JSON Response
+```json
+[
+  {
+    "id": "714356ba-7236-4179-8007-f09190eed323",
+    "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
+    "createdBy": "SYSTEM",
+    "state": "SUBMITTED",
+    "createdDateTime": "2017-05-15T10:00:00Z",
+    "updatedDateTime": "2017-05-15T10:00:00Z"
+  }
+]
+```
+
+An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 204 No Content` status code is returned if there are no action plan jobs for the action plan.
+
+## Get Action Plan Job
+* `GET /actionplans/jobs/714356ba-7236-4179-8007-f09190eed323` will return the details of the action plan job with an ID of `714356ba-7236-4179-8007-f09190eed323`.
+
+### Example JSON Response
+```json
+{
+  "id": "714356ba-7236-4179-8007-f09190eed323",
+  "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
+  "createdBy": "SYSTEM",
+  "state": "SUBMITTED",
+  "createdDateTime": "2017-05-15T10:00:00Z",
+  "updatedDateTime": "2017-05-15T10:00:00Z"
+}
+```
+
+An `HTTP 404 Not Found` status code is returned if the action plan job with the specified ID could not be found.
+
+## Create Action Plan Job
+* `POST /actionplans/5381731e-e386-41a1-8462-26373744db86/jobs` will create an action plan job (i.e. execute the action plan) for the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
+
+**Required parameters**: `createdBy` as the creator of the action plan job.
+
+### Example JSON Response
+```json
+{
+  "id": "714356ba-7236-4179-8007-f09190eed323",
+  "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
+  "createdBy": "SYSTEM",
+  "state": "SUBMITTED",
+  "createdDateTime": "2017-05-15T10:00:00Z",
+  "updatedDateTime": "2017-05-15T10:00:00Z"
+}
+```
+
+An `HTTP 201 Created` status code is returned if the action plan job creation was a success. An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 400 Bad Request` is returned if any of the required parameters are missing.
