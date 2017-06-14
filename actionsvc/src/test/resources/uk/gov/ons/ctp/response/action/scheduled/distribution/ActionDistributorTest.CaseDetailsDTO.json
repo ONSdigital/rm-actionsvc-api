@@ -1,0 +1,22 @@
+[
+	{
+		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
+		"state": "SAMPLED_INIT",
+		"iac": "bbbb cccc dddd",
+		"caseRef": "caseRef",
+		"actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a7",
+		"caseGroupId": "7fac359e-645b-487e-bb02-70536eae51d4",
+		"collectionInstrumentId": "",
+		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4",
+		"sampleUnitType": "H",
+		"createdBy": "me",
+		"createdDateTime": 1460732606544,
+		"responses": [
+			{
+				"dateTime": 1460732606544,
+				"inboundChannel": "ONLINE"
+			}
+		],
+		"caseEvents": []
+	}
+]

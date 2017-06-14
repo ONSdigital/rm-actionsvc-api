@@ -1,13 +1,13 @@
 [
 {  
-   "actionId":3,
-   "caseId":3,
-   "actionPlanId":3,
-   "actionRuleId":3,
+   "id":"774afa97-8c87-4131-923b-b33ccbf72b3e",
+   "caseId":"7fac359e-645b-487e-bb02-70536eae51d4",
+   "actionPlanFK":3,
+   "actionRuleFK":3,
    "createdBy":"me",
    "manuallyCreated":true,
    "actionType":{
-    "actionTypeId": 2,
+    "actionTypePK": 2,
     "name": "HouseholdUploadIAC",
     "description": "Household upload IAC",
     "handler": "HHSurvey",
@@ -21,14 +21,14 @@
    "updatedDateTime":1460719498196
 },
 {  
-   "actionId":4,
-   "caseId":4,
-   "actionPlanId":4,
-   "actionRuleId":4,
+   "id":"64970e28-2ffc-4948-a643-2eb1b42b3fd7",
+   "caseId":"7fac359e-645b-487e-bb02-70536eae51d4",
+   "actionPlanFK":4,
+   "actionRuleFK":4,
    "createdBy":"me",
    "manuallyCreated":true,
    "actionType":{
-    "actionTypeId": 2,
+    "actionTypePK": 2,
     "name": "HouseholdUploadIAC",
     "description": "Household upload IAC",
     "handler": "HHSurvey",

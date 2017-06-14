@@ -1,6 +1,6 @@
 [
 {  
-  "actionPlanId": 1,
+  "actionPlanPK": 1,
   "name": "plan_name",
   "description": "plan desc",
   "createdBy": "SYSTEM",

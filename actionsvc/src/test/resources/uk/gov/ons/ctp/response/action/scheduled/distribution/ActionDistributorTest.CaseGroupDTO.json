@@ -1,26 +1,26 @@
 [
 	{
-		"id": "1",
+		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
-		"partyId": 1
+		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4"
 	},
 	{
-		"id": "2",
+		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
-		"partyId": 1
+		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4"
 	},
 	{
-		"id": "3",
+		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
-		"partyId": 1
+		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4"
 	},
 	{
-		"id": "4",
+		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"sampleUnitRef": "12345678",
-		"partyId": 1
+		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4"
 	}
 ]

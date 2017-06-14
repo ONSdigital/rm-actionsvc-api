@@ -1,8 +1,8 @@
 [
 {  
    "createdDateTime":1460736159699,
-   "caseEventId":1,
-   "caseId":1,
+   "partyId":"7fac359e-645b-487e-bb02-70536eae51d4",
+   "caseId":"7fac359e-645b-487e-bb02-70536eae51d4",
    "category":"GENERAL_ENQUIRY",
    "subCategory":"subcat",
    "createdBy":"me",
@@ -10,8 +10,8 @@
 },
 {  
    "createdDateTime":1460736159699,
-   "caseEventId":2,
-   "caseId":2,
+   "partyId":"7fac359e-645b-487e-bb02-70536eae51d4",
+   "caseId":"7fac359e-645b-487e-bb02-70536eae51d4",
    "category":"GENERAL_ENQUIRY",
    "subCategory":"subcat",
    "createdBy":"me",
@@ -19,8 +19,8 @@
 },
 {  
    "createdDateTime":1460736159699,
-   "caseEventId":3,
-   "caseId":3,
+   "partyId":"7fac359e-645b-487e-bb02-70536eae51d4",
+   "caseId":"7fac359e-645b-487e-bb02-70536eae51d4",
    "category":"GENERAL_ENQUIRY",
    "subCategory":"subcat",
    "createdBy":"me",
@@ -28,8 +28,8 @@
 },
 {  
    "createdDateTime":1460736159699,
-   "caseEventId":4,
-   "caseId":4,
+   "partyId":"7fac359e-645b-487e-bb02-70536eae51d4",
+   "caseId":"7fac359e-645b-487e-bb02-70536eae51d4",
    "category":"GENERAL_ENQUIRY",
    "subCategory":"subcat",
    "createdBy":"me",
