@@ -104,9 +104,9 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 ## Create Action
 * `POST /actions` will create an action.
 
-**Required parameters**: `caseId` as the ID of the case this action is for, `actionTypeName` as the name of the action type this action is for and `createdBy` as the creator of the action.
+**Required parameters**: `caseId` as the ID of the case the action is for, `actionTypeName` as the name of the action type the action is for and `createdBy` as the creator of the action.
 
-*Optional parameters:* `priority` as the action priority (1 = highest, 5 = lowest) as passed to the remote handler
+*Optional parameters:* `priority` as the action priority (1 = highest, 5 = lowest) as passed to the remote handler.
 
 ### Example JSON Response
 ```json
