@@ -262,7 +262,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
         .withEmailAddress(csvLine.getEmailAddress())
         .end()
         .withAddress()
-        .withUprn(new BigInteger(csvLine.getUprn()))
         .withCategory(csvLine.getCategory())
         .withEstabType(csvLine.getEstabType())
         .withLatitude(new BigDecimal(csvLine.getLatitude()))
