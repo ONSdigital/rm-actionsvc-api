@@ -293,7 +293,7 @@ public class CsvIngesterTest {
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
   }
-  
+
   /**
    * Test ...
    *

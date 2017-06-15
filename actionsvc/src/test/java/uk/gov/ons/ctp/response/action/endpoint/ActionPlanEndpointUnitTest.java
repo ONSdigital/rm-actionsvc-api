@@ -72,8 +72,8 @@ public class ActionPlanEndpointUnitTest {
   private static final String LAST_RUN_DATE_TIME = "2016-03-09T11:15:48.023+0000";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
-  private static final String ACTIONPLAN_JSON = "{\"id\":\"e71002ac-3575-47eb-b87f-cd9db92bf9a7\",\"name\":\"HH\", \"description\":\"philippetesting\","
-          +"\"createdBy\":\"SYSTEM\", \"lastRunDateTime\":null}";
+  private static final String ACTIONPLAN_JSON = "{\"id\":\"e71002ac-3575-47eb-b87f-cd9db92bf9a7\",\"name\":\"HH\", "
+          + "\"description\":\"philippetesting\", \"createdBy\":\"SYSTEM\", \"lastRunDateTime\":null}";
   private static final String ACTIONPLAN_INVALIDJSON = "{\"some\":\"joke\"}";
 
   private static final Timestamp ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP = Timestamp
@@ -103,6 +103,7 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlansFound() throws Exception {
@@ -123,19 +124,25 @@ public class ActionPlanEndpointUnitTest {
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))
             .andExpect(handler().methodName("findActionPlans"))
             .andExpect(jsonPath("$", Matchers.hasSize(3)))
-            .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTIONPLAN1_ID.toString(), ACTIONPLAN2_ID.toString(), ACTIONPLAN3_ID.toString())))
-            .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTIONPLAN1_NAME, ACTIONPLAN2_NAME, ACTIONPLAN3_NAME)))
-            .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTIONPLAN1_DESC, ACTIONPLAN2_DESC, ACTIONPLAN3_DESC)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTIONPLAN1_ID.toString(),
+                    ACTIONPLAN2_ID.toString(), ACTIONPLAN3_ID.toString())))
+            .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTIONPLAN1_NAME, ACTIONPLAN2_NAME,
+                    ACTIONPLAN3_NAME)))
+            .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTIONPLAN1_DESC, ACTIONPLAN2_DESC,
+                    ACTIONPLAN3_DESC)))
             .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY, CREATED_BY, CREATED_BY)))
-            .andExpect(jsonPath("$[*].lastRunDateTime", containsInAnyOrder(LAST_RUN_DATE_TIME, LAST_RUN_DATE_TIME, LAST_RUN_DATE_TIME)));
+            .andExpect(jsonPath("$[*].lastRunDateTime", containsInAnyOrder(LAST_RUN_DATE_TIME,
+                    LAST_RUN_DATE_TIME, LAST_RUN_DATE_TIME)));
   }
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanFound() throws Exception {
-    when(actionPlanService.findActionPlan(ACTIONPLANPK)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
+    when(actionPlanService.findActionPlan(ACTIONPLANPK)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID,
+            ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
             ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", ACTIONPLANPK)));
@@ -152,6 +159,7 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanNotFound() throws Exception {
@@ -167,6 +175,7 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanUnCheckedException() throws Exception {
@@ -185,11 +194,12 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionRulesForActionPlanFound() throws Exception {
-    when(actionPlanService.findActionPlan(ACTIONPLANPK)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
-            ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
+    when(actionPlanService.findActionPlan(ACTIONPLANPK)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID,
+            ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY, ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
 
     ActionType actionType = new ActionType(1, ACTIONTYPE_NAME, ACTIONTYPE_DESC, ACTIONTYPE_HANDLER,
             ACTIONTYPE_CANCANCEL, ACTIONTYPE_RESPONSEREQUIRED);
@@ -210,23 +220,29 @@ public class ActionPlanEndpointUnitTest {
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))
             .andExpect(handler().methodName("returnActionRulesForActionPlanId"))
             .andExpect(jsonPath("$", Matchers.hasSize(3)))
-            .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTIONRULE_ACTIONTYPENAME, ACTIONRULE_ACTIONTYPENAME, ACTIONRULE_ACTIONTYPENAME)))
-            .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTIONRULE_NAME, ACTIONRULE_NAME, ACTIONRULE_NAME)))
-            .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTIONRULE_DESCRIPTION, ACTIONRULE_DESCRIPTION, ACTIONRULE_DESCRIPTION)))
+            .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTIONRULE_ACTIONTYPENAME,
+                    ACTIONRULE_ACTIONTYPENAME, ACTIONRULE_ACTIONTYPENAME)))
+            .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTIONRULE_NAME, ACTIONRULE_NAME,
+                    ACTIONRULE_NAME)))
+            .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTIONRULE_DESCRIPTION,
+                    ACTIONRULE_DESCRIPTION, ACTIONRULE_DESCRIPTION)))
             .andExpect(jsonPath("$[*].daysOffset", containsInAnyOrder(ACTIONRULE_SURVEYDATEDAYSOFFSET,
                     ACTIONRULE_SURVEYDATEDAYSOFFSET, ACTIONRULE_SURVEYDATEDAYSOFFSET)))
-            .andExpect(jsonPath("$[*].priority", containsInAnyOrder(ACTIONRULE_PRIORITY, ACTIONRULE_PRIORITY, ACTIONRULE_PRIORITY)));
+            .andExpect(jsonPath("$[*].priority", containsInAnyOrder(ACTIONRULE_PRIORITY, ACTIONRULE_PRIORITY,
+                    ACTIONRULE_PRIORITY)));
   }
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findNoActionRulesForActionPlan() throws Exception {
-    when(actionPlanService.findActionPlan(ACTIONPLANID_WITHNOACTIONRULE)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
-            ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
+    when(actionPlanService.findActionPlan(ACTIONPLANID_WITHNOACTIONRULE)).thenReturn(new ActionPlan(ACTIONPLANPK,
+            ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY, ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/rules", ACTIONPLANID_WITHNOACTIONRULE)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/rules",
+            ACTIONPLANID_WITHNOACTIONRULE)));
 
     actions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))
@@ -235,6 +251,7 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionRulesForNonExistingActionPlan() throws Exception {
@@ -250,10 +267,12 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void updateActionPlanNegativeScenarioInvalidJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTIONPLANPK), ACTIONPLAN_INVALIDJSON));
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTIONPLANPK),
+            ACTIONPLAN_INVALIDJSON));
 
     actions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))
@@ -265,10 +284,12 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void updateActionPlanHappyScenario() throws Exception {
-    when(actionPlanService.updateActionPlan(any(Integer.class), any(ActionPlan.class))).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
+    when(actionPlanService.updateActionPlan(any(Integer.class), any(ActionPlan.class))).thenReturn(
+            new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
             ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
 
     ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTIONPLANPK), ACTIONPLAN_JSON));

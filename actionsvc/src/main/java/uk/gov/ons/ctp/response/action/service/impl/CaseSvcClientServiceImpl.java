@@ -34,8 +34,8 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
 
   @Override
   public CaseDetailsDTO getCase(final UUID caseId) {
-	  CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
-			  CaseDetailsDTO.class, caseId);
+    CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+        CaseDetailsDTO.class, caseId);
     return caseDTO;
   }
 
