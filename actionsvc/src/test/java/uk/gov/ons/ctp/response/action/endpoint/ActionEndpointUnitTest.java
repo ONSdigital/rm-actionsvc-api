@@ -18,9 +18,11 @@ import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
 import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
+import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.model.ActionType;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
+import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 import uk.gov.ons.ctp.response.action.service.ActionService;
 
 import java.math.BigInteger;
@@ -53,6 +55,9 @@ public final class ActionEndpointUnitTest {
   private ActionService actionService;
 
   @Mock
+  private ActionPlanService actionPlanService;
+
+  @Mock
   private ActionCaseService actionCaseService;
 
   @Spy
@@ -64,20 +69,21 @@ public final class ActionEndpointUnitTest {
   private static final ActionDTO.ActionState ACTION2_ACTIONSTATE = ActionDTO.ActionState.COMPLETED;
   private static final ActionDTO.ActionState ACTION3_ACTIONSTATE = ActionDTO.ActionState.CANCELLED;
 
-  private static final UUID ACTION_CASEID = UUID.fromString("E39202CE-D9A2-4BDD-92F9-E5E0852AF023");
   private static final Integer ACTION_CASEFK = 1;
   private static final Integer ACTION1_PRIORITY = 1;
   private static final Integer ACTION2_PRIORITY = 3;
-  private static final Integer ACTION1_PLANFK = 1;
-  private static final Integer ACTION2_PLANFK = 2;
-  private static final Integer ACTION1_RULEFK = 1;
-  private static final Integer ACTION2_RULEFK = 2;
+  private static final Integer ACTION1_PLAN_FK = 1;
+  private static final Integer ACTION2_PLAN_FK = 2;
+  private static final Integer ACTION1_RULE_FK = 1;
+  private static final Integer ACTION2_RULE_FK = 2;
   private static final String NON_EXISTING_ID = "e1c26bf2-eaa8-4a8a-b44f-3b8f004ef271";
 
-  private static final BigInteger ACTIONPK = BigInteger.valueOf(1);
+  private static final BigInteger ACTION_PK = BigInteger.valueOf(1);
+
+  private static final UUID ACTION_CASEID = UUID.fromString("E39202CE-D9A2-4BDD-92F9-E5E0852AF023");
   private static final UUID ACTIONID_1 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
   private static final UUID ACTIONID_2 = UUID.fromString("64970e28-2ffc-4948-a643-2eb1b42b3fd7");
-  private static final BigInteger UNCHECKED_EXCEPTION = BigInteger.valueOf(999);
+  private static final UUID ACTION2_PLAN_UUID = UUID.fromString("64970e28-2ffc-4948-a643-2eb1b42b3fd8");
 
   private static final Boolean ACTION1_ACTIONTYPECANCEL = true;
   private static final Boolean ACTION2_ACTIONTYPECANCEL = false;
@@ -87,7 +93,7 @@ public final class ActionEndpointUnitTest {
   private static final Boolean ACTION2_MANUALLY_CREATED = false;
 
   private static final Timestamp ACTION_CREATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 18:30:00");
-  private static final Timestamp ACTION_UPDATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 18:30:00");
+  private static final Timestamp ACTION_UPDATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 19:30:00");
 
   private static final String ACTION1_ACTIONTYPENAME = "actiontypename1";
   private static final String ACTION2_ACTIONTYPENAME = "actiontypename2";
@@ -99,6 +105,7 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION2_SITUATION = "Sent";
   private static final String ACTION_CREATEDBY = "Unit Tester";
   private static final String ACTION_CREATEDDATE_VALUE = "2016-02-26T18:30:00.000+0000";
+  private static final String ACTION_UPDATEDDATE_VALUE = "2016-02-26T19:30:00.000+0000";
   private static final String ACTION_NOTFOUND = "NotFound";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
@@ -155,23 +162,25 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test requesting Actions filtered by action type name and state found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionsByActionTypeAndStateFound() throws Exception {
     List<Action> result = new ArrayList<Action>();
     ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
             ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    result.add(new Action(ACTIONPK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLANFK, ACTION2_RULEFK, ACTION_CREATEDBY,
+    result.add(new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK, ACTION_CREATEDBY,
             ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
             ACTION2_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0));
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION2_ACTIONTYPENAME,
             ACTION2_ACTIONSTATE)).thenReturn(result);
 
-    //System.out.println(result.get(0).toString());
+    ActionPlan actionPlan = new ActionPlan();
+    actionPlan.setId(ACTION2_PLAN_UUID);
+    when(actionPlanService.findActionPlan(ACTION2_PLAN_FK)).thenReturn(actionPlan);
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION2_ACTIONTYPENAME, ACTION2_ACTIONSTATE)));
-
-    System.out.println(actions.andReturn().getResponse().getContentAsString());
 
     actions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -179,17 +188,22 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
             .andExpect(jsonPath("$[0].id", is(ACTIONID_2.toString())))
             .andExpect(jsonPath("$[0].caseId", is(ACTION_CASEID.toString())))
+            .andExpect(jsonPath("$[0].actionPlanId", is(ACTION2_PLAN_UUID.toString())))
+// TODO            .andExpect(jsonPath("$[0].actionRuleId", is(ACTION2_PLAN_UUID.toString())))
+            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)))
             .andExpect(jsonPath("$[0].createdBy", is(ACTION_CREATEDBY)))
             .andExpect(jsonPath("$[0].manuallyCreated", is(ACTION2_MANUALLY_CREATED)))
             .andExpect(jsonPath("$[0].priority", is(ACTION2_PRIORITY)))
             .andExpect(jsonPath("$[0].situation", is(ACTION2_SITUATION)))
             .andExpect(jsonPath("$[0].state", is(ACTION2_ACTIONSTATE.name())))
             .andExpect(jsonPath("$[0].createdDateTime", is(ACTION_CREATEDDATE_VALUE)))
-            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)));
+            .andExpect(jsonPath("$[0].updatedDateTime", is(ACTION_UPDATEDDATE_VALUE)));
   }
 
   /**
    * Test requesting Actions filtered by action type name and state not found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionsByActionTypeAndStateNotFound() throws Exception {
@@ -205,16 +219,22 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test requesting Actions filtered by action type name found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionsByActionTypeFound() throws Exception {
     List<Action> result = new ArrayList<Action>();
     ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
             ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    result.add(new Action(ACTIONPK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLANFK, ACTION2_RULEFK, ACTION_CREATEDBY,
+    result.add(new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK, ACTION_CREATEDBY,
             ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
             ACTION2_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0));
     when(actionService.findActionsByType(ACTION2_ACTIONTYPENAME)).thenReturn(result);
+
+    ActionPlan actionPlan = new ActionPlan();
+    actionPlan.setId(ACTION2_PLAN_UUID);
+    when(actionPlanService.findActionPlan(ACTION2_PLAN_FK)).thenReturn(actionPlan);
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION2_ACTIONTYPENAME)));
 
@@ -224,18 +244,23 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
             .andExpect(jsonPath("$[0].id", is(ACTIONID_2.toString())))
             .andExpect(jsonPath("$[0].caseId", is(ACTION_CASEID.toString())))
+            .andExpect(jsonPath("$[0].actionPlanId", is(ACTION2_PLAN_UUID.toString())))
+// TODO            .andExpect(jsonPath("$[0].actionRuleId", is(ACTION2_PLAN_UUID.toString())))
+            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)))
             .andExpect(jsonPath("$[0].createdBy", is(ACTION_CREATEDBY)))
             .andExpect(jsonPath("$[0].manuallyCreated", is(ACTION2_MANUALLY_CREATED)))
             .andExpect(jsonPath("$[0].priority", is(ACTION2_PRIORITY)))
             .andExpect(jsonPath("$[0].situation", is(ACTION2_SITUATION)))
             .andExpect(jsonPath("$[0].state", is(ACTION2_ACTIONSTATE.name())))
             .andExpect(jsonPath("$[0].createdDateTime", is(ACTION_CREATEDDATE_VALUE)))
-            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)));
+            .andExpect(jsonPath("$[0].updatedDateTime", is(ACTION_UPDATEDDATE_VALUE)));
   }
 
 
   /**
    * Test requesting Actions filtered by action type name not found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionsByActionTypeNotFound() throws Exception {
@@ -250,16 +275,21 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test requesting Actions filtered by action state found.
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionsByStateFound() throws Exception {
     List<Action> result = new ArrayList<Action>();
     ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
             ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    result.add(new Action(ACTIONPK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLANFK, ACTION2_RULEFK, ACTION_CREATEDBY,
+    result.add(new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK, ACTION_CREATEDBY,
             ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
             ACTION2_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0));
     when(actionService.findActionsByState(ACTION2_ACTIONSTATE)).thenReturn(result);
+
+    ActionPlan actionPlan = new ActionPlan();
+    actionPlan.setId(ACTION2_PLAN_UUID);
+    when(actionPlanService.findActionPlan(ACTION2_PLAN_FK)).thenReturn(actionPlan);
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions?state=%s", ACTION2_ACTIONSTATE.toString())));
 
@@ -269,18 +299,22 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
             .andExpect(jsonPath("$[0].id", is(ACTIONID_2.toString())))
             .andExpect(jsonPath("$[0].caseId", is(ACTION_CASEID.toString())))
+            .andExpect(jsonPath("$[0].actionPlanId", is(ACTION2_PLAN_UUID.toString())))
+// TODO            .andExpect(jsonPath("$[0].actionRuleId", is(ACTION2_PLAN_UUID.toString())))
+            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)))
             .andExpect(jsonPath("$[0].createdBy", is(ACTION_CREATEDBY)))
             .andExpect(jsonPath("$[0].manuallyCreated", is(ACTION2_MANUALLY_CREATED)))
             .andExpect(jsonPath("$[0].priority", is(ACTION2_PRIORITY)))
             .andExpect(jsonPath("$[0].situation", is(ACTION2_SITUATION)))
             .andExpect(jsonPath("$[0].state", is(ACTION2_ACTIONSTATE.name())))
             .andExpect(jsonPath("$[0].createdDateTime", is(ACTION_CREATEDDATE_VALUE)))
-            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)));
+            .andExpect(jsonPath("$[0].updatedDateTime", is(ACTION_UPDATEDDATE_VALUE)));
   }
-
 
   /**
    * Test requesting an Action by action Id not found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionByActionIdNotFound() throws Exception {
@@ -296,6 +330,8 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test requesting Actions by case Id found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionsByCaseIdFound() throws Exception {
@@ -304,10 +340,10 @@ public final class ActionEndpointUnitTest {
             ACTION1_ACTIONTYPEHANDLER, ACTION1_ACTIONTYPECANCEL, ACTION1_RESPONSEREQUIRED);
     ActionType actionType2 = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
             ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    result.add(new Action(ACTIONPK, ACTIONID_1, ACTION_CASEID, ACTION_CASEFK, ACTION1_PLANFK, ACTION1_RULEFK, ACTION_CREATEDBY,
+    result.add(new Action(ACTION_PK, ACTIONID_1, ACTION_CASEID, ACTION_CASEFK, ACTION1_PLAN_FK, ACTION1_RULE_FK, ACTION_CREATEDBY,
             ACTION1_MANUALLY_CREATED, actionType1, ACTION1_PRIORITY, ACTION1_SITUATION, ACTION1_ACTIONSTATE,
             ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0));
-    result.add(new Action(ACTIONPK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLANFK, ACTION2_RULEFK, ACTION_CREATEDBY,
+    result.add(new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK, ACTION_CREATEDBY,
             ACTION2_MANUALLY_CREATED, actionType2, ACTION2_PRIORITY, ACTION2_SITUATION, ACTION2_ACTIONSTATE,
             ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0));
     when(actionService.findActionsByCaseId(ACTION_CASEID)).thenReturn(result);
@@ -334,6 +370,8 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test requesting Actions by case Id not found.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionByCaseIdNotFound() throws Exception {
@@ -346,7 +384,7 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test updating action not found
-   * TODO: ERROR Expected 404, actual 400
+   * @throws Exception when putJson does
    */
   @Test
   public void updateActionByActionIdNotFound() throws Exception {
@@ -360,6 +398,8 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test requesting an Action creating an Unchecked Exception.
+   *
+   * @throws Exception when getJson does
    */
   @Test
   public void findActionByActionIdUnCheckedException() throws Exception {
@@ -377,13 +417,13 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test creating an Action with valid JSON.
-   * TODO: ERROR Expected 201, actual 400
+   * @throws Exception when postJson does
    */
   @Test
   public void createActionGoodJsonProvided() throws Exception {
     ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
             ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    Action action = new Action(ACTIONPK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLANFK, ACTION2_RULEFK, ACTION_CREATEDBY,
+    Action action = new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK, ACTION_CREATEDBY,
             ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
             ACTION2_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0);
     when(actionService.createAction(any(Action.class))).thenReturn(action);
@@ -405,6 +445,7 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test creating an Action with invalid JSON Property.
+   * @throws Exception when postJson does
    */
   @Test
   public void createActionInvalidPropJsonProvided() throws Exception {
@@ -421,6 +462,7 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test creating an Action with missing JSON Property.
+   * @throws Exception when postJson does
    */
   @Test
   public void createActionMissingPropJsonProvided() throws Exception {
@@ -436,6 +478,7 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test cancelling an Action.
+   * @throws Exception when putJson does
    */
   @Test
   public void cancelActions() throws Exception {
@@ -445,7 +488,7 @@ public final class ActionEndpointUnitTest {
     ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
             ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
 
-    Action action = new Action(ACTIONPK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLANFK, ACTION2_RULEFK, ACTION_CREATEDBY,
+    Action action = new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK, ACTION_CREATEDBY,
             ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
             ACTION3_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0);
     List<Action> result = new ArrayList<>();
@@ -471,6 +514,7 @@ public final class ActionEndpointUnitTest {
 
   /**
    * Test cancelling an Action.
+   * @throws Exception when putJson does
    */
   @Test
   public void cancelActionsCaseNotFound() throws Exception {
