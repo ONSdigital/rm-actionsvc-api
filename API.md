@@ -250,7 +250,7 @@ An `HTTP 404 Not Found` status code is returned if the action plan with the spec
     "actionTypeName": "HouseholdCreateVisit",
     "name": "HH_CV-4",
     "description": "Create Household Visit(SD-4)",
-    "surveyDateDaysOffet": -4,
+    "surveyDateDaysOffset": -4,
     "priority": 3
   }
 ]
