@@ -43,6 +43,12 @@ public class ActionServiceImpl implements ActionService {
   private StateTransitionManager<ActionState, ActionDTO.ActionEvent> actionSvcStateTransitionManager;
 
   @Override
+  public List<Action> findAllActionsOrderedByCreatedDateTimeDescending() {
+    log.debug("Entering findAllActions");
+    return actionRepo.findAllByOrderByCreatedDateTimeDesc();
+  }
+
+  @Override
   public List<Action> findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(final String actionTypeName,
       final ActionDTO.ActionState state) {
     log.debug("Entering findActionsByTypeAndState with {} {}", actionTypeName, state);

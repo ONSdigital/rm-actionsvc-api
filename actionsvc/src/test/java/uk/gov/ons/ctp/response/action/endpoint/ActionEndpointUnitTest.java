@@ -161,6 +161,40 @@ public final class ActionEndpointUnitTest {
   }
 
   /**
+   * Test requesting Actions but none found.
+   *
+   * @throws Exception when getJson does
+   */
+  @Test
+  public void findActionsNoneFound() throws Exception {
+    when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(new ArrayList<>());
+
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions")));
+
+    actions.andExpect(status().isNoContent())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("findActions"));
+  }
+
+  /**
+   * Test requesting Actions filtered by action type name and state not found.
+   *
+   * @throws Exception when getJson does
+   */
+  @Test
+  public void findActionsByActionTypeAndStateNotFound() throws Exception {
+    when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_NOTFOUND,
+            ACTION2_ACTIONSTATE)).thenReturn(new ArrayList<>());
+
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_NOTFOUND,
+            ACTION2_ACTIONSTATE)));
+
+    actions.andExpect(status().isNoContent())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("findActions"));
+  }
+
+  /**
    * Test requesting Actions filtered by action type name and state found.
    *
    * @throws Exception when getJson does
@@ -199,24 +233,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$[0].state", is(ACTION2_ACTIONSTATE.name())))
             .andExpect(jsonPath("$[0].createdDateTime", is(ACTION_CREATEDDATE_VALUE)))
             .andExpect(jsonPath("$[0].updatedDateTime", is(ACTION_UPDATEDDATE_VALUE)));
-  }
-
-  /**
-   * Test requesting Actions filtered by action type name and state not found.
-   *
-   * @throws Exception when getJson does
-   */
-  @Test
-  public void findActionsByActionTypeAndStateNotFound() throws Exception {
-    when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_NOTFOUND,
-            ACTION2_ACTIONSTATE)).thenReturn(new ArrayList<Action>());
-
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_NOTFOUND,
-            ACTION2_ACTIONSTATE)));
-
-    actions.andExpect(status().isNoContent())
-            .andExpect(handler().handlerType(ActionEndpoint.class))
-            .andExpect(handler().methodName("findActions"));
   }
 
   /**

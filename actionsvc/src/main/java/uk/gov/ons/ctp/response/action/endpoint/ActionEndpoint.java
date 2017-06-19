@@ -61,8 +61,8 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<?> findActions(@RequestParam(value = "actiontype", required = false) final String actionType,
-                                       @RequestParam(value = "state", required = false)
-                                       final ActionDTO.ActionState actionState) {
+                                       @RequestParam(value = "state", required = false) final ActionDTO.ActionState
+                                               actionState) {
     List<Action> actions = null;
 
     if (actionType != null) {
@@ -78,8 +78,8 @@ public final class ActionEndpoint implements CTPEndpoint {
         log.info("Entering findActionsByState with {}", actionState);
         actions = actionService.findActionsByState(actionState);
       } else {
-        log.info("Entering findActionsByState");
-        actions = new ArrayList<>();
+        log.info("Entering findAllActionsOrderedByCreatedDateTimeDescending");
+        actions = actionService.findAllActionsOrderedByCreatedDateTimeDescending();
       }
     }
 

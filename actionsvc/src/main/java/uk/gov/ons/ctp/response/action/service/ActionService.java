@@ -16,6 +16,13 @@ import java.util.UUID;
 public interface ActionService extends CTPService {
 
   /**
+   * To retrieve all Actions
+   *
+   * @return all Actions
+   */
+  List<Action> findAllActionsOrderedByCreatedDateTimeDescending();
+
+  /**
    * Find Actions filtered by ActionType and state ordered by created date time
    * descending
    *
