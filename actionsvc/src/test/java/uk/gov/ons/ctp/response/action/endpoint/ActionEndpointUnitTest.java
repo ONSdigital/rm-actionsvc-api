@@ -36,6 +36,7 @@ import java.util.UUID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,6 +44,7 @@ import static uk.gov.ons.ctp.common.MvcHelper.*;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.INVALID_JSON;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
 import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
+import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
 
 /**
  * ActionEndpoint Unit tests
@@ -116,6 +118,11 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION_ACTIONTYPENAME_3 = "action type three";
   private static final String ACTION_ACTIONTYPENAME_4 = "action type four";
   private static final String ACTION_ACTIONTYPENAME_5 = "action type five";
+  private static final String ACTION_SITUATION_1 = "situation one";
+  private static final String ACTION_SITUATION_2 = "situation two";
+  private static final String ACTION_SITUATION_3 = "situation three";
+  private static final String ACTION_SITUATION_4 = "situation four";
+  private static final String ACTION_SITUATION_5 = "situation five";
   private static final String ACTION1_ACTIONTYPENAME = "actiontypename1";
   private static final String ACTION2_ACTIONTYPENAME = "actiontypename2";
   private static final String ACTION1_ACTIONTYPEDESC = "actiontypedesc1";
@@ -125,6 +132,8 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION1_SITUATION = "Assigned";
   private static final String ACTION2_SITUATION = "Sent";
   private static final String ACTION_CREATEDBY = "Unit Tester";
+  private static final String ALL_ACTIONS_CREATEDDATE_VALUE = "2017-05-15T11:00:00.000+0100";
+  private static final String ALL_ACTIONS_UPDATEDDATE_VALUE = "2017-05-15T12:00:00.000+0100";
   private static final String ACTION_CREATEDDATE_VALUE = "2016-02-26T18:30:00.000+0000";
   private static final String ACTION_UPDATEDDATE_VALUE = "2016-02-26T19:30:00.000+0000";
   private static final String ACTION_NOTFOUND = "NotFound";
@@ -216,6 +225,8 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(5)))
+            .andExpect(jsonPath("$[0].*", hasSize(12)))
+            .andExpect(jsonPath("$[*].*", hasSize(60)))
             .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTION_ID_1.toString(), ACTION_ID_2.toString(),
                     ACTION_ID_3.toString(), ACTION_ID_4.toString(), ACTION_ID_5.toString())))
             .andExpect(jsonPath("$[*].caseId", containsInAnyOrder(ACTION_ID_1_CASE_ID.toString(),
@@ -227,6 +238,21 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTION_ACTIONTYPENAME_1,
                     ACTION_ACTIONTYPENAME_2, ACTION_ACTIONTYPENAME_3, ACTION_ACTIONTYPENAME_4,
                     ACTION_ACTIONTYPENAME_5)))
+            .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY_SYSTEM, CREATED_BY_SYSTEM,
+                    CREATED_BY_SYSTEM, CREATED_BY_SYSTEM, CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$[*].manuallyCreated", containsInAnyOrder(false, false, false, false, false)))
+            .andExpect(jsonPath("$[*].priority", containsInAnyOrder(1, 2, 3, 4, 5)))
+            .andExpect(jsonPath("$[*].situation", containsInAnyOrder(ACTION_SITUATION_1, ACTION_SITUATION_2,
+                    ACTION_SITUATION_3, ACTION_SITUATION_4, ACTION_SITUATION_5)))
+            .andExpect(jsonPath("$[*].state", containsInAnyOrder(ActionDTO.ActionState.ACTIVE.name(),
+                    ActionDTO.ActionState.SUBMITTED.name(), ActionDTO.ActionState.COMPLETED.name(),
+                    ActionDTO.ActionState.CANCELLED.name(), ActionDTO.ActionState.ABORTED.name())))
+            .andExpect(jsonPath("$[*].createdDateTime", containsInAnyOrder(ALL_ACTIONS_CREATEDDATE_VALUE,
+                    ALL_ACTIONS_CREATEDDATE_VALUE, ALL_ACTIONS_CREATEDDATE_VALUE,
+                    ALL_ACTIONS_CREATEDDATE_VALUE, ALL_ACTIONS_CREATEDDATE_VALUE)))
+            .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(ALL_ACTIONS_UPDATEDDATE_VALUE,
+                    ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE,
+                    ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE)))
     // TODO actionRuleId
     ;
   }

@@ -32,7 +32,7 @@ import java.util.Optional;
 public class ActionPlanJobServiceImpl implements ActionPlanJobService {
 
   private static final String ACTION_PLAN_SPAN = "automatedActionPlanExecution";
-  private static final String CREATED_BY_SYSTEM = "SYSTEM";
+  public static final String CREATED_BY_SYSTEM = "SYSTEM";
 
   @Autowired
   private DistributedLockManager actionPlanExecutionLockManager;
