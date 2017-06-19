@@ -12,6 +12,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
@@ -65,6 +66,10 @@ public final class ActionEndpointUnitTest {
 
   private MockMvc mockMvc;
 
+  private List<Action> actions;
+  private List<ActionPlan> actionPlans;
+  private List<ActionType> actionTypes;
+
   private static final ActionDTO.ActionState ACTION1_ACTIONSTATE = ActionDTO.ActionState.ACTIVE;
   private static final ActionDTO.ActionState ACTION2_ACTIONSTATE = ActionDTO.ActionState.COMPLETED;
   private static final ActionDTO.ActionState ACTION3_ACTIONSTATE = ActionDTO.ActionState.CANCELLED;
@@ -79,6 +84,19 @@ public final class ActionEndpointUnitTest {
   private static final String NON_EXISTING_ID = "e1c26bf2-eaa8-4a8a-b44f-3b8f004ef271";
 
   private static final BigInteger ACTION_PK = BigInteger.valueOf(1);
+
+  private static final UUID ACTION_ID_1 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78a");
+  private static final UUID ACTION_ID_1_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fda");
+  private static final UUID ACTION_ID_2 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78b");
+  private static final UUID ACTION_ID_2_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fdb");
+  private static final UUID ACTION_ID_3 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78c");
+  private static final UUID ACTION_ID_3_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fdc");
+  private static final UUID ACTION_ID_4 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78d");
+  private static final UUID ACTION_ID_4_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fdd");
+  private static final UUID ACTION_ID_5 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78e");
+  private static final UUID ACTION_ID_5_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fde");
+  private static final UUID ACTION_PLAN_ID_1 = UUID.fromString("5381731e-e386-41a1-8462-26373744db81");
+  private static final UUID ACTION_PLAN_ID_2 = UUID.fromString("5381731e-e386-41a1-8462-26373744db82");
 
   private static final UUID ACTION_CASEID = UUID.fromString("E39202CE-D9A2-4BDD-92F9-E5E0852AF023");
   private static final UUID ACTIONID_1 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
@@ -158,6 +176,10 @@ public final class ActionEndpointUnitTest {
             .setHandlerExceptionResolvers(mockAdviceFor(RestExceptionHandler.class))
             .setMessageConverters(new MappingJackson2HttpMessageConverter(new CustomObjectMapper()))
             .build();
+
+    actions = FixtureHelper.loadClassFixtures(Action[].class);
+    actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
+    actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
   }
 
   /**
@@ -174,6 +196,33 @@ public final class ActionEndpointUnitTest {
     actions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"));
+  }
+
+  /**
+   * Test requesting Actions and returning all the ones found.
+   *
+   * @throws Exception when getJson does
+   */
+  @Test
+  public void findActions() throws Exception {
+    when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(actions);
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
+
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions")));
+
+    actions.andExpect(status().is2xxSuccessful())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("findActions"))
+            .andExpect(jsonPath("$", Matchers.hasSize(5)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTION_ID_1.toString(), ACTION_ID_2.toString(),
+                    ACTION_ID_3.toString(), ACTION_ID_4.toString(), ACTION_ID_5.toString())))
+            .andExpect(jsonPath("$[*].caseId", containsInAnyOrder(ACTION_ID_1_CASE_ID.toString(),
+                    ACTION_ID_2_CASE_ID.toString(), ACTION_ID_3_CASE_ID.toString(), ACTION_ID_4_CASE_ID.toString(),
+                    ACTION_ID_5_CASE_ID.toString())))
+            .andExpect(jsonPath("$[*].actionPlanId", containsInAnyOrder(ACTION_PLAN_ID_1.toString(),
+                    ACTION_PLAN_ID_1.toString(), ACTION_PLAN_ID_1.toString(), ACTION_PLAN_ID_1.toString(),
+                    ACTION_PLAN_ID_1.toString())))
+    ;
   }
 
   /**
