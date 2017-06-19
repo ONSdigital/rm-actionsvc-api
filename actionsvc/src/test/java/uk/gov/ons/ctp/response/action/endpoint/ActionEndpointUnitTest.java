@@ -96,7 +96,6 @@ public final class ActionEndpointUnitTest {
   private static final UUID ACTION_ID_5 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78e");
   private static final UUID ACTION_ID_5_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fde");
   private static final UUID ACTION_PLAN_ID_1 = UUID.fromString("5381731e-e386-41a1-8462-26373744db81");
-  private static final UUID ACTION_PLAN_ID_2 = UUID.fromString("5381731e-e386-41a1-8462-26373744db82");
 
   private static final UUID ACTION_CASEID = UUID.fromString("E39202CE-D9A2-4BDD-92F9-E5E0852AF023");
   private static final UUID ACTIONID_1 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
@@ -113,6 +112,7 @@ public final class ActionEndpointUnitTest {
   private static final Timestamp ACTION_CREATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 18:30:00");
   private static final Timestamp ACTION_UPDATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 19:30:00");
 
+  private static final String ACTION_ACTIONTYPENAME_1 = "action type one";
   private static final String ACTION1_ACTIONTYPENAME = "actiontypename1";
   private static final String ACTION2_ACTIONTYPENAME = "actiontypename2";
   private static final String ACTION1_ACTIONTYPEDESC = "actiontypedesc1";
@@ -205,6 +205,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActions() throws Exception {
+    for (Action action : actions) {
+      action.setActionType(actionTypes.get(0));
+    }
     when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(actions);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
@@ -222,6 +225,10 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$[*].actionPlanId", containsInAnyOrder(ACTION_PLAN_ID_1.toString(),
                     ACTION_PLAN_ID_1.toString(), ACTION_PLAN_ID_1.toString(), ACTION_PLAN_ID_1.toString(),
                     ACTION_PLAN_ID_1.toString())))
+            .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTION_ACTIONTYPENAME_1,
+                    ACTION_ACTIONTYPENAME_1, ACTION_ACTIONTYPENAME_1, ACTION_ACTIONTYPENAME_1,
+                    ACTION_ACTIONTYPENAME_1)))
+    // TODO actionRuleId
     ;
   }
 
