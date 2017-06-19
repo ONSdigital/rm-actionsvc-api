@@ -68,7 +68,6 @@ public final class ActionEndpointUnitTest {
 
   private List<Action> actions;
   private List<ActionPlan> actionPlans;
-  private List<ActionType> actionTypes;
 
   private static final ActionDTO.ActionState ACTION1_ACTIONSTATE = ActionDTO.ActionState.ACTIVE;
   private static final ActionDTO.ActionState ACTION2_ACTIONSTATE = ActionDTO.ActionState.COMPLETED;
@@ -113,6 +112,10 @@ public final class ActionEndpointUnitTest {
   private static final Timestamp ACTION_UPDATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 19:30:00");
 
   private static final String ACTION_ACTIONTYPENAME_1 = "action type one";
+  private static final String ACTION_ACTIONTYPENAME_2 = "action type two";
+  private static final String ACTION_ACTIONTYPENAME_3 = "action type three";
+  private static final String ACTION_ACTIONTYPENAME_4 = "action type four";
+  private static final String ACTION_ACTIONTYPENAME_5 = "action type five";
   private static final String ACTION1_ACTIONTYPENAME = "actiontypename1";
   private static final String ACTION2_ACTIONTYPENAME = "actiontypename2";
   private static final String ACTION1_ACTIONTYPEDESC = "actiontypedesc1";
@@ -179,7 +182,6 @@ public final class ActionEndpointUnitTest {
 
     actions = FixtureHelper.loadClassFixtures(Action[].class);
     actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
-    actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
   }
 
   /**
@@ -205,9 +207,6 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActions() throws Exception {
-    for (Action action : actions) {
-      action.setActionType(actionTypes.get(0));
-    }
     when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(actions);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
@@ -226,8 +225,8 @@ public final class ActionEndpointUnitTest {
                     ACTION_PLAN_ID_1.toString(), ACTION_PLAN_ID_1.toString(), ACTION_PLAN_ID_1.toString(),
                     ACTION_PLAN_ID_1.toString())))
             .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTION_ACTIONTYPENAME_1,
-                    ACTION_ACTIONTYPENAME_1, ACTION_ACTIONTYPENAME_1, ACTION_ACTIONTYPENAME_1,
-                    ACTION_ACTIONTYPENAME_1)))
+                    ACTION_ACTIONTYPENAME_2, ACTION_ACTIONTYPENAME_3, ACTION_ACTIONTYPENAME_4,
+                    ACTION_ACTIONTYPENAME_5)))
     // TODO actionRuleId
     ;
   }
