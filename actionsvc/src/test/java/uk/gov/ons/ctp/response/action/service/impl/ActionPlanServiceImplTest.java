@@ -13,7 +13,6 @@ import uk.gov.ons.ctp.common.time.DateTimeUtil;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
-import uk.gov.ons.ctp.response.action.domain.repository.ActionRuleRepository;
 
 import java.util.List;
 
@@ -32,9 +31,6 @@ public class ActionPlanServiceImplTest {
 
   @Mock
   private ActionPlanRepository actionPlanRepo;
-
-  @Mock
-  private ActionRuleRepository actionRuleRepo;
 
   @InjectMocks
   private ActionPlanServiceImpl actionPlanServiceImpl;

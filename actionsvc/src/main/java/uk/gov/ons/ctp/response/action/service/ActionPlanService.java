@@ -4,7 +4,6 @@ import java.util.List;
 
 import uk.gov.ons.ctp.common.service.CTPService;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 
 /**
  * Created by Martin.Humphrey on 17/2/2016.
@@ -32,11 +31,4 @@ public interface ActionPlanService extends CTPService {
    * @return ActionPlan This returns the updated action plan.
    */
   ActionPlan updateActionPlan(Integer actionPlanKey, ActionPlan actionPlan);
-
-  /**
-   * Returns all action rules for the given action plan id.
-   * @param actionPlanKey the given action plan id
-   * @return Returns all action rules for the given action plan id.
-   */
-  List<ActionRule> findActionRulesForActionPlan(Integer actionPlanKey);
 }

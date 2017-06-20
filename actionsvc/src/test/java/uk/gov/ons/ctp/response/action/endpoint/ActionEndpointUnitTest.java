@@ -381,7 +381,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$[0].id", is(ACTION_ID_1.toString())))
             .andExpect(jsonPath("$[0].caseId", is(ACTION_ID_1_CASE_ID.toString())))
             .andExpect(jsonPath("$[0].actionPlanId", is(ACTION_PLAN_ID_1.toString())))
-// TODO            .andExpect(jsonPath("$[0].actionRuleId", is(ACTION2_PLAN_UUID.toString())))
             .andExpect(jsonPath("$[0].actionTypeName", is(ACTION_ACTIONTYPENAME_1)))
             .andExpect(jsonPath("$[0].createdBy", is(CREATED_BY_SYSTEM)))
             .andExpect(jsonPath("$[0].manuallyCreated", is(false)))

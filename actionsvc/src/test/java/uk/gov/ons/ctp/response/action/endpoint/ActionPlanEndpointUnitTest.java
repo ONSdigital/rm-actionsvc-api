@@ -17,8 +17,6 @@ import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
 import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
-import uk.gov.ons.ctp.response.action.domain.model.ActionType;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
 import java.sql.Timestamp;
@@ -42,14 +40,8 @@ import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAd
  */
 public class ActionPlanEndpointUnitTest {
 
-  private static final boolean ACTIONTYPE_CANCANCEL = true;
-  private static final boolean ACTIONTYPE_RESPONSEREQUIRED = true;
-
   private static final Integer ACTIONPLANPK = 1;
 
-  private static final Integer ACTIONRULE_PRIORITY = 1;
-  private static final Integer ACTIONRULE_SURVEYDATEDAYSOFFSET = 1;
-  private static final Integer ACTIONPLANID_WITHNOACTIONRULE = 13;
   private static final Integer NON_EXISTING_ACTIONPLANID = 998;
   private static final Integer UNCHECKED_EXCEPTION = 999;
 
@@ -62,12 +54,6 @@ public class ActionPlanEndpointUnitTest {
   private static final String ACTIONPLAN1_DESC = "Household Action Plan 1";
   private static final String ACTIONPLAN2_DESC = "Hotel and Guest House Action Plan 1";
   private static final String ACTIONPLAN3_DESC = "Care Home Action Plan 1";
-  private static final String ACTIONRULE_ACTIONTYPENAME = "Action Type Name";
-  private static final String ACTIONRULE_DESCRIPTION = "This is a Test Action Rule";
-  private static final String ACTIONRULE_NAME = "Test Action Rule";
-  private static final String ACTIONTYPE_NAME = "Action Type Name";
-  private static final String ACTIONTYPE_DESC = "Action Type Desc";
-  private static final String ACTIONTYPE_HANDLER = "Field";
   private static final String CREATED_BY = "whilep1";
   private static final String LAST_RUN_DATE_TIME = "2016-03-09T11:15:48.023+0000";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
@@ -189,79 +175,6 @@ public class ActionPlanEndpointUnitTest {
             .andExpect(handler().methodName("findActionPlanByActionPlanId"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
             .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-  }
-
-  /**
-   * A Test
-   * @throws Exception exception thrown
-   */
-  @Test
-  public void findActionRulesForActionPlanFound() throws Exception {
-    when(actionPlanService.findActionPlan(ACTIONPLANPK)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID,
-            ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY, ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
-
-    ActionType actionType = new ActionType(1, ACTIONTYPE_NAME, ACTIONTYPE_DESC, ACTIONTYPE_HANDLER,
-            ACTIONTYPE_CANCANCEL, ACTIONTYPE_RESPONSEREQUIRED);
-    List<ActionRule> result = new ArrayList<>();
-    result.add(new ActionRule(1, ACTIONPLANPK, ACTIONRULE_PRIORITY, ACTIONRULE_SURVEYDATEDAYSOFFSET,
-            actionType, ACTIONRULE_NAME, ACTIONRULE_DESCRIPTION));
-    result.add(new ActionRule(2, ACTIONPLANPK, ACTIONRULE_PRIORITY, ACTIONRULE_SURVEYDATEDAYSOFFSET,
-            actionType, ACTIONRULE_NAME, ACTIONRULE_DESCRIPTION));
-    result.add(new ActionRule(3, ACTIONPLANPK, ACTIONRULE_PRIORITY, ACTIONRULE_SURVEYDATEDAYSOFFSET,
-            actionType, ACTIONRULE_NAME, ACTIONRULE_DESCRIPTION));
-    when(actionPlanService.findActionRulesForActionPlan(ACTIONPLANPK)).thenReturn(result);
-
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/rules", ACTIONPLANPK)));
-
-    System.out.println(actions.andReturn().getResponse().getContentAsString());
-
-    actions.andExpect(status().isOk())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("returnActionRulesForActionPlanId"))
-            .andExpect(jsonPath("$", Matchers.hasSize(3)))
-            .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTIONRULE_ACTIONTYPENAME,
-                    ACTIONRULE_ACTIONTYPENAME, ACTIONRULE_ACTIONTYPENAME)))
-            .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTIONRULE_NAME, ACTIONRULE_NAME,
-                    ACTIONRULE_NAME)))
-            .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTIONRULE_DESCRIPTION,
-                    ACTIONRULE_DESCRIPTION, ACTIONRULE_DESCRIPTION)))
-            .andExpect(jsonPath("$[*].daysOffset", containsInAnyOrder(ACTIONRULE_SURVEYDATEDAYSOFFSET,
-                    ACTIONRULE_SURVEYDATEDAYSOFFSET, ACTIONRULE_SURVEYDATEDAYSOFFSET)))
-            .andExpect(jsonPath("$[*].priority", containsInAnyOrder(ACTIONRULE_PRIORITY, ACTIONRULE_PRIORITY,
-                    ACTIONRULE_PRIORITY)));
-  }
-
-  /**
-   * A Test
-   * @throws Exception exception thrown
-   */
-  @Test
-  public void findNoActionRulesForActionPlan() throws Exception {
-    when(actionPlanService.findActionPlan(ACTIONPLANID_WITHNOACTIONRULE)).thenReturn(new ActionPlan(ACTIONPLANPK,
-            ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY, ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
-
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/rules",
-            ACTIONPLANID_WITHNOACTIONRULE)));
-
-    actions.andExpect(status().isNoContent())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("returnActionRulesForActionPlanId"));
-  }
-
-  /**
-   * A Test
-   * @throws Exception exception thrown
-   */
-  @Test
-  public void findActionRulesForNonExistingActionPlan() throws Exception {
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/rules", NON_EXISTING_ACTIONPLANID)));
-
-    actions.andExpect(status().isNotFound())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("returnActionRulesForActionPlanId"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
-            .andExpect(jsonPath("$.error.message", isA(String.class)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 

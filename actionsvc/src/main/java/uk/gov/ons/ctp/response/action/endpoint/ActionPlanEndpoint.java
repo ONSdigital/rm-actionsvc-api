@@ -19,9 +19,7 @@ import uk.gov.ons.ctp.common.endpoint.CTPEndpoint;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.InvalidRequestException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanDTO;
-import uk.gov.ons.ctp.response.action.representation.ActionRuleDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
 /**
@@ -98,27 +96,4 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     }
     return mapperFacade.map(actionPlan, ActionPlanDTO.class);
   }
-
-  /**
-   * Returns all action rules for the given action plan id.
-   * @param actionPlanId the action plan id
-   * @return Returns all action rules for the given action plan id.
-   * @throws CTPException summats went wrong
-   */
-  @RequestMapping(value = "/{actionplanid}/rules", method = RequestMethod.GET)
-  public final ResponseEntity<?>  returnActionRulesForActionPlanId(
-      @PathVariable("actionplanid") final Integer actionPlanId)
-      throws CTPException {
-    log.info("Entering returnActionRulesForActionPlanId with {}", actionPlanId);
-    ActionPlan actionPlan = actionPlanService.findActionPlan(actionPlanId);
-    if (actionPlan == null) {
-      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "ActionPlan not found for id %s", actionPlanId);
-    }
-
-    List<ActionRule> actionRules = actionPlanService.findActionRulesForActionPlan(actionPlanId);
-    List<ActionRuleDTO> actionRuleDTOs = mapperFacade.mapAsList(actionRules, ActionRuleDTO.class);
-    return CollectionUtils.isEmpty(actionRuleDTOs)
-            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionRuleDTOs);
-  }
-
 }

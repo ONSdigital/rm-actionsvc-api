@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
-import uk.gov.ons.ctp.response.action.domain.repository.ActionRuleRepository;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
 /**
@@ -27,9 +25,6 @@ public class ActionPlanServiceImpl implements ActionPlanService {
 
   @Autowired
   private ActionPlanRepository actionPlanRepo;
-
-  @Autowired
-  private ActionRuleRepository actionRuleRepository;
 
   @Override
   public List<ActionPlan> findActionPlans() {
@@ -73,10 +68,4 @@ public class ActionPlanServiceImpl implements ActionPlanService {
     }
     return existingActionPlan;
   }
-
-  @Override
-  public List<ActionRule> findActionRulesForActionPlan(final Integer actionPlanKey) {
-    return actionRuleRepository.findByActionPlanFK(actionPlanKey);
-  }
-
 }

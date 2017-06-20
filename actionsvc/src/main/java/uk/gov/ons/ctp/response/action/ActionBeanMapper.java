@@ -9,11 +9,9 @@ import ma.glasnost.orika.impl.generator.EclipseJdtCompilerStrategy;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
-import uk.gov.ons.ctp.response.action.domain.model.ActionRule;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
-import uk.gov.ons.ctp.response.action.representation.ActionRuleDTO;
 
 /**
  * The bean mapper to go from Entity objects to Presentation objects.
@@ -46,12 +44,6 @@ public class ActionBeanMapper extends ConfigurableMapper {
 
     factory
         .classMap(ActionPlanJob.class, ActionPlanJobDTO.class)
-        .byDefault()
-        .register();
-
-    factory
-        .classMap(ActionRule.class, ActionRuleDTO.class)
-        .field("actionType.name", "actionTypeName")
         .byDefault()
         .register();
   }
