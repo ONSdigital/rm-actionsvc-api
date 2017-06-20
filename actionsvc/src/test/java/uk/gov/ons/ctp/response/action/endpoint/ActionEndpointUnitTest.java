@@ -29,7 +29,6 @@ import uk.gov.ons.ctp.response.action.service.ActionService;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,6 +74,7 @@ public final class ActionEndpointUnitTest {
   private static final ActionDTO.ActionState ACTION3_ACTIONSTATE = ActionDTO.ActionState.CANCELLED;
 
   private static final Integer ACTION_CASEFK = 1;
+  private static final Integer ACTION1_PRIORITY = 1;
   private static final Integer ACTION2_PRIORITY = 3;
   private static final Integer ACTION2_PLAN_FK = 2;
   private static final Integer ACTION2_RULE_FK = 2;
@@ -134,45 +134,39 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION_TYPE_NOTFOUND = "NotFound";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
-  private static final String ACTION_VALIDJSON = "{"
+  private static final String ACTION_VALID_JSON = "{"
           + "\"id\": \"" + ACTIONID_1 + "\","
-          + "\"caseId\": \"" + ACTION_ID_6_AND_7_CASEID + "\","
-          + "\"actionTypeName\": \"" + ACTION2_ACTIONTYPENAME + "\","
+          + "\"caseId\": \"" + ACTION_ID_1_CASE_ID + "\","
+          + "\"actionTypeName\": \"" + ACTION_ACTIONTYPENAME_1 + "\","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
-          + "\"priority\": " + ACTION2_PRIORITY + ","
+          + "\"priority\": " + ACTION1_PRIORITY + ","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"situation\": \"" + ACTION1_SITUATION + "\","
-          + "\"state\": \"" + ACTION2_ACTIONSTATE + "\"}";
+          + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
 
-
-  private ActionDTO.ActionState state;
-
-  private Date createdDateTime;
-
-  private Date updatedDateTime;
-
-
-  private static final String ACTION_INVALIDJSON_PROP = "{"
+  // Note actionTypename instead of actionTypeName
+  private static final String ACTION_INVALID_JSON_BAD_PROP = "{"
           + "\"id\": \"" + ACTIONID_1 + "\","
-          + "\"caseId\": \"" + ACTION_ID_6_AND_7_CASEID + "\","
-          + "\"actionTypename\": \"" + ACTION2_ACTIONTYPENAME + "\","
+          + "\"caseId\": \"" + ACTION_ID_1_CASE_ID + "\","
+          + "\"actionTypename\": \"" + ACTION_ACTIONTYPENAME_1 + "\","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
-          + "\"priority\": " + ACTION2_PRIORITY + ","
+          + "\"priority\": " + ACTION1_PRIORITY + ","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"situation\": \"" + ACTION1_SITUATION + "\","
-          + "\"state\": \"" + ACTION2_ACTIONSTATE + "\"}";
+          + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
 
-  private static final String ACTION_INVALIDJSON_MISSING_PROP = "{"
+  // Note actionTypeName is missing
+  private static final String ACTION_INVALID_JSON_MISSING_PROP = "{"
           + "\"id\": \"" + ACTIONID_1 + "\","
-          + "\"caseId\": \"" + ACTION_ID_6_AND_7_CASEID + "\","
+          + "\"caseId\": \"" + ACTION_ID_1_CASE_ID + "\","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
-          + "\"priority\": " + ACTION2_PRIORITY + ","
+          + "\"priority\": " + ACTION1_PRIORITY + ","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"situation\": \"" + ACTION1_SITUATION + "\","
-          + "\"state\": \"" + ACTION2_ACTIONSTATE + "\"}";
+          + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
 
   @Before
   public void setUp() throws Exception {
@@ -513,7 +507,7 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void updateActionByActionIdNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID), ACTION_VALIDJSON));
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID), ACTION_VALID_JSON));
 
     actions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -527,26 +521,26 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void createActionGoodJsonProvided() throws Exception {
-    ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
-            ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    Action action = new Action(ACTION_PK, ACTIONID_2, ACTION_ID_6_AND_7_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK,
-            ACTION_CREATEDBY, ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
-            ACTION2_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0);
-    when(actionService.createAction(any(Action.class))).thenReturn(action);
+    when(actionService.createAction(any(Action.class))).thenReturn(actions.get(0));
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_VALIDJSON));
+    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_VALID_JSON));
 
     actions.andExpect(status().isCreated())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("createAction"))
-            .andExpect(jsonPath("$.id", is(ACTIONID_2.toString())))
-            .andExpect(jsonPath("$.caseId", is(ACTION_ID_6_AND_7_CASEID.toString())))
-            .andExpect(jsonPath("$.actionTypeName", is(ACTION2_ACTIONTYPENAME)))
-            .andExpect(jsonPath("$.createdBy", is(ACTION_CREATEDBY)))
-            .andExpect(jsonPath("$.priority", is(ACTION2_PRIORITY)))
-            .andExpect(jsonPath("$.situation", is(ACTION2_SITUATION)))
-            .andExpect(jsonPath("$.state", is(ACTION2_ACTIONSTATE.name())))
-            .andExpect(jsonPath("$.createdDateTime", is(ACTION_CREATEDDATE_VALUE)));
+            .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
+            .andExpect(jsonPath("$.id", is(ACTION_ID_1.toString())))
+            .andExpect(jsonPath("$.caseId", is(ACTION_ID_1_CASE_ID.toString())))
+            .andExpect(jsonPath("$.actionPlanId", is(ACTION_PLAN_ID_1.toString())))
+            .andExpect(jsonPath("$.actionTypeName", is(ACTION_ACTIONTYPENAME_1)))
+            .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$.manuallyCreated", is(false)))
+            .andExpect(jsonPath("$.priority", is(1)))
+            .andExpect(jsonPath("$.situation", is(ACTION_SITUATION_1)))
+            .andExpect(jsonPath("$.state", is(ActionDTO.ActionState.ACTIVE.name())))
+            .andExpect(jsonPath("$.createdDateTime", is(ALL_ACTIONS_CREATEDDATE_VALUE)))
+            .andExpect(jsonPath("$.updatedDateTime", is(ALL_ACTIONS_UPDATEDDATE_VALUE)));
   }
 
   /**
@@ -555,7 +549,7 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void createActionInvalidPropJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_INVALIDJSON_PROP));
+    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_INVALID_JSON_BAD_PROP));
 
     actions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -572,7 +566,7 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void createActionMissingPropJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_INVALIDJSON_MISSING_PROP));
+    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_INVALID_JSON_MISSING_PROP));
 
     actions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))

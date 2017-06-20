@@ -106,8 +106,12 @@ public final class ActionEndpoint implements CTPEndpoint {
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for create action: ", bindingResult);
     }
+
     Action action = actionService.createAction(mapperFacade.map(actionDTO, Action.class));
-    return ResponseEntity.created(URI.create("TODO")).body(mapperFacade.map(action, ActionDTO.class));
+    ActionDTO resultDTO = mapperFacade.map(action, ActionDTO.class);
+    UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
+    resultDTO.setActionPlanId(actionPlanUUID);
+    return ResponseEntity.created(URI.create("TODO")).body(resultDTO);
   }
 
   /**
