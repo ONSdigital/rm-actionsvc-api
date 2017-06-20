@@ -370,7 +370,7 @@ public class ActionDistributor {
     // now call caseSvc for the following
     ActionPlan actionPlan = (action.getActionPlanFK() == null) ? null
         : actionPlanRepo.findOne(action.getActionPlanFK());
-    CaseDetailsDTO caseDTO = caseSvcClientService.getCase(action.getCaseId());
+    CaseDetailsDTO caseDTO = caseSvcClientService.getCaseWithIAC(action.getCaseId());
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
 
@@ -423,7 +423,7 @@ public class ActionDistributor {
 //    actionRequest.setQuestionSet(caseTypeDTO.getQuestionSet());
     actionRequest.setResponseRequired(action.getActionType().getResponseRequired());
     actionRequest.setCaseId(action.getCaseId().toString());
-    actionRequest.setSampleUnitRef(caseDTO.getCaseGroup().getSampleUnitRef());
+
     
     Map<String, String> partyMap = partyDTO.getAttributes();
 
@@ -442,7 +442,9 @@ public class ActionDistributor {
     actionRequest.setPriority(Priority.fromValue(ActionPriority.valueOf(action.getPriority()).getName()));
   //  actionRequest.setCaseRef(caseDTO.getCaseRef());
 
-    ActionAddress actionAddress = mapperFacade.map(partyDTO, ActionAddress.class);
+    ActionAddress actionAddress = new ActionAddress();
+    mapperFacade.map(partyDTO, ActionAddress.class);
+    actionAddress.setSampleUnitRef(caseDTO.getCaseGroup().getSampleUnitRef());
     actionRequest.setAddress(actionAddress);
     return actionRequest;
   }
