@@ -561,17 +561,11 @@ public final class ActionEndpointUnitTest {
   public void cancelActions() throws Exception {
     when(actionCaseService.findActionCase(ACTION_ID_6_AND_7_CASEID)).thenReturn(new ActionCase());
 
-
-    ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
-            ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-
-    Action action = new Action(ACTION_PK, ACTIONID_2, ACTION_ID_6_AND_7_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK,
-            ACTION_CREATEDBY, ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
-            ACTION3_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0);
     List<Action> result = new ArrayList<>();
-    result.add(action);
+    result.add(actions.get(5));
+    result.add(actions.get(6));
     when(actionService.cancelActions(ACTION_ID_6_AND_7_CASEID)).thenReturn(result);
-
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
     ResultActions actions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel", ACTION_ID_6_AND_7_CASEID),
             ""));
@@ -579,19 +573,30 @@ public final class ActionEndpointUnitTest {
     actions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("cancelActions"))
-            .andExpect(jsonPath("$", Matchers.hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(ACTIONID_2.toString())))
-            .andExpect(jsonPath("$[0].caseId", is(ACTION_ID_6_AND_7_CASEID.toString())))
-            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)))
-            .andExpect(jsonPath("$[0].createdBy", is(ACTION_CREATEDBY)))
-            .andExpect(jsonPath("$[0].priority", is(ACTION2_PRIORITY)))
-            .andExpect(jsonPath("$[0].situation", is(ACTION2_SITUATION)))
-            .andExpect(jsonPath("$[0].state", is(ACTION3_ACTIONSTATE.name())))
-            .andExpect(jsonPath("$[0].createdDateTime", is(ACTION_CREATEDDATE_VALUE)));
+            .andExpect(jsonPath("$", Matchers.hasSize(2)))
+            .andExpect(jsonPath("$[0].*", hasSize(12)))
+            .andExpect(jsonPath("$[1].*", hasSize(12)))
+            .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTION_ID_6.toString(), ACTION_ID_7.toString())))
+            .andExpect(jsonPath("$[*].caseId", containsInAnyOrder(ACTION_ID_6_AND_7_CASEID.toString(),
+                    ACTION_ID_6_AND_7_CASEID.toString())))
+            .andExpect(jsonPath("$[*].actionPlanId", containsInAnyOrder(ACTION_PLAN_ID_1.toString(),
+                    ACTION_PLAN_ID_1.toString())))
+            .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTION_ACTIONTYPENAME_6,
+                    ACTION_ACTIONTYPENAME_7)))
+            .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY_SYSTEM, CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$[*].manuallyCreated", containsInAnyOrder(false, true)))
+            .andExpect(jsonPath("$[*].priority", containsInAnyOrder(6, 7)))
+            .andExpect(jsonPath("$[*].situation", containsInAnyOrder(ACTION_SITUATION_6, ACTION_SITUATION_7)))
+            .andExpect(jsonPath("$[*].state", containsInAnyOrder(ActionDTO.ActionState.ABORTED.name(),
+                    ActionDTO.ActionState.CANCELLED.name())))
+            .andExpect(jsonPath("$[*].createdDateTime", containsInAnyOrder(ALL_ACTIONS_CREATEDDATE_VALUE,
+                    ALL_ACTIONS_CREATEDDATE_VALUE)))
+            .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(ALL_ACTIONS_UPDATEDDATE_VALUE,
+                    ALL_ACTIONS_UPDATEDDATE_VALUE)));
   }
 
   /**
-   * Test cancelling an Action.
+   * Test cancelling an Action for a Case Not Found.
    * @throws Exception when putJson does
    */
   @Test

@@ -172,9 +172,11 @@ public final class ActionEndpoint implements CTPEndpoint {
     }
 
     List<Action> actions = actionService.cancelActions(caseId);
-    List<ActionDTO> results = mapperFacade.mapAsList(actions, ActionDTO.class);
-    return CollectionUtils.isEmpty(results)
-            ? ResponseEntity.noContent().build() : ResponseEntity.ok(results);
+    if (CollectionUtils.isEmpty(actions)) {
+      return ResponseEntity.noContent().build();
+    } else {
+      return ResponseEntity.ok(buildActionsDTOs(actions));
+    }
   }
 
   /**
