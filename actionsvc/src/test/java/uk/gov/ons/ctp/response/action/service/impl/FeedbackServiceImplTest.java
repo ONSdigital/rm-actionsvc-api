@@ -54,6 +54,9 @@ public class FeedbackServiceImplTest {
   @InjectMocks
   private FeedbackServiceImpl feedbackService;
 
+  /**
+   * Mockito setup
+   */
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
@@ -61,6 +64,7 @@ public class FeedbackServiceImplTest {
 
   /**
    * Yep - another test
+   * @throws Exception exception thrown
    */
   @Test
   public void testFeedbackAccepted() throws Exception {
@@ -77,11 +81,13 @@ public class FeedbackServiceImplTest {
 
     // Verify calls made
     verify(actionRepo, times(1)).saveAndFlush(any(Action.class));
-    verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class), any(CategoryDTO.CategoryName.class));
+    verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class),
+            any(CategoryDTO.CategoryName.class));
   }
 
   /**
    * Yep - another test
+   * @throws Exception exception thrown
    */
   @Test
   public void testFeedbackBlankSituationActionCompleted() throws Exception {
@@ -90,20 +96,22 @@ public class FeedbackServiceImplTest {
     List<OutcomeCategory> situationCats = FixtureHelper.loadClassFixtures(OutcomeCategory[].class);
 
     Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
-    Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent.valueOf(actionFeedbacks.get(2).getOutcome().name()), "Printer")))
-        .thenReturn(situationCats.get(0));
+    Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent
+            .valueOf(actionFeedbacks.get(2).getOutcome().name()), "Printer"))).thenReturn(situationCats.get(0));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.ACTIVE, ActionEvent.REQUEST_COMPLETED))
         .thenReturn(ActionState.COMPLETED);
     // Call method
     feedbackService.acceptFeedback(actionFeedbacks.get(2));
     // Verify calls made
     verify(actionRepo, times(1)).saveAndFlush(any(Action.class));
-    verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2), CategoryDTO.CategoryName.ACTION_COMPLETED);
+    verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2),
+            CategoryDTO.CategoryName.ACTION_COMPLETED);
   }
 
 
   /**
    * Yep - another test
+   * @throws Exception exception thrown
    */
   @Test
   public void testFeedbackDerelictSituationActionCompleted() throws Exception {
@@ -113,8 +121,8 @@ public class FeedbackServiceImplTest {
 
     Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
     Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
-    Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent.valueOf(actionFeedbacks.get(3).getOutcome().name()), "Printer")))
-        .thenReturn(situationCats.get(0));
+    Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent
+            .valueOf(actionFeedbacks.get(3).getOutcome().name()), "Printer"))).thenReturn(situationCats.get(0));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.ACTIVE, ActionEvent.REQUEST_COMPLETED))
         .thenReturn(ActionState.COMPLETED);
 
@@ -123,11 +131,13 @@ public class FeedbackServiceImplTest {
 
     // Verify calls made
     verify(actionRepo, times(1)).saveAndFlush(any(Action.class));
-    verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2), CategoryDTO.CategoryName.ACTION_COMPLETED);
+    verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2),
+            CategoryDTO.CategoryName.ACTION_COMPLETED);
   }
-  
+
   /**
    * Yep - another test
+   * @throws Exception exception thrown
    */
   @Test
   public void testFeedbackConfusedSituationActionCompleted() throws Exception {
@@ -136,8 +146,8 @@ public class FeedbackServiceImplTest {
     List<OutcomeCategory> situationCats = FixtureHelper.loadClassFixtures(OutcomeCategory[].class);
 
     Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
-    Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent.valueOf(actionFeedbacks.get(4).getOutcome().name()), "Printer")))
-        .thenReturn(situationCats.get(1));
+    Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent.valueOf(
+            actionFeedbacks.get(4).getOutcome().name()), "Printer"))).thenReturn(situationCats.get(1));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.ACTIVE, ActionEvent.REQUEST_COMPLETED))
         .thenReturn(ActionState.COMPLETED);
 
@@ -146,6 +156,7 @@ public class FeedbackServiceImplTest {
 
     //Verify calls made
     verify(actionRepo, times(1)).saveAndFlush(any(Action.class));
-    verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2), CategoryDTO.CategoryName.ACTION_COMPLETED_DEACTIVATED);
+    verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2),
+            CategoryDTO.CategoryName.ACTION_COMPLETED_DEACTIVATED);
   }
 }

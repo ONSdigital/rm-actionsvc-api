@@ -21,7 +21,7 @@ public interface CaseSvcClientService {
    * @param actionCategory the category for the event
    * @return the newly created caseeventdto
    */
-  CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory);
+  CaseEventDTO createNewCaseEvent(Action action, CategoryDTO.CategoryName actionCategory);
 
   /**
    * Call CaseSvc using REST to get the CaseGroups details MAY throw a
@@ -30,7 +30,7 @@ public interface CaseSvcClientService {
    * @param caseGroupId identifies the Case to fetch
    * @return the Case we fetched
    */
-  CaseGroupDTO getCaseGroup(final UUID caseGroupId);
+  CaseGroupDTO getCaseGroup(UUID caseGroupId);
 
   /**
    * Call CaseSvc using REST to get the Case details MAY throw a
@@ -40,8 +40,8 @@ public interface CaseSvcClientService {
    * @return the Case we fetched
    *
    */
-  CaseDetailsDTO getCase(final UUID caseId);
-  
+  CaseDetailsDTO getCase(UUID caseId);
+
   /**
    * Call CaseSvc using REST to get the Case details MAY throw a
    * RuntimeException if the call fails
@@ -59,6 +59,6 @@ public interface CaseSvcClientService {
    * @param caseId identifies the Case to fetch events for
    * @return the CaseEvents we found for the case
    */
-  List<CaseEventDTO> getCaseEvents(final UUID caseId);
+  List<CaseEventDTO> getCaseEvents(UUID caseId);
 
 }

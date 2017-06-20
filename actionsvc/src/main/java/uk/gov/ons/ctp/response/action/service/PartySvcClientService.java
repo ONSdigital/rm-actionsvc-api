@@ -1,8 +1,8 @@
 package uk.gov.ons.ctp.response.action.service;
 
-import java.util.UUID;
-
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
+
+import java.util.UUID;
 
 /**
  * A Service which utilises the CaseSvc via RESTful client calls
@@ -17,6 +17,6 @@ public interface PartySvcClientService {
    * @param partyId the PartySvc UUID
    * @return the Party we fetched!
    */
-  PartyDTO getParty(final UUID partyId);
+  PartyDTO getParty(UUID partyId);
 
 }

@@ -159,8 +159,6 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 
 **Required parameters**: `situation` as the action status as recorded by the remote handler, `outcome` as the outcome of the action within the context of the remote handler.
 
-*Optional parameters:* `notes` as a text description of the remote handler's feedback.
-
 ### Example JSON Response
 ```json
 {
@@ -238,25 +236,6 @@ An `HTTP 404 Not Found` status code is returned if the action plan with the spec
 ```
 
 An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 400 Bad Request` status code is returned if any of the parameters are invalid.
-
-## List Action Plan Rules
-* `GET /actionplans/5381731e-e386-41a1-8462-26373744db86/rules` will return a list of action plan rules (earliest first) for the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
-
-### Example JSON Response
-```json
-[
-  {
-    "actionPlanId": "5381731e-e386-41a1-8462-26373744db86",
-    "actionTypeName": "HouseholdCreateVisit",
-    "name": "HH_CV-4",
-    "description": "Create Household Visit(SD-4)",
-    "surveyDateDaysOffet": -4,
-    "priority": 3
-  }
-]
-```
-
-An `HTTP 404 Not Found` status code is returned if the action plan with the specified ID could not be found. An `HTTP 204 No Content` status code is returned if there are no rules for the action plan.
 
 ## List Action Plan Jobs
 * `GET /actionplans/5381731e-e386-41a1-8462-26373744db86/jobs` will return a list of action plan jobs (most recent first) for the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.

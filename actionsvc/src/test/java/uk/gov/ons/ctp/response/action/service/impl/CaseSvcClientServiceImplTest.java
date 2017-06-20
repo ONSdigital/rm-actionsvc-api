@@ -3,7 +3,11 @@ package uk.gov.ons.ctp.response.action.service.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
@@ -34,9 +38,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 public class CaseSvcClientServiceImplTest {
 
   @Mock
-  Tracer tracer;
+  private Tracer tracer;
+
   @Mock
-  Span span;
+  private Span span;
 
   @Mock
   private AppConfig appConfig;
@@ -55,7 +60,6 @@ public class CaseSvcClientServiceImplTest {
     Mockito.when(tracer.createSpan(any(String.class))).thenReturn(span);
     restClient.setTracer(tracer);
   }
-
 
   /**
    * Yep - another test
@@ -106,6 +110,5 @@ public class CaseSvcClientServiceImplTest {
     assertTrue(caseEventDTO != null);
     mockServer.verify();
   }
-  
-	  
+
 }

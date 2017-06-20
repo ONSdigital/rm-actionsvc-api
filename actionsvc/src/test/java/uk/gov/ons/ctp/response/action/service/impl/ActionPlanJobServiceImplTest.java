@@ -59,7 +59,7 @@ public class ActionPlanJobServiceImplTest {
    * Before the test
    */
   @Before
-  public void setup() throws Exception {    
+  public void setup() throws Exception {
     PlanExecution planExecution = new PlanExecution();
     planExecution.setDelayMilliSeconds(5000L);
     appConfig.setPlanExecution(planExecution);

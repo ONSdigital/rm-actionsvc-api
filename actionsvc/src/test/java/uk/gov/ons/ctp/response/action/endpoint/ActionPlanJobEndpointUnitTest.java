@@ -81,10 +81,12 @@ public class ActionPlanJobEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanJobFound() throws Exception {
-    when(actionPlanJobService.findActionPlanJob(ACTIONPLANJOBID)).thenReturn(Optional.of(new ActionPlanJob(ACTIONPLANJOBID, ACTIONPLANJOBID_ACTIONPLANFK, ACTIONPLANJOBID_CREATED_BY,
+    when(actionPlanJobService.findActionPlanJob(ACTIONPLANJOBID)).thenReturn(Optional.of(
+            new ActionPlanJob(ACTIONPLANJOBID, ACTIONPLANJOBID_ACTIONPLANFK, ACTIONPLANJOBID_CREATED_BY,
             ACTIONPLANJOBID_STATE, ACTIONPLANJOBID_CREATEDDATE_TIMESTAMP, ACTIONPLANJOBID_UPDATED_DATE_TIMESTAMP)));
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/jobs/%s", ACTIONPLANJOBID)));
@@ -104,12 +106,14 @@ public class ActionPlanJobEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanJobNotFound() throws Exception {
     when(actionPlanJobService.findActionPlanJob(NON_EXISTING_ACTIONPLANJOBID)).thenReturn(Optional.empty());
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/jobs/%s", NON_EXISTING_ACTIONPLANJOBID)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/jobs/%s",
+            NON_EXISTING_ACTIONPLANJOBID)));
 
     actions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
@@ -121,12 +125,15 @@ public class ActionPlanJobEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanUnCheckedException() throws Exception {
-    when(actionPlanJobService.findActionPlanJob(UNCHECKED_EXCEPTION_ACTIONPLANJOBID)).thenThrow(new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
+    when(actionPlanJobService.findActionPlanJob(UNCHECKED_EXCEPTION_ACTIONPLANJOBID)).thenThrow(
+            new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/jobs/%s", UNCHECKED_EXCEPTION_ACTIONPLANJOBID)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/jobs/%s",
+            UNCHECKED_EXCEPTION_ACTIONPLANJOBID)));
 
     actions.andExpect(status().is5xxServerError())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
@@ -138,6 +145,7 @@ public class ActionPlanJobEndpointUnitTest {
 
   /**
    * A Test
+   * @throws Exception exception thrown
    */
   @Test
   public void findActionPlanJobsForActionPlan() throws Exception {
@@ -150,7 +158,8 @@ public class ActionPlanJobEndpointUnitTest {
             ACTIONPLANJOBID_STATE, ACTIONPLANJOBID_CREATEDDATE_TIMESTAMP, ACTIONPLANJOBID_UPDATED_DATE_TIMESTAMP));
     when(actionPlanJobService.findActionPlanJobsForActionPlan(ACTIONPLANJOBID_ACTIONPLANFK)).thenReturn(result);
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/jobs", ACTIONPLANJOBID_ACTIONPLANFK)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s/jobs",
+            ACTIONPLANJOBID_ACTIONPLANFK)));
 
     System.out.println(actions.andReturn().getResponse().getContentAsString());
 
@@ -158,9 +167,12 @@ public class ActionPlanJobEndpointUnitTest {
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
             .andExpect(handler().methodName("findAllActionPlanJobsByActionPlanId"))
             .andExpect(jsonPath("$", Matchers.hasSize(3)))
-            .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(ACTIONPLANJOBID_CREATED_BY, ACTIONPLANJOBID_CREATED_BY, ACTIONPLANJOBID_CREATED_BY)))
-            .andExpect(jsonPath("$[*].createdDateTime", containsInAnyOrder(CREATED_DATE_TIME, CREATED_DATE_TIME, CREATED_DATE_TIME)))
-            .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(UPDATED_DATE_TIME, UPDATED_DATE_TIME, UPDATED_DATE_TIME)));
+            .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(ACTIONPLANJOBID_CREATED_BY,
+                    ACTIONPLANJOBID_CREATED_BY, ACTIONPLANJOBID_CREATED_BY)))
+            .andExpect(jsonPath("$[*].createdDateTime", containsInAnyOrder(CREATED_DATE_TIME,
+                    CREATED_DATE_TIME, CREATED_DATE_TIME)))
+            .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(UPDATED_DATE_TIME,
+                    UPDATED_DATE_TIME, UPDATED_DATE_TIME)));
   }
 
 /*  *//**
@@ -168,7 +180,8 @@ public class ActionPlanJobEndpointUnitTest {
    *//* TODO: Not yet implemented
   @Test
   public void executeActionPlanBadJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID), ACTIONPLANJOB_INVALIDJSON));
+    ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID),
+    ACTIONPLANJOB_INVALIDJSON));
 
     actions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
@@ -183,10 +196,12 @@ public class ActionPlanJobEndpointUnitTest {
    *//* TODO: Not yet implemented
   @Test
   public void executeActionPlanGoodJsonProvided() throws Exception {
-    when(actionPlanJobService.createAndExecuteActionPlanJob(any(ActionPlanJob.class))).thenReturn(Optional.of(new ActionPlanJob(ACTIONPLANJOBID, ACTIONPLANJOBID_ACTIONPLANFK, ACTIONPLANJOBID_CREATED_BY,
+    when(actionPlanJobService.createAndExecuteActionPlanJob(any(ActionPlanJob.class))).thenReturn(Optional.of(
+            new ActionPlanJob(ACTIONPLANJOBID, ACTIONPLANJOBID_ACTIONPLANFK, ACTIONPLANJOBID_CREATED_BY,
             ACTIONPLANJOBID_STATE, ACTIONPLANJOBID_CREATEDDATE_TIMESTAMP, ACTIONPLANJOBID_UPDATED_DATE_TIMESTAMP)));
 
-    ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID), ACTIONPLANJOB_VALIDJSON));
+    ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID),
+            ACTIONPLANJOB_VALIDJSON));
 
     actions.andExpect(status().isCreated())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))

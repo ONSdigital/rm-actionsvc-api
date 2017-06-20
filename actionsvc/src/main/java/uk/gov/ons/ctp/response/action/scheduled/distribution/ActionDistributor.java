@@ -411,7 +411,8 @@ public class ActionDistributor {
    * @param caseEventDTOs the list of CaseEvent representations from the CaseSvc
    * @return the shiney new Action Request
    */
-  private ActionRequest createActionRequest(final Action action, final ActionPlan actionPlan, final CaseDetailsDTO caseDTO,
+  private ActionRequest createActionRequest(final Action action, final ActionPlan actionPlan,
+      final CaseDetailsDTO caseDTO,
       final PartyDTO partyDTO,
       final List<CaseEventDTO> caseEventDTOs) {
     ActionRequest actionRequest = new ActionRequest();
@@ -424,7 +425,6 @@ public class ActionDistributor {
     actionRequest.setResponseRequired(action.getActionType().getResponseRequired());
     actionRequest.setCaseId(action.getCaseId().toString());
 
-    
     Map<String, String> partyMap = partyDTO.getAttributes();
 
     ActionContact actionContact = new ActionContact();

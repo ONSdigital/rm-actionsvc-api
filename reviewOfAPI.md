@@ -1,5 +1,6 @@
 - GET /actions
     - should we add an optional parameter for the number of actions to be returned and if not populated, we agree to a MAX number of actions that we return.
+    - actionRuleId: should it be in the response? If it should, should it be a UUID?
 
 
 - Update Action Feedback
@@ -8,6 +9,7 @@
 
 - Endpoints on actionplans
     - currently, we do not return createdDateTime. Do we really care when the action plan was created?
+    - surveyId is not currently stored in Action, will it be added?
 
 
 - List Action Plan Rules

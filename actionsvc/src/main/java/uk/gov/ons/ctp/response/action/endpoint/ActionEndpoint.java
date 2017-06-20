@@ -22,6 +22,7 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
+import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 import uk.gov.ons.ctp.response.action.service.ActionService;
 
 import javax.validation.Valid;
@@ -42,6 +43,9 @@ public final class ActionEndpoint implements CTPEndpoint {
   private ActionService actionService;
 
   @Autowired
+  private ActionPlanService actionPlanService;
+
+  @Autowired
   private ActionCaseService actionCaseService;
 
   @Qualifier("actionBeanMapper")
@@ -57,8 +61,8 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<?> findActions(@RequestParam(value = "actiontype", required = false) final String actionType,
-                                       @RequestParam(value = "state", required = false)
-                                       final ActionDTO.ActionState actionState) {
+                                       @RequestParam(value = "state", required = false) final ActionDTO.ActionState
+                                               actionState) {
     List<Action> actions = null;
 
     if (actionType != null) {
@@ -74,14 +78,26 @@ public final class ActionEndpoint implements CTPEndpoint {
         log.info("Entering findActionsByState with {}", actionState);
         actions = actionService.findActionsByState(actionState);
       } else {
-        log.info("Entering findActionsByState");
-        actions = new ArrayList<Action>();
+        log.info("Entering findAllActionsOrderedByCreatedDateTimeDescending");
+        actions = actionService.findAllActionsOrderedByCreatedDateTimeDescending();
       }
     }
 
-    List<ActionDTO> actionsDTOs = mapperFacade.mapAsList(actions, ActionDTO.class);
-    return CollectionUtils.isEmpty(actionsDTOs)
-            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionsDTOs);
+    if (CollectionUtils.isEmpty(actions)) {
+      return ResponseEntity.noContent().build();
+    } else {
+      List<ActionDTO> actionsDTOs = mapperFacade.mapAsList(actions, ActionDTO.class);
+
+      int index = 0;
+      for (Action action : actions) {
+        int actionPlanFK = action.getActionPlanFK();
+        UUID actionPlanUUID = actionPlanService.findActionPlan(actionPlanFK).getId();
+        actionsDTOs.get(index).setActionPlanId(actionPlanUUID);
+        index = index + 1;
+      }
+
+      return ResponseEntity.ok(actionsDTOs);
+    }
   }
 
   /**

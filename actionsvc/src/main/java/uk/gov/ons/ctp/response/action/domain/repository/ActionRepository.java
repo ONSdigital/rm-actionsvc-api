@@ -17,6 +17,13 @@ import java.util.UUID;
 public interface ActionRepository extends JpaRepository<Action, BigInteger> {
 
   /**
+   * Return all actions, most recent first.
+   *
+   * @return all actions
+   */
+  List<Action> findAllByOrderByCreatedDateTimeDesc();
+
+  /**
    * Find action by UUID
    * @param actionId the action uuid
    * @return the action found
