@@ -70,17 +70,9 @@ public final class ActionEndpointUnitTest {
   private List<Action> actions;
   private List<ActionPlan> actionPlans;
 
-  private static final ActionDTO.ActionState ACTION2_ACTIONSTATE = ActionDTO.ActionState.COMPLETED;
-  private static final ActionDTO.ActionState ACTION3_ACTIONSTATE = ActionDTO.ActionState.CANCELLED;
+  private static final Boolean ACTION1_MANUALLY_CREATED = true;
 
-  private static final Integer ACTION_CASEFK = 1;
   private static final Integer ACTION1_PRIORITY = 1;
-  private static final Integer ACTION2_PRIORITY = 3;
-  private static final Integer ACTION2_PLAN_FK = 2;
-  private static final Integer ACTION2_RULE_FK = 2;
-  private static final String NON_EXISTING_ID = "e1c26bf2-eaa8-4a8a-b44f-3b8f004ef271";
-
-  private static final BigInteger ACTION_PK = BigInteger.valueOf(1);
 
   private static final UUID ACTION_ID_1 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78a");
   private static final UUID ACTION_ID_1_CASE_ID = UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3fda");
@@ -97,16 +89,7 @@ public final class ActionEndpointUnitTest {
   private static final UUID ACTION_ID_7 = UUID.fromString("d24b3f17-bbf8-4c71-b2f0-a4334125d78a");
   private static final UUID ACTION_ID_6_AND_7_CASEID = UUID.fromString("E39202CE-D9A2-4BDD-92F9-E5E0852AF023");
   private static final UUID ACTIONID_1 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
-  private static final UUID ACTIONID_2 = UUID.fromString("64970e28-2ffc-4948-a643-2eb1b42b3fd7");
-  private static final UUID ACTION2_PLAN_UUID = UUID.fromString("64970e28-2ffc-4948-a643-2eb1b42b3fd8");
 
-  private static final Boolean ACTION2_ACTIONTYPECANCEL = false;
-  private static final Boolean ACTION2_RESPONSEREQUIRED = false;
-  private static final Boolean ACTION1_MANUALLY_CREATED = true;
-  private static final Boolean ACTION2_MANUALLY_CREATED = false;
-
-  private static final Timestamp ACTION_CREATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 18:30:00");
-  private static final Timestamp ACTION_UPDATEDDATE_TIMESTAMP = Timestamp.valueOf("2016-02-26 19:30:00");
 
   private static final String ACTION_ACTIONTYPENAME_1 = "action type one";
   private static final String ACTION_ACTIONTYPENAME_2 = "action type two";
@@ -123,15 +106,12 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION_SITUATION_6 = "situation six";
   private static final String ACTION_SITUATION_7 = "situation seven";
   private static final String ACTION2_ACTIONTYPENAME = "actiontypename2";
-  private static final String ACTION2_ACTIONTYPEDESC = "actiontypedesc2";
-  private static final String ACTION2_ACTIONTYPEHANDLER = "Field";
   private static final String ACTION1_SITUATION = "Assigned";
-  private static final String ACTION2_SITUATION = "Sent";
   private static final String ACTION_CREATEDBY = "Unit Tester";
   private static final String ALL_ACTIONS_CREATEDDATE_VALUE = "2017-05-15T11:00:00.000+0100";
   private static final String ALL_ACTIONS_UPDATEDDATE_VALUE = "2017-05-15T12:00:00.000+0100";
-  private static final String ACTION_CREATEDDATE_VALUE = "2016-02-26T18:30:00.000+0000";
   private static final String ACTION_TYPE_NOTFOUND = "NotFound";
+  private static final String NON_EXISTING_ID = "e1c26bf2-eaa8-4a8a-b44f-3b8f004ef271";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
   private static final String ACTION_VALID_JSON = "{"
@@ -257,10 +237,10 @@ public final class ActionEndpointUnitTest {
   @Test
   public void findActionsByActionTypeAndStateNotFound() throws Exception {
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_TYPE_NOTFOUND,
-            ACTION2_ACTIONSTATE)).thenReturn(new ArrayList<>());
+            ActionDTO.ActionState.COMPLETED)).thenReturn(new ArrayList<>());
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_TYPE_NOTFOUND,
-            ACTION2_ACTIONSTATE)));
+            ActionDTO.ActionState.COMPLETED)));
 
     actions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -277,11 +257,11 @@ public final class ActionEndpointUnitTest {
     List<Action> result = new ArrayList<Action>();
     result.add(actions.get(0));
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION2_ACTIONTYPENAME,
-            ACTION2_ACTIONSTATE)).thenReturn(result);
+            ActionDTO.ActionState.COMPLETED)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s",
-            ACTION2_ACTIONTYPENAME, ACTION2_ACTIONSTATE)));
+            ACTION2_ACTIONTYPENAME, ActionDTO.ActionState.COMPLETED)));
 
     actions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -358,10 +338,10 @@ public final class ActionEndpointUnitTest {
   public void findActionsByStateFound() throws Exception {
     List<Action> result = new ArrayList<Action>();
     result.add(actions.get(0));
-    when(actionService.findActionsByState(ACTION2_ACTIONSTATE)).thenReturn(result);
+    when(actionService.findActionsByState(ActionDTO.ActionState.COMPLETED)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?state=%s", ACTION2_ACTIONSTATE.toString())));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?state=%s", ActionDTO.ActionState.COMPLETED.name())));
 
     actions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
