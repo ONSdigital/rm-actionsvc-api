@@ -400,9 +400,57 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionByActionId"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
-            .andExpect(jsonPath("$.error.message", is(String.format("Action not found for id %s",
-                    NON_EXISTING_ID))))
+            .andExpect(jsonPath("$.error.message", is(String.format("Action not found for id %s", NON_EXISTING_ID))))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+  }
+
+
+  /**
+   * Test requesting an Action creating an Unchecked Exception.
+   *
+   * @throws Exception when getJson does
+   */
+  @Test
+  public void findActionByActionIdUnCheckedException() throws Exception {
+    when(actionService.findActionById(ACTIONID_1)).thenThrow(new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
+
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/%s", ACTIONID_1)));
+
+    actions.andExpect(status().is5xxServerError())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("findActionByActionId"))
+            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
+            .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
+            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+  }
+
+  /**
+   * Test requesting an Action by action Id.
+   *
+   * @throws Exception when getJson does
+   */
+  @Test
+  public void findActionByActionId() throws Exception {
+    when(actionService.findActionById(ACTION_ID_1)).thenReturn(actions.get(0));
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
+
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/%s", ACTION_ID_1)));
+
+    actions.andExpect(status().isOk())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("findActionByActionId"))
+            .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
+            .andExpect(jsonPath("$.id", is(ACTION_ID_1.toString())))
+            .andExpect(jsonPath("$.caseId", is(ACTION_ID_1_CASE_ID.toString())))
+            .andExpect(jsonPath("$.actionPlanId", is(ACTION_PLAN_ID_1.toString())))
+            .andExpect(jsonPath("$.actionTypeName", is(ACTION_ACTIONTYPENAME_1)))
+            .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$.manuallyCreated", is(false)))
+            .andExpect(jsonPath("$.priority", is(1)))
+            .andExpect(jsonPath("$.situation", is(ACTION_SITUATION_1)))
+            .andExpect(jsonPath("$.state", is(ActionDTO.ActionState.ACTIVE.name())))
+            .andExpect(jsonPath("$.createdDateTime", is(ALL_ACTIONS_CREATEDDATE_VALUE)))
+            .andExpect(jsonPath("$.updatedDateTime", is(ALL_ACTIONS_UPDATEDDATE_VALUE)));
   }
 
   /**
@@ -471,25 +519,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("updateAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())));
-  }
-
-  /**
-   * Test requesting an Action creating an Unchecked Exception.
-   *
-   * @throws Exception when getJson does
-   */
-  @Test
-  public void findActionByActionIdUnCheckedException() throws Exception {
-    when(actionService.findActionById(ACTIONID_1)).thenThrow(new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
-
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/%s", ACTIONID_1)));
-
-    actions.andExpect(status().is5xxServerError())
-            .andExpect(handler().handlerType(ActionEndpoint.class))
-            .andExpect(handler().methodName("findActionByActionId"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
-            .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**

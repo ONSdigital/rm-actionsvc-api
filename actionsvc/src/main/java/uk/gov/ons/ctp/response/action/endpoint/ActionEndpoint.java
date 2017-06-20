@@ -125,7 +125,11 @@ public final class ActionEndpoint implements CTPEndpoint {
     if (action == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not found for id %s", actionId);
     }
-    return mapperFacade.map(action, ActionDTO.class);
+
+    ActionDTO actionDTO = mapperFacade.map(action, ActionDTO.class);
+    UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
+    actionDTO.setActionPlanId(actionPlanUUID);
+    return actionDTO;
   }
 
   /**
