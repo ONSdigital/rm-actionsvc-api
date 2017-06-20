@@ -13,20 +13,21 @@ INSERT INTO outcomecategory (handlerPK, actionoutcomePK, eventcategory) VALUES (
 
 
 -- Action Types
-INSERT INTO action.actiontype (actiontypePK, name, description, handler, cancancel, responserequired) VALUES (1,'BRESEL' ,'Enrolment Letter','Printer','n','n');
+INSERT INTO action.actiontype (actiontypePK, name, description, handler, cancancel, responserequired) VALUES (1,'BRESEL' ,'Enrolment Invitation Letter','Printer','n','n');
 INSERT INTO action.actiontype (actiontypePK, name, description, handler, cancancel, responserequired) VALUES (2,'BRESERL','Enrolment Reminder Letter','Printer','n','n');
-INSERT INTO action.actiontype (actiontypePK, name, description, handler, cancancel, responserequired) VALUES (3,'BRESSNE','Survey Notification Email','Notify','n','n');
-INSERT INTO action.actiontype (actiontypePK, name, description, handler, cancancel, responserequired) VALUES (4,'BRESSRE','Survey Reminder Email','Notify','n','n');
+INSERT INTO action.actiontype (actiontypePK, name, description, handler, cancancel, responserequired) VALUES (3,'BRESSNE','Survey Reminder Notification','Notify','n','n');
 
 -- Action Plans
 INSERT INTO action.actionplan (id, actionplanPK, name, description, createdby, lastrundatetime) VALUES ('e71002ac-3575-47eb-b87f-cd9db92bf9a7',1,'Enrolment','BRES Enrolment','SYSTEM',NULL);
 INSERT INTO action.actionplan (id, actionplanPK, name, description, createdby, lastrundatetime) VALUES ('0009e978-0932-463b-a2a1-b45cb3ffcb2a',2,'BRES','BRES','SYSTEM',NULL);
 
 -- Action Rules
-INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (1,1,1,'NULL','NULL',0);
-INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (2,1,2,'NULL','NULL',82);
-INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (3,2,3,'NULL','NULL',8);
-INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (4,2,4,'NULL','NULL',84);
+INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (1,1,1,'NULL','NULL',1);
+INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (2,1,2,'NULL','NULL',85);
+INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (3,1,2,'NULL','NULL',127);
+
+INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (4,2,3,'NULL','NULL',85);
+INSERT INTO action.actionrule (actionrulePK, actionplanFK, actiontypeFK, name, description, daysoffset) VALUES (5,2,3,'NULL','NULL',127);
 
 
 -- Create actionrule description and name from the action type
@@ -53,31 +54,6 @@ INSERT INTO actionplanjobstate (statePK) VALUES ('SUBMITTED');
 INSERT INTO actionplanjobstate (statePK) VALUES ('STARTED');
 INSERT INTO actionplanjobstate (statePK) VALUES ('COMPLETED');
 INSERT INTO actionplanjobstate (statePK) VALUES ('FAILED');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
