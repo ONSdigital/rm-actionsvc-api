@@ -159,8 +159,6 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 
 **Required parameters**: `situation` as the action status as recorded by the remote handler, `outcome` as the outcome of the action within the context of the remote handler.
 
-*Optional parameters:* `notes` as a text description of the remote handler's feedback.
-
 ### Example JSON Response
 ```json
 {
