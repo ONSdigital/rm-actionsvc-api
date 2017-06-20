@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
@@ -77,5 +79,14 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
         action.getCaseId());
     return returnedCaseEventDTO;
   }
+
+@Override
+public CaseDetailsDTO getCaseWithIAC(UUID caseId) {
+	MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+	queryParams.add("iac", "true");
+	CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+	    CaseDetailsDTO.class, null, queryParams, caseId);
+    return caseDTO;
+}
 
 }

@@ -59,6 +59,8 @@
 	<!-- a complex type for addresses - no statistical geography info -->
 	<xs:complexType name="ActionAddress">
 		<xs:sequence>
+		    <xs:element name="sampleUnitRef" type="xs:string"
+                minOccurs="1" maxOccurs="1" />
 			<xs:element name="type" type="xs:string" minOccurs="0"
 				maxOccurs="1" />
 			<xs:element name="estabType" type="xs:string" minOccurs="0"
@@ -93,20 +95,18 @@
 				<xs:sequence>
 					<xs:element name="actionPlan" type="xs:string"
 						minOccurs="0" maxOccurs="1" />
-                    <xs:element name="sampleUnitRef" type="xs:string"
-                        minOccurs="0" maxOccurs="1" />
 					<xs:element name="actionType" type="xs:string"
 						minOccurs="1" maxOccurs="1" />
 					<xs:element name="questionSet" type="xs:string"
 						minOccurs="0" maxOccurs="1" />
 					<xs:element name="contact" type="ActionContact"
 						minOccurs="0" maxOccurs="1" />
-					<xs:element name="address" type="ActionAddress" />
+					<xs:element name="address" type="ActionAddress" minOccurs="1" />
 					<xs:element name="caseId" type="xs:string" minOccurs="0"/>
 					<xs:element name="priority" type="Priority" minOccurs="0"
 						maxOccurs="1" />
 					<xs:element name="caseRef" type="xs:string" minOccurs="0" maxOccurs="1"/>
-					<xs:element name="iac" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="iac" type="xs:string" minOccurs="1" maxOccurs="1"/>
 					<xs:element name="events" type="ActionEvent" />
 				</xs:sequence>
 			</xs:extension>
