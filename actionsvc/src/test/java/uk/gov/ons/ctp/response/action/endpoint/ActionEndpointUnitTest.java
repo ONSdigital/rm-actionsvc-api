@@ -90,7 +90,6 @@ public final class ActionEndpointUnitTest {
   private static final UUID ACTION_ID_6_AND_7_CASEID = UUID.fromString("E39202CE-D9A2-4BDD-92F9-E5E0852AF023");
   private static final UUID ACTIONID_1 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
 
-
   private static final String ACTION_ACTIONTYPENAME_1 = "action type one";
   private static final String ACTION_ACTIONTYPENAME_2 = "action type two";
   private static final String ACTION_ACTIONTYPENAME_3 = "action type three";
@@ -521,6 +520,26 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.state", is(ActionDTO.ActionState.ACTIVE.name())))
             .andExpect(jsonPath("$.createdDateTime", is(ALL_ACTIONS_CREATEDDATE_VALUE)))
             .andExpect(jsonPath("$.updatedDateTime", is(ALL_ACTIONS_UPDATEDDATE_VALUE)));
+  }
+
+  /**
+   * Test updating action with invalid json
+   * @throws Exception when putJson does
+   */
+  @Test
+  public void updateActionByActionIdWithInvalidJson() throws Exception {
+    when(actionService.updateAction(any(Action.class))).thenReturn(actions.get(0));
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
+
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
+            ACTION_INVALID_JSON_BAD_PROP));
+
+    actions.andExpect(status().isBadRequest())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("updateAction"))
+            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
+            .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
+            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**
