@@ -71,16 +71,12 @@ public final class ActionEndpointUnitTest {
   private List<Action> actions;
   private List<ActionPlan> actionPlans;
 
-  private static final ActionDTO.ActionState ACTION1_ACTIONSTATE = ActionDTO.ActionState.ACTIVE;
   private static final ActionDTO.ActionState ACTION2_ACTIONSTATE = ActionDTO.ActionState.COMPLETED;
   private static final ActionDTO.ActionState ACTION3_ACTIONSTATE = ActionDTO.ActionState.CANCELLED;
 
   private static final Integer ACTION_CASEFK = 1;
-  private static final Integer ACTION1_PRIORITY = 1;
   private static final Integer ACTION2_PRIORITY = 3;
-  private static final Integer ACTION1_PLAN_FK = 1;
   private static final Integer ACTION2_PLAN_FK = 2;
-  private static final Integer ACTION1_RULE_FK = 1;
   private static final Integer ACTION2_RULE_FK = 2;
   private static final String NON_EXISTING_ID = "e1c26bf2-eaa8-4a8a-b44f-3b8f004ef271";
 
@@ -104,9 +100,7 @@ public final class ActionEndpointUnitTest {
   private static final UUID ACTIONID_2 = UUID.fromString("64970e28-2ffc-4948-a643-2eb1b42b3fd7");
   private static final UUID ACTION2_PLAN_UUID = UUID.fromString("64970e28-2ffc-4948-a643-2eb1b42b3fd8");
 
-  private static final Boolean ACTION1_ACTIONTYPECANCEL = true;
   private static final Boolean ACTION2_ACTIONTYPECANCEL = false;
-  private static final Boolean ACTION1_RESPONSEREQUIRED = true;
   private static final Boolean ACTION2_RESPONSEREQUIRED = false;
   private static final Boolean ACTION1_MANUALLY_CREATED = true;
   private static final Boolean ACTION2_MANUALLY_CREATED = false;
@@ -128,11 +122,8 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION_SITUATION_5 = "situation five";
   private static final String ACTION_SITUATION_6 = "situation six";
   private static final String ACTION_SITUATION_7 = "situation seven";
-  private static final String ACTION1_ACTIONTYPENAME = "actiontypename1";
   private static final String ACTION2_ACTIONTYPENAME = "actiontypename2";
-  private static final String ACTION1_ACTIONTYPEDESC = "actiontypedesc1";
   private static final String ACTION2_ACTIONTYPEDESC = "actiontypedesc2";
-  private static final String ACTION1_ACTIONTYPEHANDLER = "Field";
   private static final String ACTION2_ACTIONTYPEHANDLER = "Field";
   private static final String ACTION1_SITUATION = "Assigned";
   private static final String ACTION2_SITUATION = "Sent";
@@ -140,7 +131,6 @@ public final class ActionEndpointUnitTest {
   private static final String ALL_ACTIONS_CREATEDDATE_VALUE = "2017-05-15T11:00:00.000+0100";
   private static final String ALL_ACTIONS_UPDATEDDATE_VALUE = "2017-05-15T12:00:00.000+0100";
   private static final String ACTION_CREATEDDATE_VALUE = "2016-02-26T18:30:00.000+0000";
-  private static final String ACTION_UPDATEDDATE_VALUE = "2016-02-26T19:30:00.000+0000";
   private static final String ACTION_TYPE_NOTFOUND = "NotFound";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
@@ -221,7 +211,11 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActions() throws Exception {
-    when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(actions);
+    List<Action> results = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      results.add((actions.get(i)));
+    }
+    when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(results);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions")));
@@ -435,8 +429,8 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTION_ID_6.toString(), ACTION_ID_7.toString())))
             .andExpect(jsonPath("$[*].caseId", containsInAnyOrder(ACTION_ID_6_AND_7_CASEID.toString(),
                     ACTION_ID_6_AND_7_CASEID.toString())))
-// TODO           .andExpect(jsonPath("$[*].actionPlanId", containsInAnyOrder(ACTION_PLAN_ID_1.toString(),
-// TODO                   ACTION_PLAN_ID_1.toString())))
+            .andExpect(jsonPath("$[*].actionPlanId", containsInAnyOrder(ACTION_PLAN_ID_1.toString(),
+                    ACTION_PLAN_ID_1.toString())))
             .andExpect(jsonPath("$[*].actionTypeName", containsInAnyOrder(ACTION_ACTIONTYPENAME_6,
                     ACTION_ACTIONTYPENAME_7)))
             .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY_SYSTEM, CREATED_BY_SYSTEM)))

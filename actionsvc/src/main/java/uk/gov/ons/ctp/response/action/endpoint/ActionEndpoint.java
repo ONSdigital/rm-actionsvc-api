@@ -86,17 +86,7 @@ public final class ActionEndpoint implements CTPEndpoint {
     if (CollectionUtils.isEmpty(actions)) {
       return ResponseEntity.noContent().build();
     } else {
-      List<ActionDTO> actionsDTOs = mapperFacade.mapAsList(actions, ActionDTO.class);
-
-      int index = 0;
-      for (Action action : actions) {
-        int actionPlanFK = action.getActionPlanFK();
-        UUID actionPlanUUID = actionPlanService.findActionPlan(actionPlanFK).getId();
-        actionsDTOs.get(index).setActionPlanId(actionPlanUUID);
-        index = index + 1;
-      }
-
-      return ResponseEntity.ok(actionsDTOs);
+      return ResponseEntity.ok(buildActionsDTOs(actions));
     }
   }
 
@@ -198,9 +188,11 @@ public final class ActionEndpoint implements CTPEndpoint {
   public ResponseEntity<?> findActionsByCaseId(@PathVariable("caseid") final UUID caseId) {
     log.info("Entering findActionsByCaseId...");
     List<Action> actions = actionService.findActionsByCaseId(caseId);
-    List<ActionDTO> actionDTOs = mapperFacade.mapAsList(actions, ActionDTO.class);
-    return CollectionUtils.isEmpty(actionDTOs)
-            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionDTOs);
+    if (CollectionUtils.isEmpty(actions)) {
+      return ResponseEntity.noContent().build();
+    } else {
+      return ResponseEntity.ok(buildActionsDTOs(actions));
+    }
   }
 
   /**
@@ -221,5 +213,19 @@ public final class ActionEndpoint implements CTPEndpoint {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not found for id %s", actionId);
     }
     return mapperFacade.map(action, ActionDTO.class);
+  }
+
+  private List<ActionDTO> buildActionsDTOs(List<Action> actions) {
+    List<ActionDTO> actionsDTOs = mapperFacade.mapAsList(actions, ActionDTO.class);
+
+    int index = 0;
+    for (Action action : actions) {
+      int actionPlanFK = action.getActionPlanFK();
+      UUID actionPlanUUID = actionPlanService.findActionPlan(actionPlanFK).getId();
+      actionsDTOs.get(index).setActionPlanId(actionPlanUUID);
+      index = index + 1;
+    }
+
+    return actionsDTOs;
   }
 }
