@@ -183,9 +183,9 @@ public final class ActionEndpointUnitTest {
   public void findActionsNoneFound() throws Exception {
     when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(new ArrayList<>());
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions")));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions")));
 
-    actions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"));
   }
@@ -204,9 +204,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.findAllActionsOrderedByCreatedDateTimeDescending()).thenReturn(results);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions")));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions")));
 
-    actions.andExpect(status().is2xxSuccessful())
+    resultActions.andExpect(status().is2xxSuccessful())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(5)))
@@ -251,10 +251,10 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_TYPE_NOTFOUND,
             ActionDTO.ActionState.COMPLETED)).thenReturn(new ArrayList<>());
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_TYPE_NOTFOUND,
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_TYPE_NOTFOUND,
             ActionDTO.ActionState.COMPLETED)));
 
-    actions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"));
   }
@@ -272,10 +272,10 @@ public final class ActionEndpointUnitTest {
             ActionDTO.ActionState.COMPLETED)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s",
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s",
             ACTION2_ACTIONTYPENAME, ActionDTO.ActionState.COMPLETED)));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
@@ -305,9 +305,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByType(ACTION2_ACTIONTYPENAME)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION2_ACTIONTYPENAME)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION2_ACTIONTYPENAME)));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
@@ -335,9 +335,9 @@ public final class ActionEndpointUnitTest {
   public void findActionsByActionTypeNotFound() throws Exception {
     when(actionService.findActionsByType(ACTION_TYPE_NOTFOUND)).thenReturn(new ArrayList<Action>());
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION_TYPE_NOTFOUND)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION_TYPE_NOTFOUND)));
 
-    actions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"));
   }
@@ -353,9 +353,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByState(ActionDTO.ActionState.COMPLETED)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?state=%s", ActionDTO.ActionState.COMPLETED.name())));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?state=%s", ActionDTO.ActionState.COMPLETED.name())));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
@@ -380,9 +380,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActionByActionIdNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/%s", NON_EXISTING_ID)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions/%s", NON_EXISTING_ID)));
 
-    actions.andExpect(status().isNotFound())
+    resultActions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionByActionId"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
@@ -400,9 +400,9 @@ public final class ActionEndpointUnitTest {
   public void findActionByActionIdUnCheckedException() throws Exception {
     when(actionService.findActionById(ACTIONID_1)).thenThrow(new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/%s", ACTIONID_1)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions/%s", ACTIONID_1)));
 
-    actions.andExpect(status().is5xxServerError())
+    resultActions.andExpect(status().is5xxServerError())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionByActionId"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
@@ -420,9 +420,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionById(ACTION_ID_1)).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/%s", ACTION_ID_1)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions/%s", ACTION_ID_1)));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionByActionId"))
             .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
@@ -452,9 +452,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByCaseId(ACTION_ID_6_AND_7_CASEID)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/case/%s", ACTION_ID_6_AND_7_CASEID)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions/case/%s", ACTION_ID_6_AND_7_CASEID)));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionsByCaseId"))
             .andExpect(jsonPath("$", Matchers.hasSize(2)))
@@ -486,9 +486,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActionByCaseIdNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions/case/%s", NON_EXISTING_ID)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions/case/%s", NON_EXISTING_ID)));
 
-    actions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionsByCaseId"));
   }
@@ -499,9 +499,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void updateActionByActionIdNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID), ACTION_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID), ACTION_VALID_JSON));
 
-    actions.andExpect(status().isNotFound())
+    resultActions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("updateAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
@@ -519,9 +519,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.updateAction(any(Action.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1), ACTION_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1), ACTION_VALID_JSON));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("updateAction"))
             .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
@@ -547,10 +547,10 @@ public final class ActionEndpointUnitTest {
     when(actionService.updateAction(any(Action.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
             ACTION_INVALID_JSON_BAD_PROP));
 
-    actions.andExpect(status().isBadRequest())
+    resultActions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("updateAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
@@ -564,10 +564,10 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void updateActionFeedbackByActionIdNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", NON_EXISTING_ID),
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", NON_EXISTING_ID),
             ACTION_FEEDBACK_VALID_JSON));
 
-    actions.andExpect(status().isNotFound())
+    resultActions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("feedbackAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
@@ -581,9 +581,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void updateActionFeedbackByActionIdFoundButBadJson() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1), ACTION_FEEDBACK_INVALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1), ACTION_FEEDBACK_INVALID_JSON));
 
-    actions.andExpect(status().isBadRequest())
+    resultActions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("feedbackAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
@@ -600,9 +600,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.feedBackAction(any(ActionFeedback.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1), ACTION_FEEDBACK_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1), ACTION_FEEDBACK_VALID_JSON));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("feedbackAction"))
             .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
@@ -628,9 +628,9 @@ public final class ActionEndpointUnitTest {
     when(actionService.createAction(any(Action.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(postJson("/actions", ACTION_VALID_JSON));
 
-    actions.andExpect(status().isCreated())
+    resultActions.andExpect(status().isCreated())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("createAction"))
             .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
@@ -653,9 +653,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void createActionInvalidPropJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_INVALID_JSON_BAD_PROP));
+    ResultActions resultActions = mockMvc.perform(postJson("/actions", ACTION_INVALID_JSON_BAD_PROP));
 
-    actions.andExpect(status().isBadRequest())
+    resultActions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("createAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
@@ -670,9 +670,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void createActionMissingPropJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(postJson("/actions", ACTION_INVALID_JSON_MISSING_PROP));
+    ResultActions resultActions = mockMvc.perform(postJson("/actions", ACTION_INVALID_JSON_MISSING_PROP));
 
-    actions.andExpect(status().isBadRequest())
+    resultActions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("createAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
@@ -694,10 +694,10 @@ public final class ActionEndpointUnitTest {
     when(actionService.cancelActions(ACTION_ID_6_AND_7_CASEID)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel", ACTION_ID_6_AND_7_CASEID),
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel", ACTION_ID_6_AND_7_CASEID),
             ""));
 
-    actions.andExpect(status().isOk())
+    resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("cancelActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(2)))
@@ -728,10 +728,10 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void cancelActionsCaseNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel", NON_EXISTING_ID),
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel", NON_EXISTING_ID),
             ""));
 
-    actions.andExpect(status().isNotFound())
+    resultActions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("cancelActions"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())));

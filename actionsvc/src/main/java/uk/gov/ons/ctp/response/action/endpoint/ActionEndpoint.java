@@ -241,6 +241,12 @@ public final class ActionEndpoint implements CTPEndpoint {
     return resultDTO;
   }
 
+  /**
+   * To build a list of ActionDTOs from Actions populating the actionPlanUUID
+   *
+   * @param actions a list of Actions
+   * @return a list of ActionDTOs
+   */
   private List<ActionDTO> buildActionsDTOs(List<Action> actions) {
     List<ActionDTO> actionsDTOs = mapperFacade.mapAsList(actions, ActionDTO.class);
 
