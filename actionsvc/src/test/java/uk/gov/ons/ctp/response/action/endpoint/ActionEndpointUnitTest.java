@@ -136,7 +136,7 @@ public final class ActionEndpointUnitTest {
   private static final String ALL_ACTIONS_UPDATEDDATE_VALUE = "2017-05-15T12:00:00.000+0100";
   private static final String ACTION_CREATEDDATE_VALUE = "2016-02-26T18:30:00.000+0000";
   private static final String ACTION_UPDATEDDATE_VALUE = "2016-02-26T19:30:00.000+0000";
-  private static final String ACTION_NOTFOUND = "NotFound";
+  private static final String ACTION_TYPE_NOTFOUND = "NotFound";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
   private static final String ACTION_VALIDJSON = "{"
@@ -264,10 +264,10 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActionsByActionTypeAndStateNotFound() throws Exception {
-    when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_NOTFOUND,
+    when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_TYPE_NOTFOUND,
             ACTION2_ACTIONSTATE)).thenReturn(new ArrayList<>());
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_NOTFOUND,
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_TYPE_NOTFOUND,
             ACTION2_ACTIONSTATE)));
 
     actions.andExpect(status().isNoContent())
@@ -283,17 +283,11 @@ public final class ActionEndpointUnitTest {
   @Test
   public void findActionsByActionTypeAndStateFound() throws Exception {
     List<Action> result = new ArrayList<Action>();
-    ActionType actionType = new ActionType(1, ACTION2_ACTIONTYPENAME, ACTION2_ACTIONTYPEDESC,
-            ACTION2_ACTIONTYPEHANDLER, ACTION2_ACTIONTYPECANCEL, ACTION2_RESPONSEREQUIRED);
-    result.add(new Action(ACTION_PK, ACTIONID_2, ACTION_CASEID, ACTION_CASEFK, ACTION2_PLAN_FK, ACTION2_RULE_FK,
-            ACTION_CREATEDBY, ACTION2_MANUALLY_CREATED, actionType, ACTION2_PRIORITY, ACTION2_SITUATION,
-            ACTION2_ACTIONSTATE, ACTION_CREATEDDATE_TIMESTAMP, ACTION_UPDATEDDATE_TIMESTAMP, 0));
+    result.add(actions.get(0));
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION2_ACTIONTYPENAME,
             ACTION2_ACTIONSTATE)).thenReturn(result);
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ActionPlan actionPlan = new ActionPlan();
-    actionPlan.setId(ACTION2_PLAN_UUID);
-    when(actionPlanService.findActionPlan(ACTION2_PLAN_FK)).thenReturn(actionPlan);
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s",
             ACTION2_ACTIONTYPENAME, ACTION2_ACTIONSTATE)));
@@ -302,18 +296,19 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActions"))
             .andExpect(jsonPath("$", Matchers.hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(ACTIONID_2.toString())))
-            .andExpect(jsonPath("$[0].caseId", is(ACTION_CASEID.toString())))
-            .andExpect(jsonPath("$[0].actionPlanId", is(ACTION2_PLAN_UUID.toString())))
+            .andExpect(jsonPath("$[0].*", hasSize(12)))
+            .andExpect(jsonPath("$[0].id", is(ACTION_ID_1.toString())))
+            .andExpect(jsonPath("$[0].caseId", is(ACTION_ID_1_CASE_ID.toString())))
+            .andExpect(jsonPath("$[0].actionPlanId", is(ACTION_PLAN_ID_1.toString())))
 // TODO            .andExpect(jsonPath("$[0].actionRuleId", is(ACTION2_PLAN_UUID.toString())))
-            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION2_ACTIONTYPENAME)))
-            .andExpect(jsonPath("$[0].createdBy", is(ACTION_CREATEDBY)))
-            .andExpect(jsonPath("$[0].manuallyCreated", is(ACTION2_MANUALLY_CREATED)))
-            .andExpect(jsonPath("$[0].priority", is(ACTION2_PRIORITY)))
-            .andExpect(jsonPath("$[0].situation", is(ACTION2_SITUATION)))
-            .andExpect(jsonPath("$[0].state", is(ACTION2_ACTIONSTATE.name())))
-            .andExpect(jsonPath("$[0].createdDateTime", is(ACTION_CREATEDDATE_VALUE)))
-            .andExpect(jsonPath("$[0].updatedDateTime", is(ACTION_UPDATEDDATE_VALUE)));
+            .andExpect(jsonPath("$[0].actionTypeName", is(ACTION_ACTIONTYPENAME_1)))
+            .andExpect(jsonPath("$[0].createdBy", is(CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$[0].manuallyCreated", is(false)))
+            .andExpect(jsonPath("$[0].priority", is(1)))
+            .andExpect(jsonPath("$[0].situation", is(ACTION_SITUATION_1)))
+            .andExpect(jsonPath("$[0].state", is(ActionDTO.ActionState.ACTIVE.name())))
+            .andExpect(jsonPath("$[0].createdDateTime", is(ALL_ACTIONS_CREATEDDATE_VALUE)))
+            .andExpect(jsonPath("$[0].updatedDateTime", is(ALL_ACTIONS_UPDATEDDATE_VALUE)));
   }
 
   /**
@@ -363,9 +358,9 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void findActionsByActionTypeNotFound() throws Exception {
-    when(actionService.findActionsByType(ACTION_NOTFOUND)).thenReturn(new ArrayList<Action>());
+    when(actionService.findActionsByType(ACTION_TYPE_NOTFOUND)).thenReturn(new ArrayList<Action>());
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION_NOTFOUND)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION_TYPE_NOTFOUND)));
 
     actions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
