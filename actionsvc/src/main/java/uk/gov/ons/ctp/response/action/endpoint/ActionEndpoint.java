@@ -21,6 +21,7 @@ import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionFeedbackDTO;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 import uk.gov.ons.ctp.response.action.service.ActionService;
@@ -170,7 +171,7 @@ public final class ActionEndpoint implements CTPEndpoint {
   public ActionDTO updateAction(@PathVariable("actionid") final UUID actionId,
                                 @RequestBody final ActionDTO actionDTO, BindingResult bindingResult)
           throws CTPException {
-    log.info("Updating Action with {} {}", actionId, actionDTO);
+    log.info("Updating Action with {} - {}", actionId, actionDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action: ", bindingResult);
     }
@@ -215,17 +216,21 @@ public final class ActionEndpoint implements CTPEndpoint {
   /**
    * Allow feedback otherwise sent via JMS to be sent via endpoint
    * @param actionId the action
-   * @param actionFeedback the feedback
+   * @param actionFeedbackDTO the feedback
    * @return the modified action
    * @throws CTPException oops
    */
-  @RequestMapping(value = "/{actionid}/feedback", method = RequestMethod.PUT, consumes = {"application/xml",
-          "application/json"})
-  public ActionDTO feedbackAction(@PathVariable("actionid") final UUID actionId, final ActionFeedback actionFeedback)
-      throws CTPException {
-    log.info("Feedback for Action {}", actionId);
-    actionFeedback.setActionId(actionId.toString());
-    Action action = actionService.feedBackAction(actionFeedback);
+  @RequestMapping(value = "/{actionid}/feedback", method = RequestMethod.PUT, consumes = {"application/json"})
+  public ActionDTO feedbackAction(@PathVariable("actionid") final UUID actionId,
+                                  @RequestBody final ActionFeedbackDTO actionFeedbackDTO, BindingResult bindingResult)
+          throws CTPException {
+    log.info("Feedback for Action {} - {}", actionId, actionFeedbackDTO);
+    if (bindingResult.hasErrors()) {
+      throw new InvalidRequestException("Binding errors for feedback action: ", bindingResult);
+    }
+
+    actionFeedbackDTO.setActionId(actionId.toString());
+    Action action = actionService.feedBackAction(mapperFacade.map(actionFeedbackDTO, ActionFeedback.class));
     if (action == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not found for id %s", actionId);
     }

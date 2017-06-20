@@ -9,7 +9,9 @@ import ma.glasnost.orika.impl.generator.EclipseJdtCompilerStrategy;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
+import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionFeedbackDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 
@@ -46,5 +48,10 @@ public class ActionBeanMapper extends ConfigurableMapper {
         .classMap(ActionPlanJob.class, ActionPlanJobDTO.class)
         .byDefault()
         .register();
+
+    factory
+            .classMap(ActionFeedback.class, ActionFeedbackDTO.class)
+            .byDefault()
+            .register();
   }
 }
