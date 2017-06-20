@@ -53,6 +53,46 @@ public final class ActionEndpoint implements CTPEndpoint {
   private MapperFacade mapperFacade;
 
   /**
+   * GET the Action for the specified action id.
+   *
+   * @param actionId Action Id of requested Action
+   * @return ActionDTO Returns the associated Action for the specified action
+   * @throws CTPException if no associated Action found for the specified action
+   *           Id.
+   */
+  @RequestMapping(value = "/{actionid}", method = RequestMethod.GET)
+  public ActionDTO findActionByActionId(@PathVariable("actionid") final UUID actionId) throws CTPException {
+    log.info("Entering findActionByActionId with {}", actionId);
+    Action action = actionService.findActionById(actionId);
+    if (action == null) {
+      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not found for id %s", actionId);
+    }
+
+    ActionDTO actionDTO = mapperFacade.map(action, ActionDTO.class);
+    UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
+    actionDTO.setActionPlanId(actionPlanUUID);
+    return actionDTO;
+  }
+
+  /**
+   * GET Actions for the specified case Id.
+   *
+   * @param caseId caseID to which Actions apply
+   * @return List<ActionDTO> Returns the associated actions for the specified
+   *         case id.
+   */
+  @RequestMapping(value = "/case/{caseid}", method = RequestMethod.GET)
+  public ResponseEntity<?> findActionsByCaseId(@PathVariable("caseid") final UUID caseId) {
+    log.info("Entering findActionsByCaseId...");
+    List<Action> actions = actionService.findActionsByCaseId(caseId);
+    if (CollectionUtils.isEmpty(actions)) {
+      return ResponseEntity.noContent().build();
+    } else {
+      return ResponseEntity.ok(buildActionsDTOs(actions));
+    }
+  }
+
+  /**
    * GET all Actions optionally filtered by ActionType and or state
    *
    * @param actionType Optional filter by ActionType
@@ -115,28 +155,6 @@ public final class ActionEndpoint implements CTPEndpoint {
   }
 
   /**
-   * GET the Action for the specified action id.
-   *
-   * @param actionId Action Id of requested Action
-   * @return ActionDTO Returns the associated Action for the specified action
-   * @throws CTPException if no associated Action found for the specified action
-   *           Id.
-   */
-  @RequestMapping(value = "/{actionid}", method = RequestMethod.GET)
-  public ActionDTO findActionByActionId(@PathVariable("actionid") final UUID actionId) throws CTPException {
-    log.info("Entering findActionByActionId with {}", actionId);
-    Action action = actionService.findActionById(actionId);
-    if (action == null) {
-      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not found for id %s", actionId);
-    }
-
-    ActionDTO actionDTO = mapperFacade.map(action, ActionDTO.class);
-    UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
-    actionDTO.setActionPlanId(actionPlanUUID);
-    return actionDTO;
-  }
-
-  /**
    * PUT to update the specified Action.
    *
    * @param actionId Action Id of the Action to update
@@ -159,7 +177,11 @@ public final class ActionEndpoint implements CTPEndpoint {
     if (action == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not updated for id %s", actionId);
     }
-    return mapperFacade.map(action, ActionDTO.class);
+
+    ActionDTO resultDTO = mapperFacade.map(action, ActionDTO.class);
+    UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
+    resultDTO.setActionPlanId(actionPlanUUID);
+    return resultDTO;
   }
 
   /**
@@ -180,24 +202,6 @@ public final class ActionEndpoint implements CTPEndpoint {
     }
 
     List<Action> actions = actionService.cancelActions(caseId);
-    if (CollectionUtils.isEmpty(actions)) {
-      return ResponseEntity.noContent().build();
-    } else {
-      return ResponseEntity.ok(buildActionsDTOs(actions));
-    }
-  }
-
-  /**
-   * GET Actions for the specified case Id.
-   *
-   * @param caseId caseID to which Actions apply
-   * @return List<ActionDTO> Returns the associated actions for the specified
-   *         case id.
-   */
-  @RequestMapping(value = "/case/{caseid}", method = RequestMethod.GET)
-  public ResponseEntity<?> findActionsByCaseId(@PathVariable("caseid") final UUID caseId) {
-    log.info("Entering findActionsByCaseId...");
-    List<Action> actions = actionService.findActionsByCaseId(caseId);
     if (CollectionUtils.isEmpty(actions)) {
       return ResponseEntity.noContent().build();
     } else {
