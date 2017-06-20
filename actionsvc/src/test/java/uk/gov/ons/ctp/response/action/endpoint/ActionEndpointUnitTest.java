@@ -43,6 +43,8 @@ import static uk.gov.ons.ctp.common.MvcHelper.*;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.INVALID_JSON;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
 import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
+import static uk.gov.ons.ctp.response.action.endpoint.ActionEndpoint.ACTION_NOT_FOUND;
+import static uk.gov.ons.ctp.response.action.endpoint.ActionEndpoint.ACTION_NOT_UPDATED;
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
 
 /**
@@ -112,6 +114,8 @@ public final class ActionEndpointUnitTest {
   private static final String ACTION_TYPE_NOTFOUND = "NotFound";
   private static final String NON_EXISTING_ID = "e1c26bf2-eaa8-4a8a-b44f-3b8f004ef271";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
+  private static final String UPDATED_OUTCOME = "REQUEST_COMPLETED";
+  private static final String UPDATED_SITUATION =  "new situation";
 
   private static final String ACTION_VALID_JSON = "{"
           + "\"id\": \"" + ACTIONID_1 + "\","
@@ -146,6 +150,14 @@ public final class ActionEndpointUnitTest {
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"situation\": \"" + ACTION1_SITUATION + "\","
           + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
+
+  private static final String ACTION_FEEDBACK_VALID_JSON = "{"
+          + "\"situation\": \"" + UPDATED_SITUATION + "\","
+          + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
+
+  private static final String ACTION_FEEDBACK_INVALID_JSON = "{"
+          + "\"badsituation\": \"" + UPDATED_SITUATION + "\","
+          + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
 
   @Before
   public void setUp() throws Exception {
@@ -373,7 +385,7 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("findActionByActionId"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
-            .andExpect(jsonPath("$.error.message", is(String.format("Action not found for id %s", NON_EXISTING_ID))))
+            .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_FOUND, NON_EXISTING_ID))))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
@@ -491,7 +503,10 @@ public final class ActionEndpointUnitTest {
     actions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("updateAction"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())));
+            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
+            .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_UPDATED, NON_EXISTING_ID))))
+            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+    ;
   }
 
   /**
@@ -541,6 +556,40 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
+
+  /**
+   * Test updating action feedback for action not found
+   * @throws Exception when putJson does
+   */
+  @Test
+  public void updateActionFeedbackByActionIdNotFound() throws Exception {
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", NON_EXISTING_ID),
+            ACTION_FEEDBACK_VALID_JSON));
+
+    actions.andExpect(status().isNotFound())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("feedbackAction"))
+            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
+            .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_FOUND, NON_EXISTING_ID))))
+            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+  }
+
+//  /**
+//   * Test updating action feedback for action found BUT bad json
+//   * @throws Exception when putJson does
+//   */
+//  @Test
+//  public void updateActionFeedbackByActionIdFoundButBadJson() throws Exception {
+//    ResultActions actions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1),
+//            ACTION_FEEDBACK_INVALID_JSON));
+//
+//    actions.andExpect(status().isNotFound())
+//            .andExpect(handler().handlerType(ActionEndpoint.class))
+//            .andExpect(handler().methodName("feedbackAction"))
+//            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
+//            .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_FOUND, NON_EXISTING_ID))))
+//            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+//  }
 
   /**
    * Test creating an Action with valid JSON.

@@ -52,6 +52,9 @@ public final class ActionEndpoint implements CTPEndpoint {
   @Autowired
   private MapperFacade mapperFacade;
 
+  public static final String ACTION_NOT_FOUND = "Action not found for id %s";
+  public static final String ACTION_NOT_UPDATED = "Action not updated for id %s";
+
   /**
    * GET the Action for the specified action id.
    *
@@ -166,7 +169,7 @@ public final class ActionEndpoint implements CTPEndpoint {
   @RequestMapping(value = "/{actionid}", method = RequestMethod.PUT, consumes = "application/json")
   public ActionDTO updateAction(@PathVariable("actionid") final UUID actionId,
                                 @RequestBody final ActionDTO actionDTO, BindingResult bindingResult)
-      throws CTPException {
+          throws CTPException {
     log.info("Updating Action with {} {}", actionId, actionDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action: ", bindingResult);
@@ -175,7 +178,7 @@ public final class ActionEndpoint implements CTPEndpoint {
     actionDTO.setId(actionId);
     Action action = actionService.updateAction(mapperFacade.map(actionDTO, Action.class));
     if (action == null) {
-      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not updated for id %s", actionId);
+      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_NOT_UPDATED, actionId);
     }
 
     ActionDTO resultDTO = mapperFacade.map(action, ActionDTO.class);
