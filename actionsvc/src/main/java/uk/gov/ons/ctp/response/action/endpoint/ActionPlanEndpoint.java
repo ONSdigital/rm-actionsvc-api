@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,10 +62,10 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    * @throws CTPException if no action plan found for the specified action plan id.
    */
   @RequestMapping(value = "/{actionplanid}", method = RequestMethod.GET)
-  public final ActionPlanDTO findActionPlanByActionPlanId(@PathVariable("actionplanid") final Integer actionPlanId)
+  public final ActionPlanDTO findActionPlanByActionPlanId(@PathVariable("actionplanid") final UUID actionPlanId)
       throws CTPException {
     log.info("Entering findActionPlanByActionPlanId with {}", actionPlanId);
-    ActionPlan actionPlan = actionPlanService.findActionPlan(actionPlanId);
+    ActionPlan actionPlan = actionPlanService.findActionPlanById(actionPlanId);
     if (actionPlan == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
     }

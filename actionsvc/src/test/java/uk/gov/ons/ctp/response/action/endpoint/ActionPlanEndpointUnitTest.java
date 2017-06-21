@@ -28,13 +28,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.ons.ctp.common.MvcHelper.getJson;
 import static uk.gov.ons.ctp.common.MvcHelper.putJson;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
 import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
+import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanEndpoint.ACTION_PLAN_NOT_FOUND;
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
 
 /**
@@ -43,9 +43,8 @@ import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceIm
 public class ActionPlanEndpointUnitTest {
 
   private static final Integer ACTIONPLANPK = 1;
-  private static final Integer NON_EXISTING_ACTIONPLANID = 998;
-  private static final Integer UNCHECKED_EXCEPTION = 999;
 
+  private static final UUID NON_EXISTING_ACTION_PLAN_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a1");
   private static final UUID ACTION_PLAN_1_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a7");
   private static final UUID ACTION_PLAN_2_ID = UUID.fromString("0009e978-0932-463b-a2a1-b45cb3ffcb2a");
   private static final UUID SURVEY_ID = UUID.fromString("0009e978-0932-463b-a2a1-b45cb3ffcb2B");
@@ -149,54 +148,32 @@ public class ActionPlanEndpointUnitTest {
                     ACTION_PLAN_2_LAST_RUN_DATE_TIME)));
   }
 
-//  /**
-//   * A Test
-//   * @throws Exception exception thrown
-//   */
-//  @Test
-//  public void findActionPlanFound() throws Exception {
-//    when(actionPlanService.findActionPlan(ACTIONPLANPK)).thenReturn(new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID,
-//            ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
-//            ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
-//
-//    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", ACTIONPLANPK)));
-//
-//    actions.andExpect(status().isOk())
-//            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-//            .andExpect(handler().methodName("findActionPlanByActionPlanId"))
-//            .andExpect(jsonPath("$.id", is(ACTIONPLAN3_ID.toString())))
-//            .andExpect(jsonPath("$.name", is(ACTIONPLAN3_NAME)))
-//            .andExpect(jsonPath("$.description", is(ACTIONPLAN3_DESC)))
-//            .andExpect(jsonPath("$.createdBy", is(CREATED_BY)))
-//            .andExpect(jsonPath("$.lastGoodRunDateTime", is(LAST_RUN_DATE_TIME)));
-//  }
-
   /**
-   * A Test
-   * @throws Exception exception thrown
+   * A Test to retrieve an ActionPlan BUT not found
+   * @throws Exception exception thrown when getJson does
    */
   @Test
   public void findActionPlanNotFound() throws Exception {
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", NON_EXISTING_ACTIONPLANID)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", NON_EXISTING_ACTION_PLAN_ID)));
 
     actions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))
             .andExpect(handler().methodName("findActionPlanByActionPlanId"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
-            .andExpect(jsonPath("$.error.message", isA(String.class)))
+            .andExpect(jsonPath("$.error.message", is(String.format(ACTION_PLAN_NOT_FOUND, NON_EXISTING_ACTION_PLAN_ID))))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**
-   * A Test
-   * @throws Exception exception thrown
+   * A Test to retrieve an ActionPlan BUT exception thrown
+   * @throws Exception exception thrown when getJson does
    */
   @Test
   public void findActionPlanUnCheckedException() throws Exception {
-    when(actionPlanService.findActionPlan(UNCHECKED_EXCEPTION))
-            .thenThrow(new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
+    when(actionPlanService.findActionPlanById(NON_EXISTING_ACTION_PLAN_ID)).thenThrow(
+            new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
 
-    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", UNCHECKED_EXCEPTION)));
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", NON_EXISTING_ACTION_PLAN_ID)));
 
     actions.andExpect(status().is5xxServerError())
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))
@@ -204,6 +181,28 @@ public class ActionPlanEndpointUnitTest {
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
             .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+  }
+
+  /**
+   * A Test to retrieve an ActionPlan
+   * @throws Exception exception thrown when getJson does
+   */
+  @Test
+  public void findActionPlanFound() throws Exception {
+    when(actionPlanService.findActionPlanById(ACTION_PLAN_1_ID)).thenReturn(actionPlans.get(0));
+
+    ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID)));
+
+    actions.andExpect(status().isOk())
+            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+            .andExpect(handler().methodName("findActionPlanByActionPlanId"))
+            .andExpect(jsonPath("$.*", hasSize(6)))
+            .andExpect(jsonPath("$.id", is(ACTION_PLAN_1_ID.toString())))
+// TODO           .andExpect(jsonPath("$.surveyId", is(SURVEY_ID.toString())))
+            .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
+            .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
+            .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
   }
 
   /**

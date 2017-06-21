@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.response.action.service.impl;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,15 @@ public class ActionPlanServiceImpl implements ActionPlanService {
 
   @Override
   public ActionPlan findActionPlan(final Integer actionPlanKey) {
-    log.debug("Entering findActionPlan with {}", actionPlanKey);
+    log.debug("Entering findActionPlan with primary key {}", actionPlanKey);
     return actionPlanRepo.findOne(actionPlanKey);
   }
 
+  @Override
+  public ActionPlan findActionPlanById(final UUID actionPlanId) {
+    log.debug("Entering findActionPlanById with id {}", actionPlanId);
+    return actionPlanRepo.findById(actionPlanId);
+  }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)

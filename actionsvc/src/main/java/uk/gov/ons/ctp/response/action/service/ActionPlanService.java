@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.response.action.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import uk.gov.ons.ctp.common.service.CTPService;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
@@ -17,11 +18,18 @@ public interface ActionPlanService extends CTPService {
   List<ActionPlan> findActionPlans();
 
   /**
-   * This method returns the action plan for the specified action plan id.
-   * @param actionPlanKey This is the action plan id
+   * This method returns the action plan for the specified action plan primary key.
+   * @param actionPlanKey This is the action plan primary key
    * @return ActionPlan This returns the associated action plan.
    */
   ActionPlan findActionPlan(Integer actionPlanKey);
+
+  /**
+   * This method returns the action plan for the specified action plan id.
+   * @param actionPlanId This is the action plan id
+   * @return ActionPlan This returns the associated action plan.
+   */
+  ActionPlan findActionPlanById(UUID actionPlanId);
 
   /**
    * This method returns the action plan after it has been updated. Note that only the description and
