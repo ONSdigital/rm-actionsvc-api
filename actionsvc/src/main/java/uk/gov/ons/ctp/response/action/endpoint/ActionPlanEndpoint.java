@@ -72,7 +72,6 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     return mapperFacade.map(actionPlan, ActionPlanDTO.class);
   }
 
-  // TODO Make sense to have actionplanid in the path and not in json
   /**
    * This method returns the associated action plan after it has been updated. Note that only the description and
    * the lastGoodRunDatetime can be updated.
@@ -84,7 +83,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    * @throws CTPException if the json provided is incorrect or if the action plan id does not exist.
    */
   @RequestMapping(value = "/{actionplanid}", method = RequestMethod.PUT, consumes = "application/json")
-  public final ActionPlanDTO updateActionPlanByActionPlanId(@PathVariable("actionplanid") final Integer actionPlanId,
+  public final ActionPlanDTO updateActionPlanByActionPlanId(@PathVariable("actionplanid") final UUID actionPlanId,
                                                             @RequestBody final ActionPlanDTO requestObject,
                                                             BindingResult bindingResult) throws CTPException {
     log.info("UpdateActionPlanByActionPlanId with actionplanid {} - actionPlan {}", actionPlanId, requestObject);
@@ -93,7 +92,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     }
 
     ActionPlan actionPlan = actionPlanService.updateActionPlan(actionPlanId,
-        mapperFacade.map(requestObject, ActionPlan.class));
+            mapperFacade.map(requestObject, ActionPlan.class));
     if (actionPlan == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
     }

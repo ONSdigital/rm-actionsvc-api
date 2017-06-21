@@ -59,7 +59,7 @@ public class ActionPlanEndpointUnitTest {
 
   private static final String ACTIONPLAN_JSON = "{\"id\":\"e71002ac-3575-47eb-b87f-cd9db92bf9a7\",\"name\":\"HH\", "
           + "\"description\":\"philippetesting\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
-  private static final String ACTIONPLAN_INVALIDJSON = "{\"some\":\"joke\"}";
+  private static final String ACTION_PLAN_INCORRECT_JSON = "{\"some\":\"joke\"}";
 
   private static final Timestamp ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP = Timestamp
           .valueOf("2016-03-09 11:15:48.023286");
@@ -206,13 +206,13 @@ public class ActionPlanEndpointUnitTest {
   }
 
   /**
-   * A Test
-   * @throws Exception exception thrown
+   * A Test to update an ActionPlan with incorrect json
+   * @throws Exception exception thrown when putJson does
    */
   @Test
-  public void updateActionPlanNegativeScenarioInvalidJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTIONPLANPK),
-            ACTIONPLAN_INVALIDJSON));
+  public void updateActionPlanIncorrectJson() throws Exception {
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID),
+            ACTION_PLAN_INCORRECT_JSON));
 
     actions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionPlanEndpoint.class))

@@ -47,9 +47,9 @@ public class ActionPlanServiceImpl implements ActionPlanService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
-  public ActionPlan updateActionPlan(final Integer actionPlanKey, final ActionPlan actionPlan) {
-    log.debug("Entering updateActionPlan with {}", actionPlanKey);
-    ActionPlan existingActionPlan = actionPlanRepo.findOne(actionPlanKey);
+  public ActionPlan updateActionPlan(final UUID actionPlanId, final ActionPlan actionPlan) {
+    log.debug("Entering updateActionPlan with id {}", actionPlanId);
+    ActionPlan existingActionPlan = actionPlanRepo.findById(actionPlanId);
     if (existingActionPlan != null) {
       boolean needsUpdate = false;
 
@@ -68,7 +68,7 @@ public class ActionPlanServiceImpl implements ActionPlanService {
       }
 
       if (needsUpdate) {
-        log.debug("about to update the action plan with id {}", actionPlanKey);
+        log.debug("about to update the action plan with id {}", actionPlanId);
         existingActionPlan = actionPlanRepo.save(existingActionPlan);
       }
     }
