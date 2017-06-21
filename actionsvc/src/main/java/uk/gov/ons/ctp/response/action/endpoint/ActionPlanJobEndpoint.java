@@ -18,7 +18,6 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
-import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -35,9 +34,6 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
 
   @Autowired
   private ActionPlanJobService actionPlanJobService;
-
-  @Autowired
-  private ActionPlanService actionPlanService;
 
   @Qualifier("actionBeanMapper")
   @Autowired
@@ -73,7 +69,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
     if (CollectionUtils.isEmpty(actionPlanJobs)) {
       return ResponseEntity.noContent().build();
     } else {
-      return ResponseEntity.ok(buildActionPlanJobDTOs(actionPlanJobs));
+      return ResponseEntity.ok(buildActionPlanJobDTOs(actionPlanJobs, actionPlanId));
     }
   }
 
@@ -115,15 +111,11 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    * @param actionPlanJobs a list of ActionPlanJobs
    * @return a list of ActionPlanJobDTOs
    */
-  private List<ActionPlanJobDTO> buildActionPlanJobDTOs(List<ActionPlanJob> actionPlanJobs) {
+  private List<ActionPlanJobDTO> buildActionPlanJobDTOs(List<ActionPlanJob> actionPlanJobs, UUID actionPlanId) {
     List<ActionPlanJobDTO> actionPlanJobsDTOs = mapperFacade.mapAsList(actionPlanJobs, ActionPlanJobDTO.class);
 
-    int index = 0;
-    for (ActionPlanJob actionPlanJob : actionPlanJobs) {
-      int actionPlanFK = actionPlanJob.getActionPlanFK();
-      UUID actionPlanUUID = actionPlanService.findActionPlan(actionPlanFK).getId();
-      actionPlanJobsDTOs.get(index).setActionPlanId(actionPlanUUID);
-      index = index + 1;
+    for (ActionPlanJobDTO actionPlanJobDTO : actionPlanJobsDTOs) {
+      actionPlanJobDTO.setActionPlanId(actionPlanId);
     }
 
     return actionPlanJobsDTOs;
