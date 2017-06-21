@@ -136,6 +136,7 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
           actionPlanJob.setState(ActionPlanJobDTO.ActionPlanJobState.SUBMITTED);
           actionPlanJob.setCreatedDateTime(now);
           actionPlanJob.setUpdatedDateTime(now);
+          actionPlanJob.setId(UUID.randomUUID());
           // save the new job record
           createdJob = actionPlanJobRepo.save(actionPlanJob);
           log.info("Running actionplanjobid {} actionplanid {}", createdJob.getActionPlanJobPK(),
