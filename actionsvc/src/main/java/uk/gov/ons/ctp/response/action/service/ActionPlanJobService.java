@@ -17,7 +17,7 @@ public interface ActionPlanJobService extends CTPService {
    * @param actionPlanJobId This is the action plan job id
    * @return ActionPlanJob This returns the associated action plan job.
    */
-  Optional<ActionPlanJob> findActionPlanJob(Integer actionPlanJobId);
+  ActionPlanJob findActionPlanJob(UUID actionPlanJobId);
 
   /**
    * Returns all action plan jobs for the given action plan id.

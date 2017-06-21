@@ -53,9 +53,9 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
   private ActionPlanJobRepository actionPlanJobRepo;
 
   @Override
-  public Optional<ActionPlanJob> findActionPlanJob(final Integer actionPlanJobId) {
-    log.debug("Entering findActionPlanJob with {}", actionPlanJobId);
-    return Optional.ofNullable(actionPlanJobRepo.findOne(actionPlanJobId));
+  public ActionPlanJob findActionPlanJob(final UUID actionPlanJobId) {
+    log.debug("Entering findActionPlanJob with id {}", actionPlanJobId);
+    return actionPlanJobRepo.findById(actionPlanJobId);
   }
 
   @Override
