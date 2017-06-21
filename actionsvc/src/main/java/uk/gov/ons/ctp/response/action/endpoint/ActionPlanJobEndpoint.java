@@ -18,6 +18,7 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
+import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,6 +35,9 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
 
   @Autowired
   private ActionPlanJobService actionPlanJobService;
+
+  @Autowired
+  private ActionPlanService actionPlanService;
 
   @Qualifier("actionBeanMapper")
   @Autowired
@@ -62,13 +66,15 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    * @throws CTPException summats went wrong
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.GET)
-  public final ResponseEntity<?> findAllActionPlanJobsByActionPlanId(@PathVariable("actionplanid") final Integer
-      actionPlanId) throws CTPException {
+  public final ResponseEntity<?> findAllActionPlanJobsByActionPlanId(@PathVariable("actionplanid") final
+                                                                       UUID actionPlanId) throws CTPException {
     log.info("Entering findAllActionPlanJobsByActionPlanId with {}", actionPlanId);
     List<ActionPlanJob> actionPlanJobs = actionPlanJobService.findActionPlanJobsForActionPlan(actionPlanId);
-    List<ActionPlanJobDTO> actionPlanJobDTOs = mapperFacade.mapAsList(actionPlanJobs, ActionPlanJobDTO.class);
-    return CollectionUtils.isEmpty(actionPlanJobDTOs)
-            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanJobDTOs);
+    if (CollectionUtils.isEmpty(actionPlanJobs)) {
+      return ResponseEntity.noContent().build();
+    } else {
+      return ResponseEntity.ok(buildActionPlanJobDTOs(actionPlanJobs));
+    }
   }
 
   /**
@@ -101,5 +107,25 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
 //            mapperFacade.map(actionPlanJob.orElseThrow(() -> new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND,
 //            "ActionPlan not found for id %s", id)), ActionPlanJobDTO.class));
     return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+  }
+
+  /**
+   * To build a list of ActionPlanJobDTOs from ActionPlanJobs populating the actionPlanUUID
+   *
+   * @param actionPlanJobs a list of ActionPlanJobs
+   * @return a list of ActionPlanJobDTOs
+   */
+  private List<ActionPlanJobDTO> buildActionPlanJobDTOs(List<ActionPlanJob> actionPlanJobs) {
+    List<ActionPlanJobDTO> actionPlanJobsDTOs = mapperFacade.mapAsList(actionPlanJobs, ActionPlanJobDTO.class);
+
+    int index = 0;
+    for (ActionPlanJob actionPlanJob : actionPlanJobs) {
+      int actionPlanFK = actionPlanJob.getActionPlanFK();
+      UUID actionPlanUUID = actionPlanService.findActionPlan(actionPlanFK).getId();
+      actionPlanJobsDTOs.get(index).setActionPlanId(actionPlanUUID);
+      index = index + 1;
+    }
+
+    return actionPlanJobsDTOs;
   }
 }

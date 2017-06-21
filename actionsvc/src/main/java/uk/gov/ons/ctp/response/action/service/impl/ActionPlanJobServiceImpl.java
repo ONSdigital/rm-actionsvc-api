@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.ons.ctp.common.distributed.DistributedLockManager;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.time.DateTimeUtil;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
@@ -19,10 +20,7 @@ import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Implementation
@@ -32,7 +30,9 @@ import java.util.Optional;
 public class ActionPlanJobServiceImpl implements ActionPlanJobService {
 
   private static final String ACTION_PLAN_SPAN = "automatedActionPlanExecution";
+
   public static final String CREATED_BY_SYSTEM = "SYSTEM";
+  public static final String NO_ACTIONPLAN_MSG = "ActionPlan not found for id %s";
 
   @Autowired
   private DistributedLockManager actionPlanExecutionLockManager;
@@ -59,9 +59,14 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
   }
 
   @Override
-  public List<ActionPlanJob> findActionPlanJobsForActionPlan(final Integer actionPlanId) {
+  public List<ActionPlanJob> findActionPlanJobsForActionPlan(final UUID actionPlanId) throws CTPException {
     log.debug("Entering findActionPlanJobsForActionPlan with {}", actionPlanId);
-    return actionPlanJobRepo.findByActionPlanFK(actionPlanId);
+    ActionPlan actionPlan = actionPlanRepo.findById(actionPlanId);
+    if (actionPlan == null) {
+      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, NO_ACTIONPLAN_MSG, actionPlanId);
+    }
+
+    return actionPlanJobRepo.findByActionPlanFK(actionPlan.getActionPlanPK());
   }
 
   @Override
