@@ -1,5 +1,4 @@
 
-
 SET SCHEMA 'action';
 
 
@@ -222,6 +221,7 @@ CREATE SEQUENCE actionplanjobseq
 
 
 CREATE TABLE actionplanjob (
+    id              uuid NOT NULL,
     actionplanjobPK integer DEFAULT nextval('actionplanjobseq'::regclass) NOT NULL,
     actionplanFK    integer NOT NULL,
     createdby       character varying(20) NOT NULL,
@@ -331,6 +331,8 @@ ALTER TABLE ONLY "case"             ADD CONSTRAINT actionplanFK_fkey       FOREI
 
 
 -- Add index
-ALTER TABLE action     ADD CONSTRAINT actionid_uuid_key     UNIQUE (id);
-ALTER TABLE actionplan ADD CONSTRAINT actionplanid_uuid_key UNIQUE (id);
-ALTER TABLE "case" ADD CONSTRAINT id_uuid_key UNIQUE (id);
+ALTER TABLE action        ADD CONSTRAINT actionid_uuid_key        UNIQUE (id);
+ALTER TABLE actionplan    ADD CONSTRAINT actionplanid_uuid_key    UNIQUE (id);
+ALTER TABLE "case"        ADD CONSTRAINT caseid_uuid_key          UNIQUE (id);
+ALTER TABLE actionplanjob ADD CONSTRAINT actionplanjobid_uuid_key UNIQUE (id);
+
