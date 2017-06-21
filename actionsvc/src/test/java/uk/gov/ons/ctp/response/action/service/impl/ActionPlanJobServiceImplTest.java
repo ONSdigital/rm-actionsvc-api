@@ -22,7 +22,6 @@ import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;

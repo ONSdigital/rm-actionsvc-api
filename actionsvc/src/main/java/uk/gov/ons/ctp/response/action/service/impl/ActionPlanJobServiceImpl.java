@@ -105,22 +105,17 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   private ActionPlanJob createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob, boolean forcedExecution) {
-    Integer actionPlanPK = actionPlanJob.getActionPlanFK();
-
     ActionPlanJob createdJob = null;
-    // load the action plan
+
+    Integer actionPlanPK = actionPlanJob.getActionPlanFK();
     ActionPlan actionPlan = actionPlanRepo.findOne(actionPlanPK);
     if (actionPlan != null) {
-
       if (actionPlanExecutionLockManager.lock(actionPlan.getName())) {
         try {
           Timestamp now = DateTimeUtil.nowUTC();
           if (!forcedExecution) {
-            Date lastExecutionTime = new Date(
-                now.getTime() - appConfig.getPlanExecution().getDelayMilliSeconds());
-
-            if (actionPlan.getLastRunDateTime() != null
-                && actionPlan.getLastRunDateTime().after(lastExecutionTime)) {
+            Date lastExecutionTime = new Date(now.getTime() - appConfig.getPlanExecution().getDelayMilliSeconds());
+            if (actionPlan.getLastRunDateTime() != null && actionPlan.getLastRunDateTime().after(lastExecutionTime)) {
               log.debug("Job for plan {} has been run since last wake up - skipping", actionPlanPK);
               return createdJob;
             }
@@ -137,10 +132,9 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
           actionPlanJob.setCreatedDateTime(now);
           actionPlanJob.setUpdatedDateTime(now);
           actionPlanJob.setId(UUID.randomUUID());
-          // save the new job record
           createdJob = actionPlanJobRepo.save(actionPlanJob);
           log.info("Running actionplanjobid {} actionplanid {}", createdJob.getActionPlanJobPK(),
-              createdJob.getActionPlanFK());
+                  createdJob.getActionPlanFK());
           // get the repo to call sql function to create actions
           actionCaseRepo.createActions(createdJob.getActionPlanJobPK());
         } finally {
