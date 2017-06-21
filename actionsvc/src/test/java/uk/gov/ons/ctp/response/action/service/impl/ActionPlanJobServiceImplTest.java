@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,7 +74,6 @@ public class ActionPlanJobServiceImplTest {
    */
   @Test
   public void testCreateAndExecuteActionPlanJobForcedExecutionBlueSky() throws Exception {
-
     // load fixtures
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
     List<ActionPlanJob> actionPlanJobs = FixtureHelper.loadClassFixtures(ActionPlanJob[].class);
@@ -91,7 +91,12 @@ public class ActionPlanJobServiceImplTest {
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
     verify(actionCaseRepo).countByActionPlanFK(1);
-    verify(actionPlanJobRepo).save(actionPlanJobs.get(0));
+
+    ArgumentCaptor <ActionPlanJob> actionPlanJob = ArgumentCaptor.forClass(ActionPlanJob.class);
+    verify(actionPlanJobRepo).save(actionPlanJob.capture());
+    ActionPlanJob savedJob = actionPlanJob.getValue();
+    assertEquals(actionPlanJobs.get(0), savedJob);
+
     verify(actionCaseRepo).createActions(1);
 
     Assert.assertNotNull(executedJob);
