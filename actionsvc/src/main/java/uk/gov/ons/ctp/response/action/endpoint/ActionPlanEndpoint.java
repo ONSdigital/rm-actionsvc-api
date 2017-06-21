@@ -49,8 +49,8 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     log.info("Entering findActionPlans...");
     List<ActionPlan> actionPlans = actionPlanService.findActionPlans();
     List<ActionPlanDTO> actionPlanDTOs = mapperFacade.mapAsList(actionPlans, ActionPlanDTO.class);
-    return CollectionUtils.isEmpty(actionPlanDTOs)
-            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanDTOs);
+    return CollectionUtils.isEmpty(actionPlanDTOs) ?
+            ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanDTOs);
   }
 
   /**

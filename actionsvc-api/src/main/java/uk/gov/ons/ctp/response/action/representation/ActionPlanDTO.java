@@ -28,5 +28,5 @@ public class ActionPlanDTO {
 
   private String createdBy;
 
-  private Date lastRunDateTime;
+  private Date lastGoodRunDateTime;
 }
