@@ -191,7 +191,6 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
     "name": "C1O331D10E",
     "description": "Component 1 - England/online/field day ten/three reminders",
     "createdBy": "SYSTEM",
-    "createdDateTime": "2017-05-15T10:00:00Z",
     "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
   }
 ]
@@ -209,7 +208,6 @@ An `HTTP 204 No Content` status code is returned if there are no action plans.
   "name": "C1O331D10E",
   "description": "Component 1 - England/online/field day ten/three reminders",
   "createdBy": "SYSTEM",
-  "createdDateTime": "2017-05-15T10:00:00Z",
   "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
 }
 ```
@@ -228,7 +226,6 @@ An `HTTP 404 Not Found` status code is returned if the action plan with the spec
   "name": "C1O331D10E",
   "description": "Component 1 - England/online/field day ten/three reminders",
   "createdBy": "SYSTEM",
-  "createdDateTime": "2017-05-15T10:00:00Z",
   "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
 }
 ```
