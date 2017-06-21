@@ -30,6 +30,8 @@ import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 @Slf4j
 public class ActionPlanEndpoint implements CTPEndpoint {
 
+  public static final String ACTION_PLAN_NOT_FOUND = "ActionPlan not found for id %s";
+
   @Autowired
   private ActionPlanService actionPlanService;
 
@@ -64,7 +66,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     log.info("Entering findActionPlanByActionPlanId with {}", actionPlanId);
     ActionPlan actionPlan = actionPlanService.findActionPlan(actionPlanId);
     if (actionPlan == null) {
-      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "ActionPlan not found for id %s", actionPlanId);
+      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
     }
     return mapperFacade.map(actionPlan, ActionPlanDTO.class);
   }
@@ -92,7 +94,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     ActionPlan actionPlan = actionPlanService.updateActionPlan(actionPlanId,
         mapperFacade.map(requestObject, ActionPlan.class));
     if (actionPlan == null) {
-      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "ActionPlan not found for id %s", actionPlanId);
+      throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
     }
     return mapperFacade.map(actionPlan, ActionPlanDTO.class);
   }

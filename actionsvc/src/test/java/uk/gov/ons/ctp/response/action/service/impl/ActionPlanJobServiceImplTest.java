@@ -87,7 +87,7 @@ public class ActionPlanJobServiceImplTest {
     Mockito.when(actionCaseRepo.createActions(1)).thenReturn(Boolean.TRUE);
 
     // let it roll
-    Optional<ActionPlanJob> executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
+    ActionPlanJob executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
 
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
@@ -95,7 +95,7 @@ public class ActionPlanJobServiceImplTest {
     verify(actionPlanJobRepo).save(actionPlanJobs.get(0));
     verify(actionCaseRepo).createActions(1);
 
-    Assert.assertTrue(executedJob.isPresent());
+    Assert.assertNotNull(executedJob);
   }
 
   /**
@@ -116,14 +116,14 @@ public class ActionPlanJobServiceImplTest {
     Mockito.when(actionPlanRepo.findOne(1)).thenReturn(actionPlans.get(0));
     
     // let it roll
-    Optional<ActionPlanJob> executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
+    ActionPlanJob executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
   
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
     verify(actionCaseRepo, times(0)).countByActionPlanFK(1);
     verify(actionPlanJobRepo, times(0)).save(actionPlanJobs.get(0));
     verify(actionCaseRepo, times(0)).createActions(1);
-    Assert.assertFalse(executedJob.isPresent());
+    Assert.assertNull(executedJob);
   }
 
   /**
@@ -143,7 +143,7 @@ public class ActionPlanJobServiceImplTest {
     Mockito.when(actionCaseRepo.countByActionPlanFK(1)).thenReturn(new Long(actionCases.size()));
 
     //let it roll
-    Optional<ActionPlanJob> executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
+    ActionPlanJob executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
 
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
@@ -151,7 +151,7 @@ public class ActionPlanJobServiceImplTest {
     verify(actionPlanJobRepo, times(0)).save(actionPlanJobs.get(0));
     verify(actionCaseRepo, times(0)).createActions(1);
   
-    Assert.assertFalse(executedJob.isPresent());
+    Assert.assertNotNull(executedJob);
   }
 
   /**

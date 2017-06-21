@@ -77,14 +77,17 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
       ActionPlanJob job = new ActionPlanJob();
       job.setActionPlanFK(actionPlan.getActionPlanPK());
       job.setCreatedBy(CREATED_BY_SYSTEM);
-      createAndExecuteActionPlanJob(job, false).ifPresent(j -> executedJobs.add(j));
+      job = createAndExecuteActionPlanJob(job, false);
+      if (job != null) {
+        executedJobs.add(job);
+      }
     });
     tracer.close(span);
     return executedJobs;
   }
 
   @Override
-  public Optional<ActionPlanJob> createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob) {
+  public ActionPlanJob createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob) {
     return createAndExecuteActionPlanJob(actionPlanJob, true);
   }
 
@@ -101,8 +104,7 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
    * @return the plan job if it was run or null if not
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  private Optional<ActionPlanJob> createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob,
-      boolean forcedExecution) {
+  private ActionPlanJob createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob, boolean forcedExecution) {
     Integer actionPlanPK = actionPlanJob.getActionPlanFK();
 
     ActionPlanJob createdJob = null;
@@ -120,14 +122,14 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
             if (actionPlan.getLastRunDateTime() != null
                 && actionPlan.getLastRunDateTime().after(lastExecutionTime)) {
               log.debug("Job for plan {} has been run since last wake up - skipping", actionPlanPK);
-              return Optional.empty();
+              return createdJob;
             }
           }
 
           // if no cases for actionplan why bother?
           if (actionCaseRepo.countByActionPlanFK(actionPlanPK) == 0) {
             log.debug("No open cases for action plan {} - skipping", actionPlanPK);
-            return Optional.empty();
+            return createdJob;
           }
 
           // enrich and save the job
@@ -149,6 +151,6 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
       }
     }
 
-    return Optional.ofNullable(createdJob);
+    return createdJob;
   }
 }
