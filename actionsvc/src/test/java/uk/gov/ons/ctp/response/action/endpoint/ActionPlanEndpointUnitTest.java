@@ -20,7 +20,6 @@ import uk.gov.ons.ctp.response.action.ActionBeanMapper;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +27,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.ons.ctp.common.MvcHelper.getJson;
@@ -42,8 +42,6 @@ import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceIm
  */
 public class ActionPlanEndpointUnitTest {
 
-  private static final Integer ACTIONPLANPK = 1;
-
   private static final UUID NON_EXISTING_ACTION_PLAN_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a1");
   private static final UUID ACTION_PLAN_1_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a7");
   private static final UUID ACTION_PLAN_2_ID = UUID.fromString("0009e978-0932-463b-a2a1-b45cb3ffcb2a");
@@ -57,12 +55,8 @@ public class ActionPlanEndpointUnitTest {
   private static final String ACTION_PLAN_2_LAST_RUN_DATE_TIME = "2016-04-15T16:03:26.644+0100";
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
-  private static final String ACTIONPLAN_JSON = "{\"id\":\"e71002ac-3575-47eb-b87f-cd9db92bf9a7\",\"name\":\"HH\", "
-          + "\"description\":\"philippetesting\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
+  private static final String ACTION_PLAN_JSON = "{\"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
   private static final String ACTION_PLAN_INCORRECT_JSON = "{\"some\":\"joke\"}";
-
-  private static final Timestamp ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP = Timestamp
-          .valueOf("2016-03-09 11:15:48.023286");
 
   @InjectMocks
   private ActionPlanEndpoint actionPlanEndpoint;
@@ -222,25 +216,25 @@ public class ActionPlanEndpointUnitTest {
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
-//  /**
-//   * A Test
-//   * @throws Exception exception thrown
-//   */
-//  @Test
-//  public void updateActionPlanHappyScenario() throws Exception {
-//    when(actionPlanService.updateActionPlan(any(Integer.class), any(ActionPlan.class))).thenReturn(
-//            new ActionPlan(ACTIONPLANPK, ACTIONPLAN3_ID, ACTIONPLAN3_NAME, ACTIONPLAN3_DESC, CREATED_BY,
-//            ACTIONPLAN_LAST_GOOD_RUN_DATE_TIMESTAMP));
-//
-//    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTIONPLANPK), ACTIONPLAN_JSON));
-//
-//    actions.andExpect(status().isOk())
-//            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-//            .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
-//            .andExpect(jsonPath("$.id", is(ACTIONPLAN3_ID.toString())))
-//            .andExpect(jsonPath("$.name", is(ACTIONPLAN3_NAME)))
-//            .andExpect(jsonPath("$.description", is(ACTIONPLAN3_DESC)))
-//            .andExpect(jsonPath("$.createdBy", is(CREATED_BY)))
-//            .andExpect(jsonPath("$.lastGoodRunDateTime", is(LAST_RUN_DATE_TIME)));
-//  }
+  /**
+   * A Test to update an ActionPlan with valid json
+   * @throws Exception exception thrown when putJson does
+   */
+  @Test
+  public void updateActionPlan() throws Exception {
+    when(actionPlanService.updateActionPlan(any(UUID.class), any(ActionPlan.class))).thenReturn(actionPlans.get(0));
+
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID), ACTION_PLAN_JSON));
+
+    actions.andExpect(status().isOk())
+            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+            .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
+            .andExpect(jsonPath("$.*", hasSize(6)))
+            .andExpect(jsonPath("$.id", is(ACTION_PLAN_1_ID.toString())))
+// TODO           .andExpect(jsonPath("$.surveyId", is(SURVEY_ID.toString())))
+            .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
+            .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
+            .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
+            .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+  }
 }
