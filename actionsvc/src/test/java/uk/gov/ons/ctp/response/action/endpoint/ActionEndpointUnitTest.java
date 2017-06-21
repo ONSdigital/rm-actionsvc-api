@@ -305,7 +305,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByType(ACTION2_ACTIONTYPENAME)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION2_ACTIONTYPENAME)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s",
+            ACTION2_ACTIONTYPENAME)));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -335,7 +336,8 @@ public final class ActionEndpointUnitTest {
   public void findActionsByActionTypeNotFound() throws Exception {
     when(actionService.findActionsByType(ACTION_TYPE_NOTFOUND)).thenReturn(new ArrayList<Action>());
 
-    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s", ACTION_TYPE_NOTFOUND)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s",
+            ACTION_TYPE_NOTFOUND)));
 
     resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -499,7 +501,8 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void updateActionByActionIdNotFound() throws Exception {
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID), ACTION_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID),
+            ACTION_VALID_JSON));
 
     resultActions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -519,7 +522,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.updateAction(any(Action.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1), ACTION_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
+            ACTION_VALID_JSON));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -581,7 +585,8 @@ public final class ActionEndpointUnitTest {
    */
   @Test
   public void updateActionFeedbackByActionIdFoundButBadJson() throws Exception {
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1), ACTION_FEEDBACK_INVALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1),
+            ACTION_FEEDBACK_INVALID_JSON));
 
     resultActions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -600,7 +605,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.feedBackAction(any(ActionFeedback.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1), ACTION_FEEDBACK_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1),
+            ACTION_FEEDBACK_VALID_JSON));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -694,8 +700,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.cancelActions(ACTION_ID_6_AND_7_CASEID)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel", ACTION_ID_6_AND_7_CASEID),
-            ""));
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/case/%s/cancel",
+            ACTION_ID_6_AND_7_CASEID), ""));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))

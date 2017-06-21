@@ -217,6 +217,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    * Allow feedback otherwise sent via JMS to be sent via endpoint
    * @param actionId the action
    * @param actionFeedbackDTO the feedback
+   * @param bindingResult the bindingResult
    * @return the modified action
    * @throws CTPException oops
    */
