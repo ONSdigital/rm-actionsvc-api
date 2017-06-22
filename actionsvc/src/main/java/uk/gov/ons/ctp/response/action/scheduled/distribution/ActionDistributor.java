@@ -374,7 +374,7 @@ public class ActionDistributor {
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
 
-    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getPartyId());
+    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getSampleUnitType(),caseDTO.getPartyId());
     log.debug("PARTYDTO: " + partyDTO.toString());
 
     List<CaseEventDTO> caseEventDTOs = caseSvcClientService.getCaseEvents(action.getCaseId());

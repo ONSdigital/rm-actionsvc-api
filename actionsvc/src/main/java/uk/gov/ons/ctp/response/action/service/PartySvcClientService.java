@@ -17,6 +17,6 @@ public interface PartySvcClientService {
    * @param partyId the PartySvc UUID
    * @return the Party we fetched!
    */
-  PartyDTO getParty(UUID partyId);
+  PartyDTO getParty(String sampleUnitType, UUID partyId);
 
 }

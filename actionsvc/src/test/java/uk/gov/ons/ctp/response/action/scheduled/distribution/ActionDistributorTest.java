@@ -176,7 +176,7 @@ public class ActionDistributorTest {
     verify(caseSvcClientService, times(0)).getCase(eq(
             UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
-    verify(partySvcClientService, times(0)).getParty(eq(
+    verify(partySvcClientService, times(0)).getParty("B",eq(
             UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
 
     verify(caseSvcClientService, times(0)).getCaseEvents(eq(
