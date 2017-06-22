@@ -22,8 +22,8 @@ import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -74,7 +74,6 @@ public class ActionPlanJobServiceImplTest {
    */
   @Test
   public void testCreateAndExecuteActionPlanJobForcedExecutionBlueSky() throws Exception {
-
     // load fixtures
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
     List<ActionPlanJob> actionPlanJobs = FixtureHelper.loadClassFixtures(ActionPlanJob[].class);
@@ -87,15 +86,20 @@ public class ActionPlanJobServiceImplTest {
     Mockito.when(actionCaseRepo.createActions(1)).thenReturn(Boolean.TRUE);
 
     // let it roll
-    Optional<ActionPlanJob> executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
+    ActionPlanJob executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
 
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
     verify(actionCaseRepo).countByActionPlanFK(1);
-    verify(actionPlanJobRepo).save(actionPlanJobs.get(0));
+
+    ArgumentCaptor <ActionPlanJob> actionPlanJob = ArgumentCaptor.forClass(ActionPlanJob.class);
+    verify(actionPlanJobRepo).save(actionPlanJob.capture());
+    ActionPlanJob savedJob = actionPlanJob.getValue();
+    assertEquals(actionPlanJobs.get(0), savedJob);
+
     verify(actionCaseRepo).createActions(1);
 
-    Assert.assertTrue(executedJob.isPresent());
+    Assert.assertNotNull(executedJob);
   }
 
   /**
@@ -116,14 +120,14 @@ public class ActionPlanJobServiceImplTest {
     Mockito.when(actionPlanRepo.findOne(1)).thenReturn(actionPlans.get(0));
     
     // let it roll
-    Optional<ActionPlanJob> executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
+    ActionPlanJob executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
   
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
     verify(actionCaseRepo, times(0)).countByActionPlanFK(1);
     verify(actionPlanJobRepo, times(0)).save(actionPlanJobs.get(0));
     verify(actionCaseRepo, times(0)).createActions(1);
-    Assert.assertFalse(executedJob.isPresent());
+    Assert.assertNull(executedJob);
   }
 
   /**
@@ -143,7 +147,7 @@ public class ActionPlanJobServiceImplTest {
     Mockito.when(actionCaseRepo.countByActionPlanFK(1)).thenReturn(new Long(actionCases.size()));
 
     //let it roll
-    Optional<ActionPlanJob> executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
+    ActionPlanJob executedJob = actionPlanJobServiceImpl.createAndExecuteActionPlanJob(actionPlanJobs.get(0));
 
     // assert the right calls were made
     verify(actionPlanRepo).findOne(1);
@@ -151,7 +155,7 @@ public class ActionPlanJobServiceImplTest {
     verify(actionPlanJobRepo, times(0)).save(actionPlanJobs.get(0));
     verify(actionCaseRepo, times(0)).createActions(1);
   
-    Assert.assertFalse(executedJob.isPresent());
+    Assert.assertNotNull(executedJob);
   }
 
   /**

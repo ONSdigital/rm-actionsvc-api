@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.response.action.service.impl;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,16 +35,21 @@ public class ActionPlanServiceImpl implements ActionPlanService {
 
   @Override
   public ActionPlan findActionPlan(final Integer actionPlanKey) {
-    log.debug("Entering findActionPlan with {}", actionPlanKey);
+    log.debug("Entering findActionPlan with primary key {}", actionPlanKey);
     return actionPlanRepo.findOne(actionPlanKey);
   }
 
+  @Override
+  public ActionPlan findActionPlanById(final UUID actionPlanId) {
+    log.debug("Entering findActionPlanById with id {}", actionPlanId);
+    return actionPlanRepo.findById(actionPlanId);
+  }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
-  public ActionPlan updateActionPlan(final Integer actionPlanKey, final ActionPlan actionPlan) {
-    log.debug("Entering updateActionPlan with {}", actionPlanKey);
-    ActionPlan existingActionPlan = actionPlanRepo.findOne(actionPlanKey);
+  public ActionPlan updateActionPlan(final UUID actionPlanId, final ActionPlan actionPlan) {
+    log.debug("Entering updateActionPlan with id {}", actionPlanId);
+    ActionPlan existingActionPlan = actionPlanRepo.findById(actionPlanId);
     if (existingActionPlan != null) {
       boolean needsUpdate = false;
 
@@ -62,7 +68,7 @@ public class ActionPlanServiceImpl implements ActionPlanService {
       }
 
       if (needsUpdate) {
-        log.debug("about to update the action plan with id {}", actionPlanKey);
+        log.debug("about to update the action plan with id {}", actionPlanId);
         existingActionPlan = actionPlanRepo.save(existingActionPlan);
       }
     }

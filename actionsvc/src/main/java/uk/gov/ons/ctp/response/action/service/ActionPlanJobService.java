@@ -1,7 +1,6 @@
 package uk.gov.ons.ctp.response.action.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import uk.gov.ons.ctp.common.error.CTPException;
@@ -33,7 +32,7 @@ public interface ActionPlanJobService extends CTPService {
    * @param actionPlanJob This is the actionPlanJob for the action plan job to be created
    * @return ActionPlanJob This returns the newly created action plan job.
    */
-  Optional<ActionPlanJob> createAndExecuteActionPlanJob(ActionPlanJob actionPlanJob);
+  ActionPlanJob createAndExecuteActionPlanJob(ActionPlanJob actionPlanJob);
 
   /**
    * Will be called by the endpoint when a manual execution of an action plan is requested

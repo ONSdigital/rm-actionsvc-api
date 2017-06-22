@@ -15,6 +15,7 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
@@ -34,6 +35,8 @@ public class ActionPlanServiceImplTest {
 
   @InjectMocks
   private ActionPlanServiceImpl actionPlanServiceImpl;
+
+  private static final UUID ACTION_PLAN_1_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a7");
 
   /**
    * Before the test
@@ -56,10 +59,10 @@ public class ActionPlanServiceImplTest {
     Mockito.when(actionPlanRepo.findOne(1)).thenReturn(persistedActionPlans.get(0));
 
     // let it roll
-    actionPlanServiceImpl.updateActionPlan(1, blankActionPlan);
+    actionPlanServiceImpl.updateActionPlan(ACTION_PLAN_1_ID, blankActionPlan);
 
     // assert the right calls were made
-    verify(actionPlanRepo).findOne(1);
+    verify(actionPlanRepo).findById(ACTION_PLAN_1_ID);
     verify(actionPlanRepo, times(0)).save(any(ActionPlan.class));
   }
 
@@ -76,10 +79,10 @@ public class ActionPlanServiceImplTest {
     Mockito.when(actionPlanRepo.findOne(1)).thenReturn(persistedActionPlans.get(0));
 
     // let it roll
-    actionPlanServiceImpl.updateActionPlan(1, actionPlanWithDesc);
+    actionPlanServiceImpl.updateActionPlan(ACTION_PLAN_1_ID, actionPlanWithDesc);
 
     // assert the right calls were made
-    verify(actionPlanRepo).findOne(1);
+    verify(actionPlanRepo).findById(ACTION_PLAN_1_ID);
     verify(actionPlanRepo, times(1)).save(any(ActionPlan.class));
   }
   
@@ -96,10 +99,10 @@ public class ActionPlanServiceImplTest {
     Mockito.when(actionPlanRepo.findOne(1)).thenReturn(persistedActionPlans.get(0));
 
     // let it roll
-    actionPlanServiceImpl.updateActionPlan(1, actionPlanWithLastGoodRunDateTime);
+    actionPlanServiceImpl.updateActionPlan(ACTION_PLAN_1_ID, actionPlanWithLastGoodRunDateTime);
 
     // assert the right calls were made
-    verify(actionPlanRepo).findOne(1);
+    verify(actionPlanRepo).findById(ACTION_PLAN_1_ID);
     verify(actionPlanRepo, times(1)).save(any(ActionPlan.class));
   }
 }

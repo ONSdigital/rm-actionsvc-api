@@ -77,14 +77,17 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
       ActionPlanJob job = new ActionPlanJob();
       job.setActionPlanFK(actionPlan.getActionPlanPK());
       job.setCreatedBy(CREATED_BY_SYSTEM);
-      createAndExecuteActionPlanJob(job, false).ifPresent(j -> executedJobs.add(j));
+      job = createAndExecuteActionPlanJob(job, false);
+      if (job != null) {
+        executedJobs.add(job);
+      }
     });
     tracer.close(span);
     return executedJobs;
   }
 
   @Override
-  public Optional<ActionPlanJob> createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob) {
+  public ActionPlanJob createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob) {
     return createAndExecuteActionPlanJob(actionPlanJob, true);
   }
 
@@ -101,43 +104,37 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
    * @return the plan job if it was run or null if not
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  private Optional<ActionPlanJob> createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob,
-      boolean forcedExecution) {
-    Integer actionPlanPK = actionPlanJob.getActionPlanFK();
-
+  private ActionPlanJob createAndExecuteActionPlanJob(final ActionPlanJob actionPlanJob, boolean forcedExecution) {
     ActionPlanJob createdJob = null;
-    // load the action plan
+
+    Integer actionPlanPK = actionPlanJob.getActionPlanFK();
     ActionPlan actionPlan = actionPlanRepo.findOne(actionPlanPK);
     if (actionPlan != null) {
-
       if (actionPlanExecutionLockManager.lock(actionPlan.getName())) {
         try {
           Timestamp now = DateTimeUtil.nowUTC();
           if (!forcedExecution) {
-            Date lastExecutionTime = new Date(
-                now.getTime() - appConfig.getPlanExecution().getDelayMilliSeconds());
-
-            if (actionPlan.getLastRunDateTime() != null
-                && actionPlan.getLastRunDateTime().after(lastExecutionTime)) {
+            Date lastExecutionTime = new Date(now.getTime() - appConfig.getPlanExecution().getDelayMilliSeconds());
+            if (actionPlan.getLastRunDateTime() != null && actionPlan.getLastRunDateTime().after(lastExecutionTime)) {
               log.debug("Job for plan {} has been run since last wake up - skipping", actionPlanPK);
-              return Optional.empty();
+              return createdJob;
             }
           }
 
           // if no cases for actionplan why bother?
           if (actionCaseRepo.countByActionPlanFK(actionPlanPK) == 0) {
             log.debug("No open cases for action plan {} - skipping", actionPlanPK);
-            return Optional.empty();
+            return createdJob;
           }
 
           // enrich and save the job
           actionPlanJob.setState(ActionPlanJobDTO.ActionPlanJobState.SUBMITTED);
           actionPlanJob.setCreatedDateTime(now);
           actionPlanJob.setUpdatedDateTime(now);
-          // save the new job record
+          actionPlanJob.setId(UUID.randomUUID());
           createdJob = actionPlanJobRepo.save(actionPlanJob);
           log.info("Running actionplanjobid {} actionplanid {}", createdJob.getActionPlanJobPK(),
-              createdJob.getActionPlanFK());
+                  createdJob.getActionPlanFK());
           // get the repo to call sql function to create actions
           actionCaseRepo.createActions(createdJob.getActionPlanJobPK());
         } finally {
@@ -149,6 +146,6 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
       }
     }
 
-    return Optional.ofNullable(createdJob);
+    return createdJob;
   }
 }
