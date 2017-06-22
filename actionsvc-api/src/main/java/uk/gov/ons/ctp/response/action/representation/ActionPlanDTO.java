@@ -20,8 +20,6 @@ public class ActionPlanDTO {
   @NotNull
   private UUID id;
 
-  private UUID surveyId;
-
   private String name;
 
   private String description;

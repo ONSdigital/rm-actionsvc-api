@@ -187,7 +187,6 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
 [
   {
     "id": "5381731e-e386-41a1-8462-26373744db86",
-    "surveyId": "cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87",
     "name": "C1O331D10E",
     "description": "Component 1 - England/online/field day ten/three reminders",
     "createdBy": "SYSTEM",
