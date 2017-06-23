@@ -152,8 +152,35 @@ case-svc:
     connect-timeout-milli-seconds: 5000
     # time to read response
     read-timeout-milli-seconds: 5000
+# calling the collectionexercise svc endpoints
+collection-exercise-svc:
+ collection-by-collection-exercise-get-path: /collectionexercises/{id}
+ connection-config:
+   scheme: http
+   host: localhost
+   port: 8145
+   retry-attempts: 10
+   retry-pause-milli-seconds: 5000
+   connect-timeout-milli-seconds: 5000
+   read-timeout-milli-seconds: 5000
 
+# calling the party svc endpoint
+party-svc:
+ party-by-sample-unit-type-and-id-path: /parties/type/{sampleUnitType}/id/{id}
+ connection-config:
+   scheme: http
+   host: ras-party-v2-int.apps.mvp.onsclofo.uk
+   port: 80
+   # how many times should we attempt connection on failure
+   retry-attempts: 10
+   # sleep between retries
+   retry-pause-milli-seconds: 5000
+   # time to estab connection
+   connect-timeout-milli-seconds: 5000
+   # time to read response
+   read-timeout-milli-seconds: 5000
  # looking for the ingest file
+ 
 csv-ingest:
   directory: /tmp/csv
   file-pattern: '*.csv'
