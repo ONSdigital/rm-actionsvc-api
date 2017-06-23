@@ -81,7 +81,7 @@ public interface ActionService extends CTPService {
    * @return List<Action> Returns list of all actions for the case that were cancelled. Not all actions are
    * cancellable!
    *
-   * @throws CTPException if action state transition errors
+   * @throws CTPException if action state transition error
    */
   List<Action> cancelActions(UUID caseId) throws CTPException;
 
@@ -106,7 +106,7 @@ public interface ActionService extends CTPService {
    * Accept the feedback for an action
    * @param actionFeedback the feedback
    * @return the updated action
-   * @throws CTPException if action state transition errors
+   * @throws CTPException if action state transition error
    */
   Action feedBackAction(ActionFeedback actionFeedback) throws CTPException;
 }

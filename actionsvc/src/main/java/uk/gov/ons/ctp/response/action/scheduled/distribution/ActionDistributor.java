@@ -360,7 +360,7 @@ public class ActionDistributor {
    *
    * @param action the action to change and persist
    * @param event the event to transition the action with
-   * @throws CTPException if action state transition errors
+   * @throws CTPException if action state transition error
    */
   private void transitionAction(final Action action, final ActionDTO.ActionEvent event) throws CTPException {
     ActionDTO.ActionState nextState = actionSvcStateTransitionManager.transition(action.getState(), event);
