@@ -166,7 +166,7 @@ collection-exercise-svc:
 
 # calling the party svc endpoint
 party-svc:
- party-by-sample-unit-type-and-id-path: /parties/type/{sampleUnitType}/id/{id}
+ party-by-sample-unit-type-and-id-path: /party-api/v1/parties/type/{sampleUnitType}/id/{id}
  connection-config:
    scheme: http
    host: ras-party-v2-int.apps.mvp.onsclofo.uk
@@ -180,7 +180,7 @@ party-svc:
    # time to read response
    read-timeout-milli-seconds: 5000
  # looking for the ingest file
- 
+
 csv-ingest:
   directory: /tmp/csv
   file-pattern: '*.csv'
