@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
@@ -67,8 +68,12 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
           break;
         case DISABLED:
         case DEACTIVATED:
-          actionService.cancelActions(caseId);
-          actionCaseRepo.delete(actionCase);
+          try {
+            actionService.cancelActions(caseId);
+            actionCaseRepo.delete(actionCase);
+          } catch (CTPException e) {
+            log.error(String.format("message = %s - cause = %s", e.getMessage(), e.getCause()));
+          }
           break;
         default:
           log.warn("Unknown Case lifecycle event {}", notif.getNotificationType());

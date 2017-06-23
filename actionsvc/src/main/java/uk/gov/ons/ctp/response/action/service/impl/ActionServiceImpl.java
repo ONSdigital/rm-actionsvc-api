@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.time.DateTimeUtil;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -87,7 +88,7 @@ public class ActionServiceImpl implements ActionService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
   @Override
-  public List<Action> cancelActions(final UUID caseId) {
+  public List<Action> cancelActions(final UUID caseId) throws CTPException {
     log.debug("Entering cancelAction with {}", caseId);
 
     List<Action> flushedActions = new ArrayList<>();
@@ -108,7 +109,7 @@ public class ActionServiceImpl implements ActionService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
   @Override
-  public Action feedBackAction(ActionFeedback actionFeedback) {
+  public Action feedBackAction(ActionFeedback actionFeedback) throws CTPException {
     log.debug("Entering feedBackAction with {}", actionFeedback.getActionId());
 
     Action action = actionRepo.findById(UUID.fromString(actionFeedback.getActionId()));
