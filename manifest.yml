@@ -12,7 +12,7 @@ applications:
     - rm-redis
     - rm-rabbitmq
   env:
-    partySvc_connectionConfig_host: ras-party-v2.apps.mvp.onsclofo.uk
+    partySvc_connectionConfig_host: ras-party-v2-int.apps.mvp.onsclofo.uk
     partySvc_connectionConfig_port: "80"
     partySvc_connectionConfig_scheme: http
     collectionExerciseSvc_connectionConfig_host: collectionexercisesvc.apps.mvp.onsclofo.uk

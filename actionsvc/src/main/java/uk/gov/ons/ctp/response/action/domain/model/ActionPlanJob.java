@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Domain model object.
@@ -42,6 +43,8 @@ public class ActionPlanJob {
   )
   @Column(name = "actionplanjobpk")
   private Integer actionPlanJobPK;
+
+  private UUID id;
 
   @Column(name = "actionplanfk")
   private Integer actionPlanFK;

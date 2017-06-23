@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Domain model object for representation.
@@ -27,8 +28,8 @@ public class ActionPlanJobDTO {
     SUBMITTED, STARTED, COMPLETED, FAILED;
   }
 
-  private Integer actionPlanJobPK;
-  private Integer actionPlanFK;
+  private UUID id;
+  private UUID actionPlanId;
 
   @NotNull
   @Size(min = CREATED_BY_MIN, max = CREATED_BY_MAX)
@@ -36,6 +37,5 @@ public class ActionPlanJobDTO {
   private String state;
 
   private Date createdDateTime;
-
   private Date updatedDateTime;
 }

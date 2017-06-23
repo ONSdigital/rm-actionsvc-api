@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionCaseRepository;
@@ -48,36 +49,41 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, timeout = TRANSACTION_TIMEOUT)
-  public void acceptNotification(List<CaseNotification> notifications) {
+  public void acceptNotification(List<CaseNotification> notifications) throws CTPException {
     notifications.forEach((notif) -> {
       UUID actionPlanId = UUID.fromString(notif.getActionPlanId());
       UUID caseId = UUID.fromString(notif.getCaseId());
       ActionPlan actionPlan = actionPlanRepo.findById(actionPlanId);
 
       if (actionPlan != null) {
-        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId)
-               .actionPlanFK(actionPlan.getActionPlanPK()).id(caseId).build();
+        ActionCase actionCase = ActionCase.builder().actionPlanId(actionPlanId).actionPlanFK(actionPlan.getActionPlanPK()).id(caseId).build();
         switch (notif.getNotificationType()) {
-        case REPLACED:
-        case ACTIVATED:
-          CollectionExerciseDTO collectionExercise = getCollectionExercise(notif);
-          actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
-          actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
-          checkAndSaveCase(actionCase);
-          break;
-        case DISABLED:
-        case DEACTIVATED:
-          actionService.cancelActions(caseId);
-          actionCaseRepo.delete(actionCase);
-          break;
-        default:
-          log.warn("Unknown Case lifecycle event {}", notif.getNotificationType());
-          break;
+          case REPLACED:
+          case ACTIVATED:
+            CollectionExerciseDTO collectionExercise = getCollectionExercise(notif);
+            actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
+            actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
+            checkAndSaveCase(actionCase);
+            break;
+          case DISABLED:
+          case DEACTIVATED:
+            try {
+              actionService.cancelActions(caseId);
+            } catch (CTPException e) {
+              // TODO CTPA-1340 Do we really want to catch this. Should be let to go through.
+              // TODO CTPA-1340 What happens with other notif?
+            }
+            actionCaseRepo.delete(actionCase);
+            break;
+          default:
+            log.warn("Unknown Case lifecycle event {}", notif.getNotificationType());
+            break;
         }
       } else {
         log.warn("Cannot accept CaseNotification for none existent actionplan {}", notif.getActionPlanId());
       }
     });
+
     actionCaseRepo.flush();
   }
 

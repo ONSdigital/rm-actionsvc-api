@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.response.action.message;
 
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotifications;
 
 /**
@@ -13,6 +14,7 @@ public interface CaseNotificationReceiver {
    * on life cycle event
    *
    * @param caseNotifications unmarshalled XML Java object graph
+   * @throws CTPException if action state transition error
    */
-  void acceptNotification(CaseNotifications caseNotifications);
+  void acceptNotification(CaseNotifications caseNotifications) throws CTPException;
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.distributed.LockingException;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.time.DateTimeUtil;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
@@ -303,7 +304,13 @@ public class ActionDistributor {
         // update our actions state in db
         ActionDTO.ActionEvent event = action.getActionType().getResponseRequired()
             ? ActionDTO.ActionEvent.REQUEST_DISTRIBUTED : ActionDTO.ActionEvent.REQUEST_COMPLETED;
-        transitionAction(action, event);
+        try {
+          transitionAction(action, event);
+        } catch (CTPException e) {
+          String msg = String.format("message = %s - cause = %s", e.getMessage(), e.getCause());
+          log.error(msg);
+          throw new RuntimeException(msg);
+        }
         // create the request, filling in details by GETs from casesvc
         actionRequest = prepareActionRequest(action);
         // advise casesvc to create a corresponding caseevent for our action
@@ -330,7 +337,13 @@ public class ActionDistributor {
         log.debug("Preparing action {} for distribution", action.getActionPK());
 
         // update our actions state in db
-        transitionAction(action, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
+        try {
+          transitionAction(action, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
+        } catch (CTPException e) {
+          String msg = String.format("message = %s - cause = %s", e.getMessage(), e.getCause());
+          log.error(msg);
+          throw new RuntimeException(msg);
+        }
         // create the request, filling in details by GETs from casesvc
         actionCancel = prepareActionCancel(action);
         // advise casesvc to create a corresponding caseevent for our action
@@ -347,8 +360,9 @@ public class ActionDistributor {
    *
    * @param action the action to change and persist
    * @param event the event to transition the action with
+   * @throws CTPException if action state transition error
    */
-  private void transitionAction(final Action action, final ActionDTO.ActionEvent event) {
+  private void transitionAction(final Action action, final ActionDTO.ActionEvent event) throws CTPException {
     ActionDTO.ActionState nextState = actionSvcStateTransitionManager.transition(action.getState(), event);
     action.setState(nextState);
     action.setSituation(null);
@@ -374,7 +388,7 @@ public class ActionDistributor {
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
 
-    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getPartyId());
+    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getSampleUnitType(),caseDTO.getPartyId());
     log.debug("PARTYDTO: " + partyDTO.toString());
 
     List<CaseEventDTO> caseEventDTOs = caseSvcClientService.getCaseEvents(action.getCaseId());

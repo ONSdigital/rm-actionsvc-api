@@ -13,10 +13,10 @@ The app can be started from the command line using : ./mvnw spring-boot:run
 
 ## To test action plans
 curl http://localhost:8151/actionplans -v -X GET
-200 [{"actionPlanId":1,"surveyId":1,"name":"HH","description":"Household Action Plan","createdBy":"SYSTEM","lastRunDateTime":null},{"actionPlanId":2,"surveyId":1,"name":"CH","description":"Care Home Action Plan","createdBy":"SYSTEM","lastRunDateTime":null},{"actionPlanId":3,"surveyId":1,"name":"HGH","description":"Hotel and Guest House Action Plan","createdBy":"SYSTEM","lastRunDateTime":null}]
+200 [{"actionPlanId":1,"surveyId":1,"name":"HH","description":"Household Action Plan","createdBy":"SYSTEM","lastGoodRunDateTime":null},{"actionPlanId":2,"surveyId":1,"name":"CH","description":"Care Home Action Plan","createdBy":"SYSTEM","lastGoodRunDateTime":null},{"actionPlanId":3,"surveyId":1,"name":"HGH","description":"Hotel and Guest House Action Plan","createdBy":"SYSTEM","lastGoodRunDateTime":null}]
 
 curl  -H "Accept: application/json" -H "Content-Type: application/json" http://localhost:8151/actionplans/1 -v -X PUT -d "{\"description\":\"philippe2testing\"}"
-200 {"actionPlanId":1,"surveyId":1,"name":"HH","description":"philippe2testing","createdBy":"SYSTEM","lastRunDateTime":null}
+200 {"actionPlanId":1,"surveyId":1,"name":"HH","description":"philippe2testing","createdBy":"SYSTEM","lastGoodRunDateTime":null}
 
 
 ## To test action plan jobs

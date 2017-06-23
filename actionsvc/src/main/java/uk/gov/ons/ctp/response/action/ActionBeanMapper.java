@@ -41,6 +41,7 @@ public class ActionBeanMapper extends ConfigurableMapper {
 
     factory
         .classMap(ActionPlan.class, ActionPlanDTO.class)
+        .field("lastRunDateTime", "lastGoodRunDateTime")
         .byDefault()
         .register();
 
