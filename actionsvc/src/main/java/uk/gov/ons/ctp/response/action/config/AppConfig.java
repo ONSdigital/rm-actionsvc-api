@@ -21,4 +21,5 @@ public class AppConfig {
   private PlanExecution planExecution;
   private CsvIngest csvIngest;
   private DataGrid dataGrid;
+  private SwaggerSettings swaggerSettings;
 }
