@@ -19,5 +19,8 @@ It is upto the handler to pick out what information is relevant to it from the i
 ## API
 See [API.md](https://github.com/ONSdigital/rm-action-service/blob/master/API.md) for API documentation.
 
+## Swagger Specifications
+To view the Swagger Specifications for the Action Service, run the service and navigate to http://localhost:8151/swagger-ui.html.
+
 ## Copyright
 Copyright (C) 2017 Crown Copyright (Office for National Statistics)

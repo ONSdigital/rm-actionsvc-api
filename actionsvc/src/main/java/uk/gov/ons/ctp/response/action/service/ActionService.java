@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.response.action.service;
 
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.service.CTPService;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
@@ -77,10 +78,12 @@ public interface ActionService extends CTPService {
    *
    * @param caseId Integer caseId for all the Actions to be cancelled
    *
-   * @return List<Action> Returns list of all actions for the case that were
-   *         cancelled. Not all actions are cancellable!
+   * @return List<Action> Returns list of all actions for the case that were cancelled. Not all actions are
+   * cancellable!
+   *
+   * @throws CTPException if action state transition error
    */
-  List<Action> cancelActions(UUID caseId);
+  List<Action> cancelActions(UUID caseId) throws CTPException;
 
   /**
    * Create an action.
@@ -103,6 +106,7 @@ public interface ActionService extends CTPService {
    * Accept the feedback for an action
    * @param actionFeedback the feedback
    * @return the updated action
+   * @throws CTPException if action state transition error
    */
-  Action feedBackAction(ActionFeedback actionFeedback);
+  Action feedBackAction(ActionFeedback actionFeedback) throws CTPException;
 }

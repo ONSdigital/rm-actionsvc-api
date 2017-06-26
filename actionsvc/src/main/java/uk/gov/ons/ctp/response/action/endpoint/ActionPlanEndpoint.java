@@ -81,11 +81,13 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    * @param bindingResult collects errors thrown by update
    * @return ActionPlanDTO This returns the updated action plan.
    * @throws CTPException if the json provided is incorrect or if the action plan id does not exist.
+   * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(value = "/{actionplanid}", method = RequestMethod.PUT, consumes = "application/json")
   public final ActionPlanDTO updateActionPlanByActionPlanId(@PathVariable("actionplanid") final UUID actionPlanId,
                                                             @RequestBody final ActionPlanDTO requestObject,
-                                                            BindingResult bindingResult) throws CTPException {
+                                                            BindingResult bindingResult)
+          throws CTPException, InvalidRequestException {
     log.info("UpdateActionPlanByActionPlanId with actionplanid {} - actionPlan {}", actionPlanId, requestObject);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action plan: ", bindingResult);
