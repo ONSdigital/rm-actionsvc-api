@@ -201,8 +201,15 @@ rabbitmq:
   port: ${cloud.services.rabbitmq.connection.port}
   virtualhost: ${cloud.services.rabbitmq.connection.virtualhost}
 
-messaging:
+messaging:git stat
   consumingThreads: 1
   maxAttempts: 1
   prefetchCount: 10
   txSize: 1
+
+swagger-settings:
+  swagger-ui-active: false
+  group-name: "actionservice-api"
+  title: "Action Service API"
+  description: "API for the Action Service"
+  version: "10.41"
