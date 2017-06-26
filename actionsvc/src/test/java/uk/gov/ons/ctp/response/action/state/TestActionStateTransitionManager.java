@@ -8,6 +8,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.state.StateTransitionManagerFactory;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
@@ -97,8 +98,6 @@ public class TestActionStateTransitionManager {
 
   /**
    * test a valid transition
-   *
-   * @throws StateTransitionException shouldn't!
    */
   @Test(threadPoolSize = THREAD_POOL_SIZE, invocationCount = INVOCATIONS, timeOut = TIMEOUT)
   public void testActionTransitions() {
@@ -110,7 +109,7 @@ public class TestActionStateTransitionManager {
       transitions.forEach((actionEvent, actionState) -> {
         try {
           Assert.assertEquals(actionState, stm.transition(sourceState, actionEvent));
-        } catch (RuntimeException re) {
+        } catch (CTPException re) {
           Assert.fail("bad transition!", re);
         }
       });
@@ -120,7 +119,7 @@ public class TestActionStateTransitionManager {
           boolean caught = false;
           try {
             stm.transition(sourceState, event);
-          } catch (RuntimeException re) {
+          } catch (CTPException re) {
             caught = true;
           }
           Assert.assertTrue(caught, "Transition " + sourceState + "(" + event + ") should be invalid");

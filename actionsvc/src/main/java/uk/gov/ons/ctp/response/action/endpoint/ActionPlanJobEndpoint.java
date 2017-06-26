@@ -97,10 +97,12 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    * @param bindingResult collects errors thrown by update
    * @return the created ActionPlanJobDTO
    * @throws CTPException summats went wrong
+   * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.POST, consumes = "application/json")
   public final ResponseEntity<?> executeActionPlan(@PathVariable("actionplanid") final UUID actionPlanId,
-      final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult) throws CTPException {
+      final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult)
+          throws CTPException, InvalidRequestException {
     log.info("Entering executeActionPlan with {}", actionPlanId);
 
     if (bindingResult.hasErrors()) {

@@ -28,7 +28,6 @@ import uk.gov.ons.ctp.response.action.service.ActionService;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -142,10 +141,11 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @param bindingResult collects errors thrown by update
    * @return ActionDTO Created Action
    * @throws CTPException on failure to create Action
+   * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
   public ResponseEntity<?> createAction(final @RequestBody @Valid ActionDTO actionDTO, BindingResult bindingResult)
-          throws CTPException {
+          throws CTPException, InvalidRequestException {
     log.info("Entering createAction with Action {}", actionDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for create action: ", bindingResult);
@@ -166,11 +166,12 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @param bindingResult collects errors thrown by update
    * @return ActionDTO Returns the updated Action details
    * @throws CTPException if update operation fails
+   * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(value = "/{actionid}", method = RequestMethod.PUT, consumes = "application/json")
   public ActionDTO updateAction(@PathVariable("actionid") final UUID actionId,
                                 @RequestBody final ActionDTO actionDTO, BindingResult bindingResult)
-          throws CTPException {
+          throws CTPException, InvalidRequestException {
     log.info("Updating Action with {} - {}", actionId, actionDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action: ", bindingResult);
@@ -220,11 +221,12 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @param bindingResult the bindingResult
    * @return the modified action
    * @throws CTPException oops
+   * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(value = "/{actionid}/feedback", method = RequestMethod.PUT, consumes = {"application/json"})
   public ActionDTO feedbackAction(@PathVariable("actionid") final UUID actionId,
                                   @RequestBody final ActionFeedbackDTO actionFeedbackDTO, BindingResult bindingResult)
-          throws CTPException {
+          throws CTPException, InvalidRequestException {
     log.info("Feedback for Action {} - {}", actionId, actionFeedbackDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for feedback action: ", bindingResult);
