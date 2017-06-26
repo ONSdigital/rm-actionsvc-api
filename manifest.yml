@@ -1,7 +1,6 @@
 ---
 applications:
 - name: actionsvc
-  buildpack: https://github.com/cloudfoundry/java-buildpack.git
   instances: 1
   host: actionsvc
   memory: 1024M
