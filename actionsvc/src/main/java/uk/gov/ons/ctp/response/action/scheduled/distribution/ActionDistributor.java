@@ -443,9 +443,8 @@ public class ActionDistributor {
 
     ActionContact actionContact = new ActionContact();
     //actionContact.setTitle(partyMap.get("title")); //TODO Not in Party Swagger Spec.
-    actionContact.setForename(partyMap.get("firstName"));
-    actionContact.setSurname(partyMap.get("lastName"));
-    actionContact.setPhoneNumber(partyMap.get("telephone"));
+    actionContact.setForename(partyMap.get("surname"));
+    actionContact.setPhoneNumber(partyMap.get("phonenumber"));
     actionContact.setEmailAddress(partyMap.get("emailAddress"));
     actionRequest.setContact(actionContact);
 
