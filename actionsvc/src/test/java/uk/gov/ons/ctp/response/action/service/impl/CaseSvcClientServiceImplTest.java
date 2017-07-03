@@ -90,7 +90,6 @@ public class CaseSvcClientServiceImplTest {
     MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
     mockServer.expect(requestTo("http://localhost:8080/cases/7fac359e-645b-487e-bb02-70536eae51d4/events"))
         .andExpect(method(HttpMethod.POST))
-        .andExpect(content().string(containsString("\"caseId\":\"" + action.getCaseId() + "\",")))
         .andExpect(content()
             .string(containsString("\"category\":\"" + CategoryDTO.CategoryName.ACTION_COMPLETED.name() + "\"")))
         .andExpect(content().string(containsString("\"subCategory\":\"" + action.getActionType().getName() + "\"")))

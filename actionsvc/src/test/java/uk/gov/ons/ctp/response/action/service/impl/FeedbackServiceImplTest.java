@@ -25,6 +25,7 @@ import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class FeedbackServiceImplTest {
 
+  private static final UUID ACTION_ID1 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
+  private static final UUID ACTION_ID2 = UUID.fromString("774afa97-8c87-4131-923b-b33ccbf72b3e");
+  
   @Mock
   private CaseSvcClientService caseSvcClientService;
 
@@ -71,7 +75,7 @@ public class FeedbackServiceImplTest {
     List<ActionFeedback> actionFeedbacks = FixtureHelper.loadClassFixtures(ActionFeedback[].class);
     List<Action> actions = FixtureHelper.loadClassFixtures(Action[].class);
 
-    Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(0));
+    Mockito.when(actionRepo.findById(ACTION_ID1)).thenReturn(actions.get(0));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.PENDING, ActionEvent.REQUEST_ACCEPTED))
         .thenReturn(ActionState.ACTIVE);
 
@@ -95,7 +99,7 @@ public class FeedbackServiceImplTest {
     List<Action> actions = FixtureHelper.loadClassFixtures(Action[].class);
     List<OutcomeCategory> situationCats = FixtureHelper.loadClassFixtures(OutcomeCategory[].class);
 
-    Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
+    Mockito.when(actionRepo.findById(ACTION_ID2)).thenReturn(actions.get(2));
     Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent
             .valueOf(actionFeedbacks.get(2).getOutcome().name()), "Printer"))).thenReturn(situationCats.get(0));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.ACTIVE, ActionEvent.REQUEST_COMPLETED))
@@ -119,8 +123,7 @@ public class FeedbackServiceImplTest {
     List<Action> actions = FixtureHelper.loadClassFixtures(Action[].class);
     List<OutcomeCategory> situationCats = FixtureHelper.loadClassFixtures(OutcomeCategory[].class);
 
-    Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
-    Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
+    Mockito.when(actionRepo.findById(ACTION_ID2)).thenReturn(actions.get(2));
     Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent
             .valueOf(actionFeedbacks.get(3).getOutcome().name()), "Printer"))).thenReturn(situationCats.get(0));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.ACTIVE, ActionEvent.REQUEST_COMPLETED))
@@ -145,7 +148,7 @@ public class FeedbackServiceImplTest {
     List<Action> actions = FixtureHelper.loadClassFixtures(Action[].class);
     List<OutcomeCategory> situationCats = FixtureHelper.loadClassFixtures(OutcomeCategory[].class);
 
-    Mockito.when(actionRepo.findOne(BigInteger.valueOf(1))).thenReturn(actions.get(2));
+    Mockito.when(actionRepo.findById(ACTION_ID2)).thenReturn(actions.get(2));
     Mockito.when(outcomeCategoryRepository.findOne(new OutcomeHandlerId(ActionDTO.ActionEvent.valueOf(
             actionFeedbacks.get(4).getOutcome().name()), "Printer"))).thenReturn(situationCats.get(1));
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.ACTIVE, ActionEvent.REQUEST_COMPLETED))

@@ -76,7 +76,8 @@ public class ActionPlanServiceImplTest {
     ActionPlan actionPlanWithDesc = ActionPlan.builder().description("this is a test").build();
 
     // wire up mock responses
-    Mockito.when(actionPlanRepo.findOne(1)).thenReturn(persistedActionPlans.get(0));
+    Mockito.when(actionPlanRepo.findById(ACTION_PLAN_1_ID)).thenReturn(persistedActionPlans.get(0));
+
 
     // let it roll
     actionPlanServiceImpl.updateActionPlan(ACTION_PLAN_1_ID, actionPlanWithDesc);
@@ -96,7 +97,7 @@ public class ActionPlanServiceImplTest {
     ActionPlan actionPlanWithLastGoodRunDateTime = ActionPlan.builder().lastRunDateTime(DateTimeUtil.nowUTC()).build();
 
     // wire up mock responses
-    Mockito.when(actionPlanRepo.findOne(1)).thenReturn(persistedActionPlans.get(0));
+    Mockito.when(actionPlanRepo.findById(ACTION_PLAN_1_ID)).thenReturn(persistedActionPlans.get(0));
 
     // let it roll
     actionPlanServiceImpl.updateActionPlan(ACTION_PLAN_1_ID, actionPlanWithLastGoodRunDateTime);
