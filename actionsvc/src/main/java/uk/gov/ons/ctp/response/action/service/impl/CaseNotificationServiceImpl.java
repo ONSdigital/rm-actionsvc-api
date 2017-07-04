@@ -70,8 +70,8 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
             try {
               actionService.cancelActions(caseId);
             } catch (CTPException e) {
-              // TODO CTPA-1340 Do we really want to catch this. Should be let to go through.
-              // TODO CTPA-1340 What happens with other notif?
+              // TODO CTPA-1373 Do we really want to catch this. Should be let to go through.
+              // TODO CTPA-1373 What happens with other notif?
             }
             actionCaseRepo.delete(actionCase);
             break;
