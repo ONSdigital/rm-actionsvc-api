@@ -54,7 +54,7 @@
         </property>
         <property name="retryStateGenerator"> <!-- Important to make it a Stateful Retry -->
             <bean class="org.springframework.integration.handler.advice.SpelExpressionRetryStateGenerator">
-                <constructor-arg value="payload.caseNotifications.hashCode()"/>
+                <constructor-arg value="payload.caseNotifications[0].caseId"/>
             </bean>
         </property>
         <property name="retryTemplate" ref="retryTemplate" />
