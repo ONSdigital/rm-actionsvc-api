@@ -9,7 +9,9 @@ info:
 # ie -Dlogging.level.org.springframework=DEBUG
 logging:
   level:
-    uk.gov.ons.ctp: DEBUG
+    uk.gov.ons.ctp: WARN
+    org.springframework.retry: DEBUG
+    org.springframework.integration.handler.advice: DEBUG
     org.springframework.cloud.sleuth.instrument.messaging.MessagingSpanExtractor: ERROR
     org.springframework.context.annotation.ConfigurationClassPostProcessor: ERROR
   profile: DEV
@@ -202,8 +204,11 @@ rabbitmq:
   virtualhost: /
   
 messaging:
+  backoffInitial: 5000
+  backoffMultiplier: 3
+  backoffMax: 45000
   consumingThreads: 1
-  maxAttempts: 1
+  maxAttempts: 3
   prefetchCount: 10
   txSize: 1
 
