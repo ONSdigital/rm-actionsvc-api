@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.ons.ctp.common.MvcHelper.getJson;
 import static uk.gov.ons.ctp.common.MvcHelper.putJson;
+import static uk.gov.ons.ctp.common.TestHelper.createTestDate;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
 import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
 import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanEndpoint.ACTION_PLAN_NOT_FOUND;
@@ -45,14 +46,13 @@ public class ActionPlanEndpointUnitTest {
   private static final UUID NON_EXISTING_ACTION_PLAN_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a1");
   private static final UUID ACTION_PLAN_1_ID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a7");
   private static final UUID ACTION_PLAN_2_ID = UUID.fromString("0009e978-0932-463b-a2a1-b45cb3ffcb2a");
-  private static final UUID SURVEY_ID = UUID.fromString("0009e978-0932-463b-a2a1-b45cb3ffcb2B");
 
   private static final String ACTION_PLAN_1_NAME = "C1O331D10E";
   private static final String ACTION_PLAN_2_NAME = "C1O331D10F";
   private static final String ACTION_PLAN_1_DESC = "Component 1 - England/online/field day ten/three reminders";
   private static final String ACTION_PLAN_2_DESC = "Component 2 - England/online/field day ten/three reminders";
-  private static final String ACTION_PLAN_1_LAST_RUN_DATE_TIME = "2016-04-15T16:03:26.544+0100";
-  private static final String ACTION_PLAN_2_LAST_RUN_DATE_TIME = "2016-04-15T16:03:26.644+0100";
+  private static final String ACTION_PLAN_1_LAST_RUN_DATE_TIME = createTestDate("2016-04-15T16:03:26.544+0100");
+  private static final String ACTION_PLAN_2_LAST_RUN_DATE_TIME = createTestDate("2016-04-15T16:03:26.644+0100");
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
   private static final String ACTION_PLAN_JSON = "{\"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";

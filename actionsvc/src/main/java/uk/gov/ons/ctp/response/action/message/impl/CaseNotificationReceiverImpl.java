@@ -21,7 +21,6 @@ public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
   @Autowired
   private CaseNotificationService caseNotificationService;
 
-  // TODO CTPA-1340
   @Override
   @ServiceActivator(inputChannel = "caseNotificationTransformed", adviceChain = "caseNotificationRetryAdvice")
   public void acceptNotification(CaseNotifications caseNotifications) throws CTPException {

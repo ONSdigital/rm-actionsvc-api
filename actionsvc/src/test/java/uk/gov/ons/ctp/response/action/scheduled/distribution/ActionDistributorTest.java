@@ -1,6 +1,16 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import ma.glasnost.orika.MapperFacade;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +25,8 @@ import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.rest.RestClient;
@@ -40,15 +52,6 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
-
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
  * Test the action distributor
@@ -176,8 +179,8 @@ public class ActionDistributorTest {
     verify(caseSvcClientService, times(0)).getCase(eq(
             UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
-    verify(partySvcClientService, times(0)).getParty("B",eq(
-            UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
+    verify(partySvcClientService, times(0)).getParty(eq("B"),
+            eq(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
 
     verify(caseSvcClientService, times(0)).getCaseEvents(eq(
             UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
@@ -308,7 +311,6 @@ public class ActionDistributorTest {
     List<Action> actionsHHIC = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdInitialContact");
     List<Action> actionsHHIACLOAD = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdUploadIAC");
 
-    List<CaseDTO> caseDTOs = FixtureHelper.loadClassFixtures(CaseDTO[].class);
     // TODO BRES
     //List<CaseTypeDTO> caseTypeDTOs = FixtureHelper.loadClassFixtures(CaseTypeDTO[].class);
     List<CaseGroupDTO> caseGroupDTOs = FixtureHelper.loadClassFixtures(CaseGroupDTO[].class);

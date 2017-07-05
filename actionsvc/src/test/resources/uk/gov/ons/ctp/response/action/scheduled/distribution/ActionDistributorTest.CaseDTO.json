@@ -1,25 +1,21 @@
 [
 	{
 		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
-		"caseGroupId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"state": "SAMPLED_INIT",
 		"createdDateTime": 1460732606544,
 		"createdBy": "me",
-		"iac": "bbbb cccc dddd",
 		"actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a7",
 		"responses": []
 	},
 	{
 		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
-		"caseGroupId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"state": "SAMPLED_INIT",
 		"createdDateTime": 1460732606544,
 		"createdBy": "me",
-		"iac": "cccc dddd ffff",
 		"actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a7",
 		"responses": [
 			{
@@ -30,25 +26,21 @@
 	},
 	{
 		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
-		"caseGroupId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"state": "SAMPLED_INIT",
 		"createdDateTime": 1460732606544,
 		"createdBy": "me",
-		"iac": "dddd ffff gggg",
 		"actionPlanId": "0009e978-0932-463b-a2a1-b45cb3ffcb2a",
 		"responses": []
 	},
 	{
 		"id": "7fac359e-645b-487e-bb02-70536eae51d4",
-		"caseGroupId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"sampleUnitType": "H",
 		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4",
 		"state": "SAMPLED_INIT",
 		"createdDateTime": 1460732606544,
 		"createdBy": "me",
-		"iac": "ffff gggg hhhh",
 		"actionPlanId": "0009e978-0932-463b-a2a1-b45cb3ffcb2a",
 		"responses": [
 			{

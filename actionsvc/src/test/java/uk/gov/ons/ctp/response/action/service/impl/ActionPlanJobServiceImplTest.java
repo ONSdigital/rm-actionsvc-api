@@ -155,7 +155,7 @@ public class ActionPlanJobServiceImplTest {
     verify(actionPlanJobRepo, times(0)).save(actionPlanJobs.get(0));
     verify(actionCaseRepo, times(0)).createActions(1);
   
-    Assert.assertNotNull(executedJob);
+    Assert.assertNull(executedJob);
   }
 
   /**
