@@ -1,10 +1,17 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.cobertura.CoverageIgnore;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.common.time.DateTimeUtil;
@@ -17,11 +24,6 @@ import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.ActionService;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * An ActionService implementation which encapsulates all business logic
@@ -43,12 +45,14 @@ public class ActionServiceImpl implements ActionService {
   @Autowired
   private StateTransitionManager<ActionState, ActionDTO.ActionEvent> actionSvcStateTransitionManager;
 
+  @CoverageIgnore
   @Override
   public List<Action> findAllActionsOrderedByCreatedDateTimeDescending() {
     log.debug("Entering findAllActions");
     return actionRepo.findAllByOrderByCreatedDateTimeDesc();
   }
 
+  @CoverageIgnore
   @Override
   public List<Action> findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(final String actionTypeName,
       final ActionDTO.ActionState state) {
@@ -56,30 +60,35 @@ public class ActionServiceImpl implements ActionService {
     return actionRepo.findByActionTypeNameAndStateOrderByCreatedDateTimeDesc(actionTypeName, state);
   }
 
+  @CoverageIgnore
   @Override
   public List<Action> findActionsByType(final String actionTypeName) {
     log.debug("Entering findActionsByType with {}", actionTypeName);
     return actionRepo.findByActionTypeNameOrderByCreatedDateTimeDesc(actionTypeName);
   }
 
+  @CoverageIgnore
   @Override
   public List<Action> findActionsByState(final ActionDTO.ActionState state) {
     log.debug("Entering findActionsByState with {}", state);
     return actionRepo.findByStateOrderByCreatedDateTimeDesc(state);
   }
 
+  @CoverageIgnore
   @Override
   public Action findActionByActionPK(final BigInteger actionKey) {
     log.debug("Entering findActionByActionPK with {}", actionKey);
     return actionRepo.findOne(actionKey);
   }
 
+  @CoverageIgnore
   @Override
   public Action findActionById(final UUID actionId) {
     log.debug("Entering findActionById with {}", actionId);
     return actionRepo.findById(actionId);
   }
 
+  @CoverageIgnore
   @Override
   public List<Action> findActionsByCaseId(final UUID caseId) {
     log.debug("Entering findActionsByCaseId with {}", caseId);
