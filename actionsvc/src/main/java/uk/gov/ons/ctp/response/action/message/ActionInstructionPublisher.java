@@ -11,15 +11,13 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
  * @author centos
  *
  */
-public interface InstructionPublisher {
+public interface ActionInstructionPublisher {
   /**
-   * The implementation will be responsible for publishing ActionRequests to the
-   * SpringIntegration outbound flow
+   * The implementation will be responsible for publishing ActionInstruction SpringIntegration outbound flow
    *
-   * @param handler the handler that the outbound flow should send to - taken
-   *          directly from the Actions ActionType
+   * @param handler the handler that the outbound flow should send to - taken directly from the Actions ActionType
    * @param actionRequests the requests to publish
    * @param actionCancels the cancels to publish
    */
-  void sendInstructions(String handler, List<ActionRequest> actionRequests, List<ActionCancel> actionCancels);
+  void sendActionInstructions(String handler, List<ActionRequest> actionRequests, List<ActionCancel> actionCancels);
 }

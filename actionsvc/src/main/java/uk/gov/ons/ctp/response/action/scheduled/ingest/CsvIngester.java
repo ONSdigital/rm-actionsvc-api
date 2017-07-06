@@ -14,7 +14,7 @@ import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action.ActionPriority;
-import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
+import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.ctp.response.action.message.instruction.Priority;
@@ -114,7 +114,7 @@ public class CsvIngester extends CsvToBean<CsvLine> {
   private AppConfig appConfig;
 
   @Autowired
-  private InstructionPublisher instructionPublisher;
+  private ActionInstructionPublisher actionInstructionPublisher;
 
   private ColumnPositionMappingStrategy<CsvLine> columnPositionMappingStrategy;
 
@@ -302,11 +302,11 @@ public class CsvIngester extends CsvToBean<CsvLine> {
     buckets.forEach((handler, handlerInstructionBucket) -> {
       for (List<ActionRequest> partition : Lists.partition(handlerInstructionBucket.actionRequests,
           appConfig.getActionDistribution().getDistributionMax())) {
-        instructionPublisher.sendInstructions(handler, partition, null);
+        actionInstructionPublisher.sendActionInstructions(handler, partition, null);
       }
       for (List<ActionCancel> partition : Lists.partition(handlerInstructionBucket.actionCancels,
           appConfig.getActionDistribution().getDistributionMax())) {
-        instructionPublisher.sendInstructions(handler, null, partition);
+        actionInstructionPublisher.sendActionInstructions(handler, null, partition);
       }
     });
   }

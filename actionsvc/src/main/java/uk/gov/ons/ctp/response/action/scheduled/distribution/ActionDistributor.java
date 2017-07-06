@@ -27,7 +27,7 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionType;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionTypeRepository;
-import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
+import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.*;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 /**
  * This is the 'service' class that distributes actions to downstream services
  * ie those services outside of response management It has a number of injected
- * beans, including a RestClient, Repositories and the InstructionPublisher
+ * beans, including a RestClient, Repositories and the ActionInstructionPublisher
  *
  * It cannot use the normal serviceimpl @Transaction pattern, as that will
  * rollback on a runtime exception (desired) but will then rethrow that
@@ -95,7 +95,7 @@ public class ActionDistributor {
   private StateTransitionManager<ActionState, ActionDTO.ActionEvent> actionSvcStateTransitionManager;
 
   @Autowired
-  private InstructionPublisher instructionPublisher;
+  private ActionInstructionPublisher actionInstructionPublisher;
 
   @Autowired
   private MapperFacade mapperFacade;
@@ -225,7 +225,7 @@ public class ActionDistributor {
         try {
           // send the list of requests for this action type to the handler
           log.info("Publishing {} requests and {} cancels", actionRequests.size(), actionCancels.size());
-          instructionPublisher.sendInstructions(actionType.getHandler(), actionRequests, actionCancels);
+          actionInstructionPublisher.sendActionInstructions(actionType.getHandler(), actionRequests, actionCancels);
           published = true;
         } catch (Exception e) {
           // broker not there ? sleep then retry
