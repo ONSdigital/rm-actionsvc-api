@@ -7,10 +7,8 @@ import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.messaging.handler.annotation.Header;
 import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancels;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequests;
 
 import java.util.List;
 
@@ -43,21 +41,22 @@ public class InstructionPublisherImpl implements InstructionPublisher {
    */
   public void sendInstructions(@Header("HANDLER") String handler, List<ActionRequest> actionRequests,
       List<ActionCancel> actionCancels) {
-    ActionInstruction instruction = new ActionInstruction();
-
-    if (actionRequests != null) {
-      ActionRequests requests = new ActionRequests();
-      requests.getActionRequests().addAll(actionRequests);
-      instruction.setActionRequests(requests);
-    }
-
-    if (actionCancels != null) {
-      ActionCancels cancels = new ActionCancels();
-      cancels.getActionCancels().addAll(actionCancels);
-      instruction.setActionCancels(cancels);
-    }
-
     String routingKey = String.format("%s%s%s", ACTION, handler, BINDING);
-    rabbitTemplate.convertAndSend(routingKey, instruction);
+
+    if (actionRequests != null && !actionRequests.isEmpty()) {
+      actionRequests.forEach(actionRequest -> {
+        ActionInstruction instruction = new ActionInstruction();
+        instruction.setActionRequest(actionRequest);
+        rabbitTemplate.convertAndSend(routingKey, instruction);
+      });
+    }
+
+    if (actionCancels != null && !actionCancels.isEmpty()) {
+      actionCancels.forEach(actionCancel -> {
+        ActionInstruction instruction = new ActionInstruction();
+        instruction.setActionCancel(actionCancel);
+        rabbitTemplate.convertAndSend(routingKey, instruction);
+      });
+    }
   }
 }

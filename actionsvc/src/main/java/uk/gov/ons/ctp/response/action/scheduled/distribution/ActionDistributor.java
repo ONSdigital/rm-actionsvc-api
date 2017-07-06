@@ -129,11 +129,9 @@ public class ActionDistributor {
   }
 
   /**
-   * wake up on schedule and check for submitted actions, enrich and distribute
-   * them to spring integration channels
+   * wake up on schedule and check for submitted actions, enrich and distribute them to spring integration channels
    *
-   * @return the info for the health endpoint regarding the distribution just
-   *         performed
+   * @return the info for the health endpoint regarding the distribution just performed
    */
   public final DistributionInfo distribute() {
     Span distribSpan = tracer.createSpan(ACTION_DISTRIBUTOR_SPAN);
@@ -225,8 +223,7 @@ public class ActionDistributor {
     if (actionRequests.size() > 0 || actionCancels.size() > 0) {
       do {
         try {
-          // send the list of requests for this action type to the
-          // handler
+          // send the list of requests for this action type to the handler
           log.info("Publishing {} requests and {} cancels", actionRequests.size(), actionCancels.size());
           instructionPublisher.sendInstructions(actionType.getHandler(), actionRequests, actionCancels);
           published = true;
