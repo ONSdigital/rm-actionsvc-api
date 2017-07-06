@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ActionFeedbackDTO {
 
+    @NotNull
     private String actionId;
 
     @NotNull

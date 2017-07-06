@@ -15,6 +15,8 @@ import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import net.sourceforge.cobertura.CoverageIgnore;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.distributed.DistributedListManagerRedissonImpl;
 import uk.gov.ons.ctp.common.distributed.DistributedLockManager;
@@ -33,6 +35,7 @@ import java.math.BigInteger;
 /**
  * The main entry point into the Action Service SpringBoot Application.
  */
+@CoverageIgnore
 @SpringBootApplication
 @EnableTransactionManagement
 @IntegrationComponentScan

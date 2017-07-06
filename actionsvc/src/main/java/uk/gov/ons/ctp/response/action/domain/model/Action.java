@@ -23,11 +23,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.sourceforge.cobertura.CoverageIgnore;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 
 /**
  * Domain model object.
  */
+@CoverageIgnore
 @Entity
 @Data
 @AllArgsConstructor

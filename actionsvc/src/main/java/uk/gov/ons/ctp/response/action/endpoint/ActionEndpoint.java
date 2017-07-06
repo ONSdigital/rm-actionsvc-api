@@ -170,7 +170,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionid}", method = RequestMethod.PUT, consumes = "application/json")
   public ActionDTO updateAction(@PathVariable("actionid") final UUID actionId,
-                                @RequestBody final ActionDTO actionDTO, BindingResult bindingResult)
+                                @RequestBody @Valid final ActionDTO actionDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
     log.info("Updating Action with {} - {}", actionId, actionDTO);
     if (bindingResult.hasErrors()) {
@@ -225,7 +225,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionid}/feedback", method = RequestMethod.PUT, consumes = {"application/json"})
   public ActionDTO feedbackAction(@PathVariable("actionid") final UUID actionId,
-                                  @RequestBody final ActionFeedbackDTO actionFeedbackDTO, BindingResult bindingResult)
+                                  @RequestBody @Valid final ActionFeedbackDTO actionFeedbackDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
     log.info("Feedback for Action {} - {}", actionId, actionFeedbackDTO);
     if (bindingResult.hasErrors()) {

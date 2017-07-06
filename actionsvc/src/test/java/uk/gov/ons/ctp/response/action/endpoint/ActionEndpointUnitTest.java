@@ -131,6 +131,16 @@ public final class ActionEndpointUnitTest {
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
           + "\"situation\": \"" + ACTION1_SITUATION + "\","
           + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
+  
+  private static final String ACTION_INVALID_JSON_MISSING_CASEID = "{"
+      + "\"id\": \"" + ACTIONID_1 + "\","
+      + "\"actionTypeName\": \"" + ACTION_ACTIONTYPENAME_1 + "\","
+      + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
+      + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
+      + "\"priority\": " + ACTION1_PRIORITY + ","
+      + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
+      + "\"situation\": \"" + ACTION1_SITUATION + "\","
+      + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
 
   // Note actionTypename instead of actionTypeName
   private static final String ACTION_INVALID_JSON_BAD_PROP = "{"
@@ -156,12 +166,18 @@ public final class ActionEndpointUnitTest {
           + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
 
   private static final String ACTION_FEEDBACK_VALID_JSON = "{"
+          + "\"actionId\": \"" + ACTIONID_1 + "\","
           + "\"situation\": \"" + UPDATED_SITUATION + "\","
           + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
 
   private static final String ACTION_FEEDBACK_INVALID_JSON = "{"
+          + "\"actionId\": \"" + ACTIONID_1 + "\","
           + "\"badsituation\": \"" + UPDATED_SITUATION + "\","
           + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
+  
+  private static final String ACTION_FEEDBACK_INVALID_JSON2 = "{"
+      + "\"actionId\": \"" + ACTIONID_1 + "\","
+      + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
 
   @Before
   public void setUp() throws Exception {
@@ -513,7 +529,7 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
             .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_UPDATED, NON_EXISTING_ID))))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-    ;
+    
   }
 
   /**
@@ -564,6 +580,26 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
+  
+  /**
+   * Test updating action with invalid json
+   * @throws Exception when putJson does
+   */
+  @Test
+  public void updateActionByActionIdWithInvalidJson2() throws Exception {
+    when(actionService.updateAction(any(Action.class))).thenReturn(actions.get(0));
+    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
+
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
+        ACTION_INVALID_JSON_MISSING_CASEID));
+
+    resultActions.andExpect(status().isBadRequest())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("updateAction"))
+            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
+            .andExpect(jsonPath("$.error.message", is(INVALID_JSON)))
+            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+  }
 
   /**
    * Test updating action feedback for action not found
@@ -596,6 +632,23 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().methodName("feedbackAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
             .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
+            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+  }
+  
+  /**
+   * Test updating action feedback for action found BUT bad json
+   * @throws Exception when putJson does
+   */
+  @Test
+  public void updateActionFeedbackByActionIdFoundButBadJson2() throws Exception {
+    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1),
+            ACTION_FEEDBACK_INVALID_JSON2));
+
+    resultActions.andExpect(status().isBadRequest())
+            .andExpect(handler().handlerType(ActionEndpoint.class))
+            .andExpect(handler().methodName("feedbackAction"))
+            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
+            .andExpect(jsonPath("$.error.message", is(INVALID_JSON)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 

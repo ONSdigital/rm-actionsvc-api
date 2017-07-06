@@ -5,6 +5,7 @@ import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.cobertura.CoverageIgnore;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.message.ActionFeedbackReceiver;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
@@ -24,7 +25,8 @@ public class ActionFeedbackReceiverImpl implements ActionFeedbackReceiver {
 
   @Autowired
   private FeedbackService feedbackService;
-
+  
+  @CoverageIgnore
   @Override
   @ServiceActivator(inputChannel = "actionFeedbackTransformed", adviceChain = "actionFeedbackRetryAdvice")
   public void acceptFeedback(ActionFeedback feedback) throws CTPException {
