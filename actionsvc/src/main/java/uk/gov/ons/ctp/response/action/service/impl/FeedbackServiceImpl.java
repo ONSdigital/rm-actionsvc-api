@@ -55,16 +55,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
       if (outcomeEvent != null) {
         String situation = feedback.getSituation();
-
-        try {
-          ActionDTO.ActionState nextState = actionSvcStateTransitionManager.transition(action.getState(),
+        ActionDTO.ActionState nextState = actionSvcStateTransitionManager.transition(action.getState(),
               outcomeEvent);
-          updateAction(action, nextState, situation);
-        } catch (RuntimeException re) {
-          log.error(
-              "Feedback Service unable to effect state transition. Ignoring feedback. Reason: {}" + re.getMessage());
-          throw re;
-        }
+        updateAction(action, nextState, situation);
 
         String handler = action.getActionType().getHandler();
         OutcomeHandlerId outcomeHandlerId = OutcomeHandlerId.builder().handler(handler).actionOutcome(outcomeEvent)
@@ -77,12 +70,14 @@ public class FeedbackServiceImpl implements FeedbackService {
       } else {
         log.error("Feedback Service unable to decipher the outcome {} from feedback - ignoring this feedback",
             feedback.getOutcome());
-        throw new RuntimeException("Outcome " + feedback.getOutcome() + " unknown");
+        throw new CTPException(CTPException.Fault.SYSTEM_ERROR,
+                String.format("Outcome % unknown", feedback.getOutcome()));
       }
     } else {
       log.error("Feedback Service unable to find action id {} from feedback - ignoring this feedback",
-          feedback.getActionId());
-      throw new RuntimeException("ActionID " + feedback.getActionId() + " unknown");
+              feedback.getActionId());
+      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, String.format("ActionID %s unknown",
+              feedback.getActionId()));
     }
   }
 

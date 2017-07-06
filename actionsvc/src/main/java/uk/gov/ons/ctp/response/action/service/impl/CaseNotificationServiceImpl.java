@@ -18,6 +18,7 @@ import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,8 +62,8 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
           case REPLACED:
           case ACTIVATED:
             CollectionExerciseDTO collectionExercise = getCollectionExercise(notif);
-            actionCase.setActionPlanStartDate(collectionExercise.getScheduledStartDateTime());
-            actionCase.setActionPlanEndDate(collectionExercise.getScheduledEndDateTime());
+            actionCase.setActionPlanStartDate(new Timestamp(collectionExercise.getScheduledStartDateTime().getTime()));
+            actionCase.setActionPlanEndDate(new Timestamp(collectionExercise.getScheduledEndDateTime().getTime()));
             checkAndSaveCase(actionCase);
             break;
           case DISABLED:
@@ -70,8 +71,8 @@ public class CaseNotificationServiceImpl implements CaseNotificationService {
             try {
               actionService.cancelActions(caseId);
             } catch (CTPException e) {
-              // TODO CTPA-1340 Do we really want to catch this. Should be let to go through.
-              // TODO CTPA-1340 What happens with other notif?
+              // TODO CTPA-1373 Do we really want to catch this. Should be let to go through.
+              // TODO CTPA-1373 What happens with other notif?
             }
             actionCaseRepo.delete(actionCase);
             break;
