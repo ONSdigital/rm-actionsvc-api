@@ -19,6 +19,7 @@ import uk.gov.ons.ctp.response.action.service.FeedbackService;
  * is done in the feedbackservice, but having this class in this package keeps
  * spring integration related entry/exit points in one logical location
  */
+@CoverageIgnore
 @MessageEndpoint
 @Slf4j
 public class ActionFeedbackReceiverImpl implements ActionFeedbackReceiver {
@@ -26,7 +27,6 @@ public class ActionFeedbackReceiverImpl implements ActionFeedbackReceiver {
   @Autowired
   private FeedbackService feedbackService;
   
-  @CoverageIgnore
   @Override
   @ServiceActivator(inputChannel = "actionFeedbackTransformed", adviceChain = "actionFeedbackRetryAdvice")
   public void acceptFeedback(ActionFeedback feedback) throws CTPException {

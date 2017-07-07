@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Message end point for Case notification life cycle messages, please see flows.xml.
  */
+@CoverageIgnore
 @MessageEndpoint
 @Slf4j
 public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
@@ -23,7 +24,6 @@ public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
   @Autowired
   private CaseNotificationService caseNotificationService;
 
-  @CoverageIgnore
   @Override
   @ServiceActivator(inputChannel = "caseNotificationTransformed", adviceChain = "caseNotificationRetryAdvice")
   public void acceptNotification(CaseNotifications caseNotifications) throws CTPException {
