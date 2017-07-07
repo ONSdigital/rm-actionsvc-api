@@ -21,7 +21,6 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,9 +82,7 @@ public class CaseNotificationServiceImplTest {
 	  actionPlan.setActionPlanPK(1);
 	  
 	  when(actionPlanRepo.findById(any())).thenReturn(actionPlan);
-	  
-	  List<CaseNotification> notification = Arrays.asList(caseNotification);
-	  
+
 	  List<CaseDetailsDTO> caseJson = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
 	  List<CollectionExerciseDTO> collectionExerciseJson = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
 	  
@@ -94,7 +91,7 @@ public class CaseNotificationServiceImplTest {
 	  when(collectionSvcClientServiceImpl.getCollectionExercise(caseJson.get(0).getCaseGroup()
             .getCollectionExerciseId())).thenReturn(collectionExerciseJson.get(0));
 	  
-	  caseNotificationService.acceptNotification(notification);
+	  caseNotificationService.acceptNotification(caseNotification);
 
 	  ArgumentCaptor <ActionCase> actionCase = ArgumentCaptor.forClass(ActionCase.class);
 	  
@@ -108,6 +105,5 @@ public class CaseNotificationServiceImplTest {
 	  assertTrue(caze.get(0).getActionPlanStartDate() != null);
 	  assertTrue(caze.get(0).getActionPlanEndDate() != null);
 	  assertEquals(UUID.fromString(DUMMY_UUID), caze.get(0).getId());
-	  
   }
 }
