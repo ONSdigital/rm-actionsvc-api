@@ -1,0 +1,18 @@
+[
+  {
+    "actionTypePK": 1,
+    "name": "HouseholdInitialContact",
+    "description": "Household Initial Contact",
+    "handler": "Printer",
+    "canCancel": false,
+    "responseRequired": true
+  },
+  {
+    "actionTypePK": 2,
+    "name": "HouseholdUploadIAC",
+    "description": "Household upload IAC",
+    "handler": "HHSurvey",
+    "canCancel": true,
+    "responseRequired": true
+  }
+]

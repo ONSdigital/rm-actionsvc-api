@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.messaging.handler.annotation.Header;
-import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
+import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancels;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequests;
 
 import java.util.List;
 
@@ -23,7 +21,7 @@ import java.util.List;
  *
  */
 @MessageEndpoint
-public class InstructionPublisherImpl implements InstructionPublisher {
+public class ActionInstructionPublisherImpl implements ActionInstructionPublisher {
 
   @Qualifier("actionInstructionRabbitTemplate")
   @Autowired
@@ -41,23 +39,24 @@ public class InstructionPublisherImpl implements InstructionPublisher {
    * @param actionRequests the requests to publish
    * @param actionCancels the cancels to publish
    */
-  public void sendInstructions(@Header("HANDLER") String handler, List<ActionRequest> actionRequests,
-      List<ActionCancel> actionCancels) {
-    ActionInstruction instruction = new ActionInstruction();
-
-    if (actionRequests != null) {
-      ActionRequests requests = new ActionRequests();
-      requests.getActionRequests().addAll(actionRequests);
-      instruction.setActionRequests(requests);
-    }
-
-    if (actionCancels != null) {
-      ActionCancels cancels = new ActionCancels();
-      cancels.getActionCancels().addAll(actionCancels);
-      instruction.setActionCancels(cancels);
-    }
-
+  public void sendActionInstructions(@Header("HANDLER") String handler, List<ActionRequest> actionRequests,
+                                     List<ActionCancel> actionCancels) {
     String routingKey = String.format("%s%s%s", ACTION, handler, BINDING);
-    rabbitTemplate.convertAndSend(routingKey, instruction);
+
+    if (actionRequests != null && !actionRequests.isEmpty()) {
+      actionRequests.forEach(actionRequest -> {
+        ActionInstruction instruction = new ActionInstruction();
+        instruction.setActionRequest(actionRequest);
+        rabbitTemplate.convertAndSend(routingKey, instruction);
+      });
+    }
+
+    if (actionCancels != null && !actionCancels.isEmpty()) {
+      actionCancels.forEach(actionCancel -> {
+        ActionInstruction instruction = new ActionInstruction();
+        instruction.setActionCancel(actionCancel);
+        rabbitTemplate.convertAndSend(routingKey, instruction);
+      });
+    }
   }
 }

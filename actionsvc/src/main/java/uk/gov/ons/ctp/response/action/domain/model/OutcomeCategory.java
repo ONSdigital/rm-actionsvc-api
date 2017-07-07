@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.sourceforge.cobertura.CoverageIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -13,6 +14,7 @@ import javax.persistence.Table;
 /**
  * Domain model object.
  */
+@CoverageIgnore
 @Entity
 @Data
 @AllArgsConstructor

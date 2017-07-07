@@ -40,7 +40,7 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionType;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionTypeRepository;
-import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
+import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
@@ -68,7 +68,7 @@ public class ActionDistributorTest {
 
 
   @Mock
-  private InstructionPublisher instructionPublisher;
+  private ActionInstructionPublisher actionInstructionPublisher;
 
   @Mock
   Tracer tracer;
@@ -190,9 +190,9 @@ public class ActionDistributorTest {
     verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
 
-    verify(instructionPublisher, times(0)).sendInstructions(eq("Printer"),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(eq("Printer"),
         anyListOf(ActionRequest.class), anyListOf(ActionCancel.class));
-    verify(instructionPublisher, times(0)).sendInstructions(eq("HHSurvey"),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(eq("HHSurvey"),
         anyListOf(ActionRequest.class), anyListOf(ActionCancel.class));
   }
 
@@ -291,10 +291,10 @@ public class ActionDistributorTest {
     //verify(caseSvcClientService, times(2)).createNewCaseEvent(any(Action.class),
     //    eq(CategoryDTO.CategoryName.ACTION_CREATED)); TODO Removed due to "wanted but not invoked" error
 
-    verify(instructionPublisher, times(0)).sendInstructions(eq("Printer"),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(eq("Printer"),
             anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
-    //verify(instructionPublisher, times(1)).sendInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
+    //verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
     //    anyListOf(ActionCancel.class)); TODO Removed due to "wanted but not invoked" error
   }
 
@@ -406,9 +406,9 @@ public class ActionDistributorTest {
     //verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
     //    eq(CategoryDTO.CategoryName.ACTION_CREATED)); TODO Removed due to "wanted but not invoked" error
 
-    //verify(instructionPublisher, times(1)).sendInstructions(eq("Printer"), anyListOf(ActionRequest.class),
+    //verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("Printer"), anyListOf(ActionRequest.class),
     //    anyListOf(ActionCancel.class)); TODO Removed due to "wanted but not invoked" error
-    //verify(instructionPublisher, times(1)).sendInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
+    //verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
     //    anyListOf(ActionCancel.class)); TODO Removed due to "wanted but not invoked" error
   }
 }

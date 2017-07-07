@@ -6,6 +6,8 @@ import ma.glasnost.orika.MapperFacade;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +87,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionplanid}", method = RequestMethod.PUT, consumes = "application/json")
   public final ActionPlanDTO updateActionPlanByActionPlanId(@PathVariable("actionplanid") final UUID actionPlanId,
-                                                            @RequestBody final ActionPlanDTO requestObject,
+                                                            @RequestBody @Valid final ActionPlanDTO requestObject,
                                                             BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
     log.info("UpdateActionPlanByActionPlanId with actionplanid {} - actionPlan {}", actionPlanId, requestObject);

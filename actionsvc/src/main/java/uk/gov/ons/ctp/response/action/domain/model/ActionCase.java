@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.sourceforge.cobertura.CoverageIgnore;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -23,6 +25,7 @@ import java.util.UUID;
 /**
  * Domain model object.
  */
+@CoverageIgnore
 @Entity
 @Data
 @AllArgsConstructor

@@ -12,7 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cloud.sleuth.Tracer;
 import uk.gov.ons.ctp.response.action.config.ActionDistribution;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
-import uk.gov.ons.ctp.response.action.message.InstructionPublisher;
+import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 
@@ -34,7 +34,7 @@ public class CsvIngesterTest {
   private AppConfig appConfig = new AppConfig();
 
   @Mock
-  private InstructionPublisher instructionPublisher;
+  private ActionInstructionPublisher actionInstructionPublisher;
 
   @Mock
   private Tracer tracer;
@@ -98,7 +98,7 @@ public class CsvIngesterTest {
   public void testBlueSky() throws Exception {
     csvIngester.ingest(getTestFile("bluesky.csv"));
 
-    verify(instructionPublisher, times(1)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(1)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
   }
 
@@ -112,7 +112,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-handler.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_handler");
@@ -128,7 +128,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-actionType.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_actionType");
@@ -144,7 +144,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-instructionType.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_instructionType");
@@ -160,7 +160,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-addressType.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_addressType");
@@ -176,7 +176,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-estabType.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_estabType");
@@ -192,7 +192,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-locality.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_locality");
@@ -208,7 +208,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-organisationName.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_organisationName");
@@ -224,7 +224,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-category.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_category");
@@ -240,7 +240,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-line1.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_line1");
@@ -256,7 +256,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-line2.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_line2");
@@ -272,7 +272,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-townName.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_townName");
@@ -288,7 +288,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-postcode-a.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
@@ -304,7 +304,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-postcode-b.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
@@ -320,7 +320,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-postcode-c.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
@@ -336,7 +336,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-latitude.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_latitude");
@@ -352,7 +352,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-longitude.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_longitude");
@@ -368,7 +368,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-uprn.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_uprn");
@@ -384,7 +384,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-ladCode.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
             anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_ladCode");
@@ -400,7 +400,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-title.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_title");
@@ -416,7 +416,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-forename.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_forename");
@@ -432,7 +432,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-surname.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_surname");
@@ -448,7 +448,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-emailAddress.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_emailAddress");
@@ -464,7 +464,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-telephoneNumber.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_telephoneNumber");
@@ -480,7 +480,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-caseId.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_caseId");
@@ -497,7 +497,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-caseRef.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_caseRef");
@@ -514,7 +514,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-iac.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_iac");
@@ -530,7 +530,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-priority.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_priority");
@@ -541,7 +541,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-actionPlan.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
             anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_actionPlan");
@@ -552,7 +552,7 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-questionSet.csv");
     csvIngester.ingest(testFile);
 
-    verify(instructionPublisher, times(0)).sendInstructions(anyString(), anyListOf(ActionRequest.class),
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
             anyListOf(ActionCancel.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_questionSet");

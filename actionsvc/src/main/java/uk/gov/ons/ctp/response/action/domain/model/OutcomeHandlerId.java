@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.response.action.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import net.sourceforge.cobertura.CoverageIgnore;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 /**
  * Domain model object.
  */
+@CoverageIgnore
 @Data
 @Builder
 @Embeddable

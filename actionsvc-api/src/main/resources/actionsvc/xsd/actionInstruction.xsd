@@ -7,38 +7,11 @@
 	<xs:element name="actionInstruction" type="ActionInstruction" />
 
 	<xs:complexType name="ActionInstruction">
-		<xs:sequence>
-			<xs:element name="actionRequests" type="ActionRequests"
-				minOccurs="0" maxOccurs="1" />
-			<xs:element name="actionUpdates" type="ActionUpdates"
-				minOccurs="0" maxOccurs="1" />
-			<xs:element name="actionCancels" type="ActionCancels"
-				minOccurs="0" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<!-- the outer element containing requests -->
-	<xs:complexType name="ActionRequests">
-		<xs:sequence>
-			<xs:element name="actionRequest" type="ActionRequest"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<!-- the outer element containing updates -->
-	<xs:complexType name="ActionUpdates">
-		<xs:sequence>
-			<xs:element name="actionUpdate" type="ActionUpdate"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<!-- the outer element containing cancels -->
-	<xs:complexType name="ActionCancels">
-		<xs:sequence>
-			<xs:element name="actionCancel" type="ActionCancel"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
+		<xs:choice>
+			<xs:element name="actionRequest" type="ActionRequest" minOccurs="1" maxOccurs="1" />
+			<xs:element name="actionUpdate" type="ActionUpdate" minOccurs="1" maxOccurs="1" />
+			<xs:element name="actionCancel" type="ActionCancel" minOccurs="1" maxOccurs="1" />
+		</xs:choice>
 	</xs:complexType>
 
 	<xs:complexType name="ActionContact">
