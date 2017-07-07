@@ -14,7 +14,7 @@ applications:
     partySvc_connectionConfig_host: ras-party-service-int.apps.devtest.onsclofo.uk
     partySvc_connectionConfig_port: "80"
     partySvc_connectionConfig_scheme: http
-    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-int.devtest.mvp.onsclofo.uk
+    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-int.apps.devtest.onsclofo.uk
     collectionExerciseSvc_connectionConfig_port: "80"
     collectionExerciseSvc_connectionConfig_scheme: http
     caseSvc_connectionConfig_host: casesvc-int.apps.devtest.onsclofo.uk
