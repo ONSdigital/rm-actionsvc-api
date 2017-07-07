@@ -14,6 +14,7 @@ import uk.gov.ons.ctp.response.casesvc.message.notification.CaseNotification;
 /**
  * Message end point for Case notification life cycle messages, please see flows.xml.
  */
+@CoverageIgnore
 @MessageEndpoint
 @Slf4j
 public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
@@ -21,7 +22,6 @@ public class CaseNotificationReceiverImpl implements CaseNotificationReceiver {
   @Autowired
   private CaseNotificationService caseNotificationService;
 
-  @CoverageIgnore
   @Override
   @ServiceActivator(inputChannel = "caseNotificationTransformed", adviceChain = "caseNotificationRetryAdvice")
   public void acceptNotification(CaseNotification caseNotification) throws CTPException {
