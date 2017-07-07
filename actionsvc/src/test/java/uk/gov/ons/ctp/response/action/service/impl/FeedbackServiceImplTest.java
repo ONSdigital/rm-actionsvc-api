@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import uk.gov.ons.ctp.common.FixtureHelper;
+import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -162,4 +163,18 @@ public class FeedbackServiceImplTest {
     verify(caseSvcClientService, times(1)).createNewCaseEvent(actions.get(2),
             CategoryDTO.CategoryName.ACTION_COMPLETED_DEACTIVATED);
   }
+  
+  /**
+   * Yep - another test
+   * @throws Exception exception thrown
+   */
+  @Test(expected = CTPException.class)
+  public void testFeedbackActionNull() throws Exception {
+    List<ActionFeedback> actionFeedbacks = FixtureHelper.loadClassFixtures(ActionFeedback[].class);
+
+    //Call method
+    feedbackService.acceptFeedback(actionFeedbacks.get(0));
+
+  }
+  
 }
