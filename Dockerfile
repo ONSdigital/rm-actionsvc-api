@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:8u121-jre
 ARG jar
 VOLUME /tmp
 COPY $jar actionsvc.jar
