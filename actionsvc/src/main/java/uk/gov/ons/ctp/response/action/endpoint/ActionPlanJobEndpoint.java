@@ -108,17 +108,21 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for execute action plan: ", bindingResult);
     }
-
+     
+    ActionPlan actionPlan = actionPlanService.findActionPlanById(actionPlanId);
+    if(actionPlan == null){
+    	 throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
+    }
     ActionPlanJob job = mapperFacade.map(actionPlanJobDTO, ActionPlanJob.class);
-    job.setId(actionPlanId);
+    job.setActionPlanFK(actionPlan.getActionPlanPK());
     job = actionPlanJobService.createAndExecuteActionPlanJob(job);
     if (job == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
-    } else {
-      ActionPlanJobDTO result = mapperFacade.map(job, ActionPlanJobDTO.class);
-      result.setActionPlanId(actionPlanId);
-      return ResponseEntity.created(URI.create("TODO")).body(result);
     }
+    ActionPlanJobDTO result = mapperFacade.map(job, ActionPlanJobDTO.class);
+    result.setActionPlanId(actionPlanId);
+    return ResponseEntity.created(URI.create("TODO")).body(result);
+    
   }
 
   /**

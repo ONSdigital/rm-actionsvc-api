@@ -171,7 +171,7 @@ party-svc:
   party-by-sample-unit-type-and-id-path: /party-api/v1/parties/type/{sampleUnitType}/id/{id}
   connection-config:
     scheme: http
-    host: ras-party-v2-int.apps.mvp.onsclofo.uk
+    host: ras-party-service-int.apps.devtest.onsclofo.uk
     port: 80
     # how many times should we attempt connection on failure
     retry-attempts: 10
