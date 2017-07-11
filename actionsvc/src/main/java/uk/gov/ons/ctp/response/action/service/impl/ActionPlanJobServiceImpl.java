@@ -1,6 +1,8 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.cobertura.CoverageIgnore;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
@@ -52,12 +54,14 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
   @Autowired
   private ActionPlanJobRepository actionPlanJobRepo;
 
+  @CoverageIgnore
   @Override
   public ActionPlanJob findActionPlanJob(final UUID actionPlanJobId) {
     log.debug("Entering findActionPlanJob with id {}", actionPlanJobId);
     return actionPlanJobRepo.findById(actionPlanJobId);
   }
 
+  @CoverageIgnore
   @Override
   public List<ActionPlanJob> findActionPlanJobsForActionPlan(final UUID actionPlanId) throws CTPException {
     log.debug("Entering findActionPlanJobsForActionPlan with {}", actionPlanId);

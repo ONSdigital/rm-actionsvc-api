@@ -34,6 +34,7 @@ import static uk.gov.ons.ctp.common.MvcHelper.getJson;
 import static uk.gov.ons.ctp.common.MvcHelper.putJson;
 import static uk.gov.ons.ctp.common.TestHelper.createTestDate;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
+import static uk.gov.ons.ctp.common.error.RestExceptionHandler.INVALID_JSON;
 import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
 import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanEndpoint.ACTION_PLAN_NOT_FOUND;
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
@@ -55,8 +56,10 @@ public class ActionPlanEndpointUnitTest {
   private static final String ACTION_PLAN_2_LAST_RUN_DATE_TIME = createTestDate("2016-04-15T16:03:26.644+0100");
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
-  private static final String ACTION_PLAN_JSON = "{\"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
+  private static final String ACTION_PLAN_JSON = "{\"id\":\"e71002ac-3575-47eb-b87f-cd9db92bf9a7\", \"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
   private static final String ACTION_PLAN_INCORRECT_JSON = "{\"some\":\"joke\"}";
+  private static final String ACTION_PLAN_INCORRECT_JSON2 = "{\"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
+
 
   @InjectMocks
   private ActionPlanEndpoint actionPlanEndpoint;
@@ -76,16 +79,17 @@ public class ActionPlanEndpointUnitTest {
     MockitoAnnotations.initMocks(this);
 
     this.mockMvc = MockMvcBuilders
-            .standaloneSetup(actionPlanEndpoint)
-            .setHandlerExceptionResolvers(mockAdviceFor(RestExceptionHandler.class))
-            .setMessageConverters(new MappingJackson2HttpMessageConverter(new CustomObjectMapper()))
-            .build();
+        .standaloneSetup(actionPlanEndpoint)
+        .setHandlerExceptionResolvers(mockAdviceFor(RestExceptionHandler.class))
+        .setMessageConverters(new MappingJackson2HttpMessageConverter(new CustomObjectMapper()))
+        .build();
 
-    actionPlans =  FixtureHelper.loadClassFixtures(ActionPlan[].class);
+    actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
   }
 
   /**
    * A Test to retrieve all action plans BUT none found
+   * 
    * @throws Exception exception thrown when getJson does
    */
   @Test
@@ -93,12 +97,13 @@ public class ActionPlanEndpointUnitTest {
     ResultActions actions = mockMvc.perform(getJson("/actionplans"));
 
     actions.andExpect(status().isNoContent())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("findActionPlans"));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("findActionPlans"));
   }
 
   /**
    * A Test to retrieve all action plans BUT exception thrown
+   * 
    * @throws Exception exception thrown when getJson does
    */
   @Test
@@ -108,15 +113,16 @@ public class ActionPlanEndpointUnitTest {
     ResultActions actions = mockMvc.perform(getJson("/actionplans"));
 
     actions.andExpect(status().is5xxServerError())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("findActionPlans"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
-            .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("findActionPlans"))
+        .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
+        .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
+        .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**
    * A Test to retrieve all action plans
+   * 
    * @throws Exception exception thrown when getJson does
    */
   @Test
@@ -126,22 +132,23 @@ public class ActionPlanEndpointUnitTest {
     ResultActions actions = mockMvc.perform(getJson("/actionplans"));
 
     actions.andExpect(status().isOk())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("findActionPlans"))
-            .andExpect(jsonPath("$", Matchers.hasSize(2)))
-            .andExpect(jsonPath("$[0].*", hasSize(5)))
-            .andExpect(jsonPath("$[1].*", hasSize(5)))
-            .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTION_PLAN_1_ID.toString(),
-                    ACTION_PLAN_2_ID.toString())))
-            .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTION_PLAN_1_NAME, ACTION_PLAN_2_NAME)))
-            .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTION_PLAN_1_DESC, ACTION_PLAN_2_DESC)))
-            .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY_SYSTEM, CREATED_BY_SYSTEM)))
-            .andExpect(jsonPath("$[*].lastGoodRunDateTime", containsInAnyOrder(ACTION_PLAN_1_LAST_RUN_DATE_TIME,
-                    ACTION_PLAN_2_LAST_RUN_DATE_TIME)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("findActionPlans"))
+        .andExpect(jsonPath("$", Matchers.hasSize(2)))
+        .andExpect(jsonPath("$[0].*", hasSize(5)))
+        .andExpect(jsonPath("$[1].*", hasSize(5)))
+        .andExpect(jsonPath("$[*].id", containsInAnyOrder(ACTION_PLAN_1_ID.toString(),
+            ACTION_PLAN_2_ID.toString())))
+        .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTION_PLAN_1_NAME, ACTION_PLAN_2_NAME)))
+        .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTION_PLAN_1_DESC, ACTION_PLAN_2_DESC)))
+        .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY_SYSTEM, CREATED_BY_SYSTEM)))
+        .andExpect(jsonPath("$[*].lastGoodRunDateTime", containsInAnyOrder(ACTION_PLAN_1_LAST_RUN_DATE_TIME,
+            ACTION_PLAN_2_LAST_RUN_DATE_TIME)));
   }
 
   /**
    * A Test to retrieve an ActionPlan BUT not found
+   * 
    * @throws Exception exception thrown when getJson does
    */
   @Test
@@ -149,34 +156,36 @@ public class ActionPlanEndpointUnitTest {
     ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", NON_EXISTING_ACTION_PLAN_ID)));
 
     actions.andExpect(status().isNotFound())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("findActionPlanByActionPlanId"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
-            .andExpect(jsonPath("$.error.message", is(String.format(ACTION_PLAN_NOT_FOUND, NON_EXISTING_ACTION_PLAN_ID))))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("findActionPlanByActionPlanId"))
+        .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
+        .andExpect(jsonPath("$.error.message", is(String.format(ACTION_PLAN_NOT_FOUND, NON_EXISTING_ACTION_PLAN_ID))))
+        .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**
    * A Test to retrieve an ActionPlan BUT exception thrown
+   * 
    * @throws Exception exception thrown when getJson does
    */
   @Test
   public void findActionPlanUnCheckedException() throws Exception {
     when(actionPlanService.findActionPlanById(NON_EXISTING_ACTION_PLAN_ID)).thenThrow(
-            new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
+        new IllegalArgumentException(OUR_EXCEPTION_MESSAGE));
 
     ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", NON_EXISTING_ACTION_PLAN_ID)));
 
     actions.andExpect(status().is5xxServerError())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("findActionPlanByActionPlanId"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
-            .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("findActionPlanByActionPlanId"))
+        .andExpect(jsonPath("$.error.code", is(CTPException.Fault.SYSTEM_ERROR.name())))
+        .andExpect(jsonPath("$.error.message", is(OUR_EXCEPTION_MESSAGE)))
+        .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**
    * A Test to retrieve an ActionPlan
+   * 
    * @throws Exception exception thrown when getJson does
    */
   @Test
@@ -186,51 +195,67 @@ public class ActionPlanEndpointUnitTest {
     ResultActions actions = mockMvc.perform(getJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID)));
 
     actions.andExpect(status().isOk())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("findActionPlanByActionPlanId"))
-            .andExpect(jsonPath("$.*", hasSize(5)))
-            .andExpect(jsonPath("$.id", is(ACTION_PLAN_1_ID.toString())))
-            .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
-            .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
-            .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
-            .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("findActionPlanByActionPlanId"))
+        .andExpect(jsonPath("$.*", hasSize(5)))
+        .andExpect(jsonPath("$.id", is(ACTION_PLAN_1_ID.toString())))
+        .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
+        .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
+        .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
+        .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
   }
 
   /**
    * A Test to update an ActionPlan with incorrect json
+   * 
    * @throws Exception exception thrown when putJson does
    */
   @Test
-  public void updateActionPlanIncorrectJson() throws Exception {
+  public void updateActionPlanIncorrectJson1() throws Exception {
     ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID),
-            ACTION_PLAN_INCORRECT_JSON));
+        ACTION_PLAN_INCORRECT_JSON));
 
     actions.andExpect(status().isBadRequest())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
-            .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
+        .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
+        .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
+        .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
   /**
    * A Test to update an ActionPlan with valid json
+   * 
    * @throws Exception exception thrown when putJson does
    */
   @Test
   public void updateActionPlan() throws Exception {
     when(actionPlanService.updateActionPlan(any(UUID.class), any(ActionPlan.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID), ACTION_PLAN_JSON));
+    ResultActions actions = mockMvc
+        .perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID), ACTION_PLAN_JSON));
 
     actions.andExpect(status().isOk())
-            .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-            .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
-            .andExpect(jsonPath("$.*", hasSize(5)))
-            .andExpect(jsonPath("$.id", is(ACTION_PLAN_1_ID.toString())))
-            .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
-            .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
-            .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
-            .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
+        .andExpect(jsonPath("$.*", hasSize(5)))
+        .andExpect(jsonPath("$.id", is(ACTION_PLAN_1_ID.toString())))
+        .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
+        .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
+        .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
+        .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+  }
+  
+  @Test
+  public void updateActionPlanIncorrectJson2() throws Exception {
+    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID),
+        ACTION_PLAN_INCORRECT_JSON2));
+
+    actions.andExpect(status().isBadRequest())
+        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
+        .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
+        .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
+        .andExpect(jsonPath("$.error.message", is(INVALID_JSON)))
+        .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 }

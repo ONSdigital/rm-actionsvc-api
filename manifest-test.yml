@@ -1,8 +1,8 @@
 ---
 applications:
-- name: actionsvc-int
+- name: actionsvc-test
   instances: 1
-  host: actionsvc-int
+  host: actionsvc-test
   memory: 1024M
   path: actionsvc/target/actionsvc.jar
   timeout: 180
@@ -11,12 +11,12 @@ applications:
     - rm-redis
     - rm-rabbitmq
   env:
-    partySvc_connectionConfig_host: ras-party-service-int.apps.devtest.onsclofo.uk
+    partySvc_connectionConfig_host: ras-party-service-test.apps.devtest.onsclofo.uk
     partySvc_connectionConfig_port: "80"
     partySvc_connectionConfig_scheme: http
-    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-int.apps.devtest.onsclofo.uk
+    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-test.apps.devtest.onsclofo.uk
     collectionExerciseSvc_connectionConfig_port: "80"
     collectionExerciseSvc_connectionConfig_scheme: http
-    caseSvc_connectionConfig_host: casesvc-int.apps.devtest.onsclofo.uk
+    caseSvc_connectionConfig_host: casesvc-test.apps.devtest.onsclofo.uk
     caseSvc_connectionConfig_port: "80"
     caseSvc_connectionConfig_scheme: http

@@ -8,9 +8,9 @@
 
 	<xs:complexType name="ActionInstruction">
 		<xs:choice>
-			<xs:element name="actionRequest" type="ActionRequest" minOccurs="1" maxOccurs="1" />
-			<xs:element name="actionUpdate" type="ActionUpdate" minOccurs="1" maxOccurs="1" />
-			<xs:element name="actionCancel" type="ActionCancel" minOccurs="1" maxOccurs="1" />
+			<xs:element name="actionRequest" type="ActionRequest" />
+			<xs:element name="actionUpdate" type="ActionUpdate" />
+			<xs:element name="actionCancel" type="ActionCancel" />
 		</xs:choice>
 	</xs:complexType>
 
