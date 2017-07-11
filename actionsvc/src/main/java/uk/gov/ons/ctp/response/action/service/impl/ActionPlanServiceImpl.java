@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.cobertura.CoverageIgnore;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
@@ -27,18 +28,21 @@ public class ActionPlanServiceImpl implements ActionPlanService {
   @Autowired
   private ActionPlanRepository actionPlanRepo;
 
+  @CoverageIgnore
   @Override
   public List<ActionPlan> findActionPlans() {
     log.debug("Entering findActionPlans");
     return actionPlanRepo.findAll();
   }
 
+  @CoverageIgnore
   @Override
   public ActionPlan findActionPlan(final Integer actionPlanKey) {
     log.debug("Entering findActionPlan with primary key {}", actionPlanKey);
     return actionPlanRepo.findOne(actionPlanKey);
   }
 
+  @CoverageIgnore
   @Override
   public ActionPlan findActionPlanById(final UUID actionPlanId) {
     log.debug("Entering findActionPlanById with id {}", actionPlanId);

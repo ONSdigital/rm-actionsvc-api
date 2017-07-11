@@ -1,0 +1,35 @@
+[
+{
+	"actionPlan": "test",
+	"actionType": "test",
+	"questionSet": "B",
+	"contact": 
+	{
+		"title": "mr",
+    	"forename": "fdg",
+    	"surname": "fa",
+    	"phoneNumber": "075235252352525",
+    	"emailAddress": "test@test.com"
+	},
+	"address": 
+	{
+		"sampleUnitRef": "br",
+    	"type": "B",
+    	"estabType": "B",
+    	"locality": "v",
+    	"organisationName": "org",
+    	"category": "as",
+    	"line1": "one",
+    	"line2": "two",
+    	"townName": "town",
+    	"postcode": "SO999SO",
+    	"ladCode": "f",
+    	"latitude": "4",
+    	"longitude": "5"
+	},
+	"caseId": "1e82ab27-7d18-4c6f-89d8-766c651f9ca0",
+	"priority": "MEDIUM",
+	"caseRef": "fff",
+	"iac": "235235235235"
+}
+]
