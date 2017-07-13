@@ -381,7 +381,7 @@ public class ActionDistributor {
     // now call caseSvc for the following
     ActionPlan actionPlan = (action.getActionPlanFK() == null) ? null
         : actionPlanRepo.findOne(action.getActionPlanFK());
-    CaseDetailsDTO caseDTO = caseSvcClientService.getCaseWithIAC(action.getCaseId());
+    CaseDetailsDTO caseDTO = caseSvcClientService.getCaseWithIACandCaseEvents(action.getCaseId());
 //    CaseTypeDTO caseTypeDTO = caseSvcClientService.getCaseType(caseDTO.getCaseTypeId());
 //    CaseGroupDTO caseGroupDTO = caseSvcClientService.getCaseGroup(caseDTO.getCaseGroupId());
 

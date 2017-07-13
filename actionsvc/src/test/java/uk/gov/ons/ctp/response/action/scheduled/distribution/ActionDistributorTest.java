@@ -324,17 +324,8 @@ public class ActionDistributorTest {
 
     Mockito.when(caseSvcClientService.getCaseGroup(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
         .thenReturn(caseGroupDTOs.get(0));
-    Mockito.when(caseSvcClientService.getCaseWithIAC(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
+    Mockito.when(caseSvcClientService.getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
         .thenReturn(caseDTOs.get(0));
-
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(0)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(1)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(2)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(3)}));
 
     Mockito.when(
         caseSvcClientService.createNewCaseEvent(any(Action.class), eq(CategoryDTO.CategoryName.ACTION_CREATED)))
@@ -353,7 +344,7 @@ public class ActionDistributorTest {
     verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
         anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
-    verify(caseSvcClientService, times(4)).getCaseWithIAC(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+    verify(caseSvcClientService, times(4)).getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
     verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
