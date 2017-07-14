@@ -1,13 +1,7 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
-import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanEndpoint.ACTION_PLAN_NOT_FOUND;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.endpoint.CTPEndpoint;
 import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.InvalidRequestException;
@@ -29,6 +20,13 @@ import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
+import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanEndpoint.ACTION_PLAN_NOT_FOUND;
 
 /**
  * The REST endpoint controller for ActionPlanJobs.
@@ -80,7 +78,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    * @throws CTPException summats went wrong
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.GET)
-  public final ResponseEntity<?> findAllActionPlanJobsByActionPlanId(@PathVariable("actionplanid") final
+  public final ResponseEntity<List<ActionPlanJobDTO>> findAllActionPlanJobsByActionPlanId(@PathVariable("actionplanid") final
                                                                      UUID actionPlanId) throws CTPException {
     log.info("Entering findAllActionPlanJobsByActionPlanId with {}", actionPlanId);
     List<ActionPlanJob> actionPlanJobs = actionPlanJobService.findActionPlanJobsForActionPlan(actionPlanId);
@@ -101,7 +99,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.POST, consumes = "application/json")
-  public final ResponseEntity<?> executeActionPlan(@PathVariable("actionplanid") final UUID actionPlanId,
+  public final ResponseEntity<ActionPlanJobDTO> executeActionPlan(@PathVariable("actionplanid") final UUID actionPlanId,
       final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
     log.info("Entering executeActionPlan with {}", actionPlanId);
