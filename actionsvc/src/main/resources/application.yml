@@ -116,6 +116,7 @@ data-grid:
   list-time-to-wait-seconds: 10
   #  after app death how long should the lock on all lists remain
   lock-time-to-live-seconds: 10
+  report-lock-time-to-live-seconds: 300
 
 # the thread that sends actions to handlers
 action-distribution:
@@ -211,6 +212,9 @@ messaging:
   maxAttempts: 3
   prefetchCount: 10
   txSize: 1
+
+report-settings:
+  cron-expression: "0 * * * * *"
 
 swagger-settings:
   swagger-ui-active: true
