@@ -169,12 +169,11 @@ public class FeedbackServiceImplTest {
    * @throws Exception exception thrown
    */
   @Test(expected = CTPException.class)
-  public void testFeedbackActionNull() throws Exception {
+  public void testFeedbackActionWithNonExistentActionIdThrowsCTPException() throws Exception {
     List<ActionFeedback> actionFeedbacks = FixtureHelper.loadClassFixtures(ActionFeedback[].class);
 
     //Call method
     feedbackService.acceptFeedback(actionFeedbacks.get(0));
-
   }
   
 }

@@ -24,4 +24,5 @@ public class AppConfig {
   private CsvIngest csvIngest;
   private DataGrid dataGrid;
   private SwaggerSettings swaggerSettings;
+  private ReportSettings reportSettings;
 }
