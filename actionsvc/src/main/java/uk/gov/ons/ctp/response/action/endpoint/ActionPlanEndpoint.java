@@ -2,12 +2,6 @@ package uk.gov.ons.ctp.response.action.endpoint;
 
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
-
-import java.util.List;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +18,10 @@ import uk.gov.ons.ctp.common.error.InvalidRequestException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The REST endpoint controller for ActionPlans.
@@ -48,7 +46,7 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    * @return List<ActionPlanDTO> This returns all action plans.
    */
   @RequestMapping(method = RequestMethod.GET)
-  public final ResponseEntity<?> findActionPlans() {
+  public final ResponseEntity<List<ActionPlanDTO>> findActionPlans() {
     log.info("Entering findActionPlans...");
     List<ActionPlan> actionPlans = actionPlanService.findActionPlans();
     List<ActionPlanDTO> actionPlanDTOs = mapperFacade.mapAsList(actionPlans, ActionPlanDTO.class);

@@ -212,7 +212,7 @@ messaging:
 
 swagger-settings:
   swagger-ui-active: false
-  group-name: "actionservice-api"
-  title: "Action Service API"
-  description: "API for the Action Service"
-  version: "10.41"
+  group-name: actionservice-api
+  title: Action Service API
+  description: API for ${project.artifactId}
+  version: ${project.version}
