@@ -1,0 +1,21 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 10.43.0-1
+      author: Sarah Radford
+      changes:
+        - sqlFile:
+            comment: Update action type name
+            path: update_seeddata_action.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 10.43.0-2
+      author: Sarah Radford
+      changes:
+        - sqlFile:
+            comment: Reporting
+            path: create_action_mi.sql
+            relativeToChangelogFile: true
+            splitStatements: false
