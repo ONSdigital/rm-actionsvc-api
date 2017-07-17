@@ -16,28 +16,28 @@
 			}
 		],
 		"caseEvents": [
-			{  
+			{
    				"createdDateTime":1460736159699,
 			    "category":"GENERAL_ENQUIRY",
 			    "subCategory":"subcat",
 			    "createdBy":"me",
 			    "description":"desc"
 			},
-			{  
+			{
 			    "createdDateTime":1460736159699,
 			    "category":"GENERAL_ENQUIRY",
 			    "subCategory":"subcat",
 			    "createdBy":"me",
 			    "description":"desc"
 			},
-			{  
+			{
 			    "createdDateTime":1460736159699,
 			    "category":"GENERAL_ENQUIRY",
 			    "subCategory":"subcat",
 			    "createdBy":"me",
 			    "description":"desc"
 			},
-			{  
+			{
 			    "createdDateTime":1460736159699,
 			    "category":"GENERAL_ENQUIRY",
 			    "subCategory":"subcat",
@@ -47,6 +47,7 @@
 		],
 		"caseGroup":
 			{
+                "collectionExerciseId": "c2124abc-10c6-4c7c-885a-779d185a03a4",
 				"sampleUnitRef": "222"
 			}
 	}

@@ -46,6 +46,7 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
+import uk.gov.ons.ctp.response.action.service.CollectionExerciseClientService;
 import uk.gov.ons.ctp.response.action.service.impl.PartySvcClientServiceImpl;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
@@ -53,6 +54,7 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CaseTypeDTO;
+import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
 /**
@@ -85,6 +87,9 @@ public class ActionDistributorTest {
 
   @Mock
   private CaseSvcClientService caseSvcClientService;
+  
+  @Mock
+  private CollectionExerciseClientService collectionExerciseClientService;
 
   @Mock
   private ActionRepository actionRepo;
@@ -209,7 +214,8 @@ public class ActionDistributorTest {
         .thenReturn(actionsHHIACLOAD);
 
     List<CaseDetailsDTO> caseDetailsDTOS = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
-
+    List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
+    
     Mockito.when(
         caseSvcClientService.getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
         .thenReturn(
@@ -226,6 +232,9 @@ public class ActionDistributorTest {
 
     Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
         .thenReturn(partyDTOs.get(0));
+    
+    Mockito.when(collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
+        .thenReturn(collectionexerciseDTOS.get(0));
 
     // let it roll
     actionDistributor.distribute();
@@ -279,6 +288,9 @@ public class ActionDistributorTest {
 
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
+    List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
+    
+    
     // wire up mock responses
     Mockito.when(
         actionSvcStateTransitionManager.transition(ActionState.SUBMITTED, ActionDTO.ActionEvent.REQUEST_DISTRIBUTED))
@@ -308,6 +320,9 @@ public class ActionDistributorTest {
 
     Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
         .thenReturn(partyDTOs.get(0));
+    
+    Mockito.when(collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
+        .thenReturn(collectionexerciseDTOS.get(0));
 
     // let it roll
     actionDistributor.distribute();
