@@ -2,6 +2,7 @@ package uk.gov.ons.ctp.response.action.scheduled.ingest;
 
 import lombok.Data;
 import lombok.Getter;
+import net.sourceforge.cobertura.CoverageIgnore;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Size;
  * Integer and throw an InvalidFormatException otherwise, and we want to
  * validate the fields with more finesse using the javax.validation framework
  */
+@CoverageIgnore
 @Data
 @Getter
 public class CsvLine {
