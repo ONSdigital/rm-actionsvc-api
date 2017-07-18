@@ -1,0 +1,22 @@
+---
+applications:
+- name: actionsvc-ci
+  instances: 1
+  host: actionsvc-ci
+  memory: 1024M
+  path: actionsvc/target/actionsvc.jar
+  timeout: 180
+  services:
+    - rm-pg-db
+    - rm-redis
+    - rm-rabbitmq
+  env:
+    partySvc_connectionConfig_host: ras-party-service-ci.apps.devtest.onsclofo.uk
+    partySvc_connectionConfig_port: "80"
+    partySvc_connectionConfig_scheme: http
+    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-ci.apps.devtest.onsclofo.uk
+    collectionExerciseSvc_connectionConfig_port: "80"
+    collectionExerciseSvc_connectionConfig_scheme: http
+    caseSvc_connectionConfig_host: casesvc-ci.apps.devtest.onsclofo.uk
+    caseSvc_connectionConfig_port: "80"
+    caseSvc_connectionConfig_scheme: http
