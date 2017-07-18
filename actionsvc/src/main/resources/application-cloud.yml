@@ -1,9 +1,10 @@
 info:
-  contactEmail: philippe.brossier@ons.gov.uk
+  name: ${project.artifactId}
   version: ${project.version}
+  origin: ${scm.url}
   commit: ${buildNumber}
   branch: ${scmBranch}
-  buildTime: ${timestamp}
+  built: ${timestamp}
 
 # logging config here as a reminder as to how to override logback from cmd line
 # ie -Dlogging.level.org.springframework=DEBUG
@@ -29,14 +30,13 @@ security:
     password: secret
 
 management:
-  port: 8251
-  context-path: /mgmt
   security:
     roles: SUPERUSER
     enabled: true
   health:
     rabbit:
       enabled: false
+
 server:
   port: 8151
   servlet-path: /
@@ -59,7 +59,7 @@ endpoints:
     sensitive: true
   info:
     enabled: true
-    sensitive: true
+    sensitive: false
   metrics:
     enabled: true
     sensitive: true
@@ -115,6 +115,7 @@ data-grid:
   list-time-to-wait-seconds: 600
   #  after app death how long should the lock on all lists remain
   lock-time-to-live-seconds: 600
+  report-lock-time-to-live-seconds: 300
 
 # the thread that sends actions to handlers
 action-distribution:
@@ -210,9 +211,12 @@ messaging:
   prefetchCount: 10
   txSize: 1
 
+report-settings:
+  cron-expression: "0 * * * * *"
+
 swagger-settings:
   swagger-ui-active: false
-  group-name: "actionservice-api"
-  title: "Action Service API"
-  description: "API for the Action Service"
-  version: "10.41"
+  group-name: actionservice-api
+  title: Action Service API
+  description: API for ${project.artifactId}
+  version: ${project.version}

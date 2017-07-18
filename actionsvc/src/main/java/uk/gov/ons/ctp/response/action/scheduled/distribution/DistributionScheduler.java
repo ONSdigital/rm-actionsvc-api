@@ -7,12 +7,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.cobertura.CoverageIgnore;
 
 /**
  * This bean will have the actionDistributor injected into it by spring on
  * constructions. It will then schedule the running of the distributor using
  * details from the AppConfig
  */
+@CoverageIgnore
 @Component
 @Slf4j
 public class DistributionScheduler implements HealthIndicator {

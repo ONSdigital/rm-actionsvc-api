@@ -53,6 +53,15 @@ public interface CaseSvcClientService {
   CaseDetailsDTO getCaseWithIAC(final UUID caseId);
   
   /**
+   * Call CaseSvc using REST to get the Case details MAY throw a
+   * RuntimeException if the call fails
+   *
+   * @param caseId identifies the Case to fetch
+   * @return the Case we fetched
+   *
+   */
+  CaseDetailsDTO getCaseWithIACandCaseEvents(UUID caseId);
+  /**
    * Call CaseSvc using REST to get the CaseEvents for the Case MAY throw a
    * RuntimeException if the call fails
    *
@@ -60,5 +69,6 @@ public interface CaseSvcClientService {
    * @return the CaseEvents we found for the case
    */
   List<CaseEventDTO> getCaseEvents(UUID caseId);
+
 
 }

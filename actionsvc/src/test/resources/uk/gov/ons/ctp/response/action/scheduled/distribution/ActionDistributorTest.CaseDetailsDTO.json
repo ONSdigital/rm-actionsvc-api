@@ -5,7 +5,7 @@
 		"iac": "bbbb cccc dddd",
 		"actionPlanId": "e71002ac-3575-47eb-b87f-cd9db92bf9a7",
 		"collectionInstrumentId": "",
-		"partyId": "7fac359e-645b-487e-bb02-70536eae51d4",
+		"partyId": "2e6add83-e43d-4f52-954f-4109be506c86",
 		"sampleUnitType": "H",
 		"createdBy": "me",
 		"createdDateTime": 1460732606544,
@@ -15,6 +15,40 @@
 				"inboundChannel": "ONLINE"
 			}
 		],
-		"caseEvents": []
+		"caseEvents": [
+			{
+   				"createdDateTime":1460736159699,
+			    "category":"GENERAL_ENQUIRY",
+			    "subCategory":"subcat",
+			    "createdBy":"me",
+			    "description":"desc"
+			},
+			{
+			    "createdDateTime":1460736159699,
+			    "category":"GENERAL_ENQUIRY",
+			    "subCategory":"subcat",
+			    "createdBy":"me",
+			    "description":"desc"
+			},
+			{
+			    "createdDateTime":1460736159699,
+			    "category":"GENERAL_ENQUIRY",
+			    "subCategory":"subcat",
+			    "createdBy":"me",
+			    "description":"desc"
+			},
+			{
+			    "createdDateTime":1460736159699,
+			    "category":"GENERAL_ENQUIRY",
+			    "subCategory":"subcat",
+			    "createdBy":"me",
+			    "description":"desc"
+			}
+		],
+		"caseGroup":
+			{
+                "collectionExerciseId": "c2124abc-10c6-4c7c-885a-779d185a03a4",
+				"sampleUnitRef": "222"
+			}
 	}
 ]

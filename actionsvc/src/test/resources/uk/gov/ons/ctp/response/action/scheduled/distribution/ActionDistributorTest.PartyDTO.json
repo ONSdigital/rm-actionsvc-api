@@ -1,0 +1,12 @@
+[
+	{
+		"id":"2e6add83-e43d-4f52-954f-4109be506c86",
+		"sampleUnitType":"H",
+		"sampleUnitRef": "222",
+		"attributes": {
+			"surname": "bob",
+			"phonenumber": "07235235235235235",
+			"emailAddress": "test@test.com"
+		}
+	}
+]

@@ -1,6 +1,21 @@
 # Action Service API
 This page documents the Action service API endpoints. These endpoints will be secured using HTTP basic authentication initially. All endpoints return an `HTTP 200 OK` status code except where noted otherwise.
 
+## Service Information
+* `GET /info` will return information about this service, collated from when it was last built.
+
+### Example JSON Response
+```json
+{
+    "name": "actionsvc",
+    "version": "10.42.0",
+    "origin": "git@github.com:ONSdigital/rm-action-service.git",
+    "commit": "06752afbf05f27c923ddf42d3cd2ec9eeafd3362",
+    "branch": "master",
+    "built": "2017-07-12T08:38:34Z"
+}
+```
+
 ## List Actions
 * `GET /actions` will return a list of all actions, most recent first.
 

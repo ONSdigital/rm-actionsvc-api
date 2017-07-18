@@ -85,7 +85,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    *         case id.
    */
   @RequestMapping(value = "/case/{caseid}", method = RequestMethod.GET)
-  public ResponseEntity<?> findActionsByCaseId(@PathVariable("caseid") final UUID caseId) {
+  public ResponseEntity<List<ActionDTO>> findActionsByCaseId(@PathVariable("caseid") final UUID caseId) {
     log.info("Entering findActionsByCaseId...");
     List<Action> actions = actionService.findActionsByCaseId(caseId);
     if (CollectionUtils.isEmpty(actions)) {
@@ -103,7 +103,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @return List<ActionDTO> Actions for the specified filters
    */
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<?> findActions(@RequestParam(value = "actiontype", required = false) final String actionType,
+  public ResponseEntity<List<ActionDTO>> findActions(@RequestParam(value = "actiontype", required = false) final String actionType,
                                        @RequestParam(value = "state", required = false) final ActionDTO.ActionState
                                                actionState) {
     List<Action> actions = null;
@@ -144,7 +144,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public ResponseEntity<?> createAction(final @RequestBody @Valid ActionDTO actionDTO, BindingResult bindingResult)
+  public ResponseEntity<ActionDTO> createAction(final @RequestBody @Valid ActionDTO actionDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
     log.info("Entering createAction with Action {}", actionDTO);
     if (bindingResult.hasErrors()) {
@@ -197,7 +197,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @throws CTPException if update operation fails
    */
   @RequestMapping(value = "/case/{caseid}/cancel", method = RequestMethod.PUT, consumes = "application/json")
-  public ResponseEntity<?> cancelActions(@PathVariable("caseid") final UUID caseId)
+  public ResponseEntity<List<ActionDTO>> cancelActions(@PathVariable("caseid") final UUID caseId)
       throws CTPException {
     log.info("Cancelling Actions for {}", caseId);
 
