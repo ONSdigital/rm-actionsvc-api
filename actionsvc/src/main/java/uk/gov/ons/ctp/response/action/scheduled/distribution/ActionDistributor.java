@@ -450,7 +450,7 @@ public class ActionDistributor {
   
     UUID collectionId = caseDTO.getCaseGroup().getCollectionExerciseId();
     CollectionExerciseDTO collectionExe =  CollectionSvcClientService.getCollectionExercise(collectionId);
-    actionRequest.setExerciseref(collectionExe.getExerciseRef());
+    actionRequest.setExerciseRef(collectionExe.getExerciseRef());
     
     Map<String, String> partyMap = partyDTO.getAttributes();
 
