@@ -402,6 +402,50 @@ public class ActionDistributorTest {
         anyListOf(ActionCancel.class));
   }
   
+  /**
+   * Test BlueSky scenario - two action types, four cases etc resulting in two
+   * calls to publish
+   * 
+   * @throws Exception oops
+   */
+  @Test
+  public void testStateNotCancelledOrSubmitted() throws Exception {
+
+    List<ActionType> actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
+
+    List<Action> actionsHHIC = FixtureHelper.loadClassFixtures(Action[].class, "AbortedInitial");
+    List<Action> actionsHHIACLOAD = FixtureHelper.loadClassFixtures(Action[].class, "AbortedUpload");
+
+    List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
+
+    // wire up mock responses
+    Mockito.when(
+        actionSvcStateTransitionManager.transition(ActionState.SUBMITTED, ActionDTO.ActionEvent.REQUEST_DISTRIBUTED))
+        .thenReturn(ActionState.PENDING);
+
+    Mockito.when(actionTypeRepo.findAll()).thenReturn(actionTypes);
+    Mockito.when(actionPlanRepo.findOne(any(Integer.class))).thenReturn(actionPlans.get(0));
+    Mockito
+        .when(actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
+            anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class)))
+        .thenReturn(actionsHHIC);
+    Mockito.when(
+        actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
+            anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class)))
+        .thenReturn(actionsHHIACLOAD);
+
+    // let it roll
+    actionDistributor.distribute();
+
+    // assert the right calls were made
+    verify(actionTypeRepo).findAll();
+    verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+    verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+
+  }
+  
   
   /**
    * Test BlueSky scenario - two action types, four cases etc resulting in two
@@ -437,6 +481,9 @@ public class ActionDistributorTest {
 
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
+    List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
+    
+    
     // wire up mock responses
     Mockito.when(
         actionSvcStateTransitionManager.transition(ActionState.SUBMITTED, ActionDTO.ActionEvent.REQUEST_DISTRIBUTED))
@@ -466,6 +513,9 @@ public class ActionDistributorTest {
 
     Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
         .thenReturn(partyDTOs.get(0));
+    
+    Mockito.when(collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
+        .thenReturn(collectionexerciseDTOS.get(0));
 
     // let it roll
     actionDistributor.distribute();
