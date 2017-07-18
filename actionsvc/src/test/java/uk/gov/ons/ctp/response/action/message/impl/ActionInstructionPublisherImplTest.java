@@ -28,7 +28,7 @@ public class ActionInstructionPublisherImplTest {
   private ActionInstructionPublisherImpl actionInstructionPublisherImpl;
 
   @Test
-  public void sendActionInstructionsTest() throws Exception {
+  public void verifySendActionInstructionsSendsToQueue() throws Exception {
     List<ActionRequest> actionRequests = FixtureHelper.loadClassFixtures(ActionRequest[].class);
     List<ActionCancel> actionCancels = FixtureHelper.loadClassFixtures(ActionCancel[].class);
 
@@ -38,7 +38,7 @@ public class ActionInstructionPublisherImplTest {
   }
 
   @Test
-  public void sendActionInstructionsTestNoRequests() throws Exception {
+  public void verifySendActionInstructionsWithOnlyCancelActionsOnlySendsCancelActionsToQueue() throws Exception {
     List<ActionCancel> actionCancels = FixtureHelper.loadClassFixtures(ActionCancel[].class);
 
     actionInstructionPublisherImpl.sendActionInstructions("test", null, actionCancels);
@@ -47,7 +47,7 @@ public class ActionInstructionPublisherImplTest {
   }
 
   @Test
-  public void sendActionInstructionsTestNoCancels() throws Exception {
+  public void verifySendActionInstructionsWithOnlyRequestActionsOnlySendsRequestActionsToQueue() throws Exception {
     List<ActionRequest> actionRequests = FixtureHelper.loadClassFixtures(ActionRequest[].class);
 
     actionInstructionPublisherImpl.sendActionInstructions("test", actionRequests, null);
@@ -56,7 +56,7 @@ public class ActionInstructionPublisherImplTest {
   }
   
   @Test
-  public void sendActionInstructionsTestEmptyLists() throws Exception {
+  public void verifySendActionInstructionsWithNoActionsSendsNothingToQueue() throws Exception {
     List<ActionRequest> actionRequests = new ArrayList<>();
     List<ActionCancel> actionCancels = new ArrayList<>();
 

@@ -264,10 +264,13 @@ public class ActionPlanJobEndpointUnitTest {
   public void executeActionPlanGoodJsonProvided() throws Exception {
     when(actionPlanJobService.createAndExecuteActionPlanJob(any(ActionPlanJob.class))).thenReturn(
             actionPlanJobs.get(0));
-
+    when(actionPlanService.findActionPlanById(ACTIONPLANID)).thenReturn(actionPlans.get(0));;
+    
     ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID),
             ACTION_PLAN_JOB_JSON));
 
+    
+    
     actions.andExpect(status().isCreated())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
             .andExpect(handler().methodName("executeActionPlan"))

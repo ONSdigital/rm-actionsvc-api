@@ -39,7 +39,7 @@ public class PartySvcClientServiceImplTest {
     }
 
     @Test
-    public void getCollectionExerciseTest() throws CTPException {
+    public void verifyGetPartyCallInvokesRESTEndpoint() throws CTPException {
         PartyDTO party = new PartyDTO();
 
         PartySvc partySvc = new PartySvc();

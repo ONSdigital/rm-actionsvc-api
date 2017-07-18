@@ -89,4 +89,14 @@ public CaseDetailsDTO getCaseWithIAC(UUID caseId) {
     return caseDTO;
 }
 
+@Override
+public CaseDetailsDTO getCaseWithIACandCaseEvents(UUID caseId) {
+  MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+  queryParams.add("iac", "true");
+  queryParams.add("caseevents", "true");
+  CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+      CaseDetailsDTO.class, null, queryParams, caseId);
+    return caseDTO;
+}
+
 }

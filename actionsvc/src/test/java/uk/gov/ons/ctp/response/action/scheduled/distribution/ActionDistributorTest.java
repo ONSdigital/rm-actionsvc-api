@@ -52,6 +52,8 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.collection.exercise.representation.CaseTypeDTO;
+import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
 /**
  * Test the action distributor
@@ -60,12 +62,8 @@ import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 public class ActionDistributorTest {
 
   private static final int I_HATE_CHECKSTYLE_TEN = 10;
-  @Mock
-  private AppConfig appConfig;
-
-  @Mock
-  private RestClient partySvcClient;
-
+  @Spy
+  private AppConfig appConfig = new AppConfig();
 
   @Mock
   private ActionInstructionPublisher actionInstructionPublisher;
@@ -80,8 +78,7 @@ public class ActionDistributorTest {
   private DistributedListManager<BigInteger> actionDistributionListManager;
 
   @Mock
-  private StateTransitionManager<ActionState,
-    uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent> actionSvcStateTransitionManager;
+  private StateTransitionManager<ActionState, uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent> actionSvcStateTransitionManager;
 
   @Mock
   private MapperFacade mapperFacade;
@@ -104,8 +101,8 @@ public class ActionDistributorTest {
   @Mock
   private PlatformTransactionManager platformTransactionManager;
 
-  @Spy
-  private PartySvcClientServiceImpl partySvcClientService = new PartySvcClientServiceImpl();
+  @Mock
+  private PartySvcClientServiceImpl partySvcClientService;
 
   @InjectMocks
   private ActionDistributor actionDistributor;
@@ -127,29 +124,6 @@ public class ActionDistributorTest {
 
     MockitoAnnotations.initMocks(this);
   }
-
-/*  @Test
-  public void getPartyObject() {
-    //Mockito.when(partySvcClientService.getParty(UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87")))
-    .thenReturn(partyDTO);
-    //PartyDTO partyDTO = partySvcClientService.getParty(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992"));
-
-    UUID partyId = UUID.fromString("cb0711c3-0ac8-41d3-ae0e-567e5ea1ef87");
-
-    PartyDTO partyDTO = partySvcClient.getResource(appConfig.getPartySvc().getPartyByIdPath(), PartyDTO.class, partyId);
-
-     Map<String, String> partyMap = partyDTO.getAttributes();
-
-    ActionContact actionContact = new ActionContact();
-    actionContact.setForename(partyMap.get("firstName"));
-    actionContact.setSurname(partyMap.get("lastName"));
-    actionContact.setPhoneNumber(partyMap.get("telephone"));
-    actionContact.setEmailAddress(partyMap.get("emailAddress"));
-
-    System.out.println("TEST: " + actionContact.toString());
-
-  }*/
-
 
   /**
    * Test that when we fail at first hurdle to load ActionTypes we do not go on
@@ -175,17 +149,17 @@ public class ActionDistributorTest {
         anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
     verify(caseSvcClientService, times(0)).getCase(eq(
-            UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
     verify(caseSvcClientService, times(0)).getCase(eq(
-            UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
     verify(partySvcClientService, times(0)).getParty(eq("B"),
-            eq(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
+        eq(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
 
     verify(caseSvcClientService, times(0)).getCaseEvents(eq(
-            UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
     verify(caseSvcClientService, times(0)).getCaseEvents(eq(
-            UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
     verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
@@ -198,7 +172,9 @@ public class ActionDistributorTest {
 
   /**
    * Test that when we momentarily fail to call casesvc to GET two cases we
-   * carry on trying and successfully deal with the actions/cases we can retrieve
+   * carry on trying and successfully deal with the actions/cases we can
+   * retrieve
+   * 
    * @throws Exception oops
    */
   @Test
@@ -210,17 +186,9 @@ public class ActionDistributorTest {
     List<Action> actionsHHIC = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdInitialContact");
     List<Action> actionsHHIACLOAD = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdUploadIAC");
 
-    List<CaseDTO> caseDTOs = FixtureHelper.loadClassFixtures(CaseDTO[].class);
-
-    // TODO BRES - AddressDTO no longer used
-    //List<AddressDTO> addressDTOsUprn1234 = FixtureHelper.loadClassFixtures(AddressDTO[].class, "uprn1234");
-
     List<CaseEventDTO> caseEventDTOs = FixtureHelper.loadClassFixtures(CaseEventDTO[].class);
 
-    // TODO BRES
-    //List<CaseTypeDTO> caseTypeDTOs = FixtureHelper.loadClassFixtures(CaseTypeDTO[].class);
-    // TODO CaseTypeDTO from CollectionExercise, should this be used?
-    // List<CaseGroupDTO> caseGroupDTOs = FixtureHelper.loadClassFixtures(CaseGroupDTO[].class);
+    List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
     List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
 
     // wire up mock responses
@@ -231,25 +199,21 @@ public class ActionDistributorTest {
     Mockito.when(actionTypeRepo.findAll()).thenReturn(actionTypes);
     Mockito
         .when(actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
-                anyListOf(ActionState.class),
+            anyListOf(ActionState.class),
             anyListOf(BigInteger.class), any(Pageable.class)))
         .thenReturn(actionsHHIC);
     Mockito.when(
         actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
-                anyListOf(ActionState.class),
+            anyListOf(ActionState.class),
             anyListOf(BigInteger.class), any(Pageable.class)))
         .thenReturn(actionsHHIACLOAD);
 
     List<CaseDetailsDTO> caseDetailsDTOS = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
 
-    Mockito.when(caseSvcClientService.getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")))).thenReturn(
+    Mockito.when(
+        caseSvcClientService.getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
+        .thenReturn(
             caseDetailsDTOS.get(0));
-    //Mockito.when(caseSvcClientService.getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-    // .thenReturn(caseDetailsDTOS.get(3));
-
-    // TODO BRES - Address no longer needed?
-    //Mockito.when(caseSvcClientService.getAddress(eq(FAKE_UPRN)))
-    //    .thenReturn(addressDTOsUprn1234.get(0));
 
     Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
         .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(2)}));
@@ -260,47 +224,43 @@ public class ActionDistributorTest {
         caseSvcClientService.createNewCaseEvent(any(Action.class), eq(CategoryDTO.CategoryName.ACTION_CREATED)))
         .thenReturn(caseEventDTOsPost.get(2));
 
-    // TODO BRES - How is caseType now implemented?
-    //Mockito.when(caseSvcClientService.getCaseType(eq(1))).thenReturn(caseTypeDTOs.get(0));
-    //Mockito.when(caseSvcClientService.getCaseGroup(eq(1))).thenReturn(caseGroupDTOs.get(0));
+    Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
+        .thenReturn(partyDTOs.get(0));
 
     // let it roll
     actionDistributor.distribute();
 
     // assert the right calls were made
     verify(actionTypeRepo).findAll();
-    // TODO Removed due to "wanted but not invoked" error
-/*    verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
-        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+    verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class),
+        any(Pageable.class));
     verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
-        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));*/
+        anyListOf(ActionState.class), anyListOf(BigInteger.class),
+        any(Pageable.class));
 
-    //verify(caseSvcClientService).getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    //verify(caseSvcClientService).getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
+    verify(caseSvcClientService, times(2))
+        .getCaseWithIACandCaseEvents(eq(UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c81")));
+    verify(caseSvcClientService, times(2))
+        .getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
-    // TODO BRES - Address no longer used?
-    //verify(caseSvcClientService, times(2)).getAddress(eq(FAKE_UPRN));
-
-    //verify(caseSvcClientService).getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    //verify(caseSvcClientService).getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-
-    //verify(caseSvcClientService, times(2)).createNewCaseEvent(any(Action.class),
-    //    eq(CategoryDTO.CategoryName.ACTION_CREATED)); TODO Removed due to "wanted but not invoked" error
+    verify(caseSvcClientService,
+        times(2)).createNewCaseEvent(any(Action.class),
+            eq(CategoryDTO.CategoryName.ACTION_CREATED));
 
     verify(actionInstructionPublisher, times(0)).sendActionInstructions(eq("Printer"),
-            anyListOf(ActionRequest.class),
+        anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
-    //verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
-    //    anyListOf(ActionCancel.class)); TODO Removed due to "wanted but not invoked" error
+    verify(actionInstructionPublisher,
+        times(1)).sendActionInstructions(eq("HHSurvey"),
+            anyListOf(ActionRequest.class),
+            anyListOf(ActionCancel.class));
   }
 
   /**
    * Test BlueSky scenario - two action types, four cases etc resulting in two
    * calls to publish
+   * 
    * @throws Exception oops
    */
   @Test
@@ -311,17 +271,13 @@ public class ActionDistributorTest {
     List<Action> actionsHHIC = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdInitialContact");
     List<Action> actionsHHIACLOAD = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdUploadIAC");
 
-    // TODO BRES
-    //List<CaseTypeDTO> caseTypeDTOs = FixtureHelper.loadClassFixtures(CaseTypeDTO[].class);
-    List<CaseGroupDTO> caseGroupDTOs = FixtureHelper.loadClassFixtures(CaseGroupDTO[].class);
+    List<CaseDetailsDTO> caseDTOs = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
 
-    // TODO BRES - AddressDTO no longer used?
-    //List<AddressDTO> addressDTOsUprn1234 = FixtureHelper.loadClassFixtures(AddressDTO[].class, "uprn1234");
-
-    List<CaseEventDTO> caseEventDTOs = FixtureHelper.loadClassFixtures(CaseEventDTO[].class);
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
 
     List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
+
+    List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
     // wire up mock responses
     Mockito.when(
@@ -332,83 +288,48 @@ public class ActionDistributorTest {
     Mockito.when(actionPlanRepo.findOne(any(Integer.class))).thenReturn(actionPlans.get(0));
     Mockito
         .when(actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
-                anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class)))
+            anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class)))
         .thenReturn(actionsHHIC);
     Mockito.when(
         actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
-                anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class)))
+            anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class)))
         .thenReturn(actionsHHIACLOAD);
 
-    // TODO BRES
-    //Mockito.when(caseSvcClientService.getCaseType(eq(1))).thenReturn(caseTypeDTOs.get(0));
-    Mockito.when(caseSvcClientService.getCaseGroup(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-            .thenReturn(caseGroupDTOs.get(0));
-    //Mockito.when(caseSvcClientService.getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-    // .thenReturn(caseDTOs.get(0));
-    //Mockito.when(caseSvcClientService.getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-    // .thenReturn(caseDTOs.get(1));
-    //Mockito.when(caseSvcClientService.getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-    // .thenReturn(caseDTOs.get(2));
-    //Mockito.when(caseSvcClientService.getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-    // .thenReturn(caseDTOs.get(3));
-
-    // TODO BRES - Address no longer used?
-    //Mockito.when(caseSvcClientService.getAddress(eq(FAKE_UPRN)))
-    //    .thenReturn(addressDTOsUprn1234.get(0));
-
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(0)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(1)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(2)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(3)}));
+    Mockito.when(
+        caseSvcClientService.getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
+        .thenReturn(caseDTOs.get(0));
+    Mockito.when(
+        caseSvcClientService.getCaseWithIACandCaseEvents(eq(UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c81"))))
+        .thenReturn(caseDTOs.get(0));
 
     Mockito.when(
         caseSvcClientService.createNewCaseEvent(any(Action.class), eq(CategoryDTO.CategoryName.ACTION_CREATED)))
         .thenReturn(caseEventDTOsPost.get(2));
+
+    Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
+        .thenReturn(partyDTOs.get(0));
 
     // let it roll
     actionDistributor.distribute();
 
     // assert the right calls were made
     verify(actionTypeRepo).findAll();
-    //verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
-    //    anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
-    // TODO Removed due to "wanted but not invoked" error
-    //verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
-    //    anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
-    // TODO Removed due to "wanted but not invoked" error
+    verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdInitialContact"),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+    verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
+    verify(caseSvcClientService, times(2))
+        .getCaseWithIACandCaseEvents(eq(UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c81")));
+    verify(caseSvcClientService, times(2))
+        .getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
-    // verify(caseSvcClientService).getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    // verify(caseSvcClientService).getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    // verify(caseSvcClientService).getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    // verify(caseSvcClientService).getCase(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
+    verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
+        eq(CategoryDTO.CategoryName.ACTION_CREATED));
 
-    // TODO BRES - Address no longer used
-    //verify(caseSvcClientService, times(4)).getAddress(eq(FAKE_UPRN));
-
-    // verify(caseSvcClientService).getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    // verify(caseSvcClientService).getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    // verify(caseSvcClientService).getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-    // verify(caseSvcClientService).getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    // TODO Removed due to "wanted but not invoked" error
-
-    //verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
-    //    eq(CategoryDTO.CategoryName.ACTION_CREATED)); TODO Removed due to "wanted but not invoked" error
-
-    //verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("Printer"), anyListOf(ActionRequest.class),
-    //    anyListOf(ActionCancel.class)); TODO Removed due to "wanted but not invoked" error
-    //verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
-    //    anyListOf(ActionCancel.class)); TODO Removed due to "wanted but not invoked" error
+    verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("Printer"), anyListOf(ActionRequest.class),
+        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
+        anyListOf(ActionCancel.class));
   }
 }

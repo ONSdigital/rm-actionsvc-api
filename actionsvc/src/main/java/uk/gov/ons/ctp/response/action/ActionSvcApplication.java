@@ -17,10 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import net.sourceforge.cobertura.CoverageIgnore;
-import uk.gov.ons.ctp.common.distributed.DistributedListManager;
-import uk.gov.ons.ctp.common.distributed.DistributedListManagerRedissonImpl;
-import uk.gov.ons.ctp.common.distributed.DistributedLockManager;
-import uk.gov.ons.ctp.common.distributed.DistributedLockManagerRedissonImpl;
+import uk.gov.ons.ctp.common.distributed.*;
 import uk.gov.ons.ctp.common.error.RestExceptionHandler;
 import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
 import uk.gov.ons.ctp.common.rest.RestClient;
@@ -47,6 +44,7 @@ public class ActionSvcApplication {
 
   public static final String ACTION_DISTRIBUTION_LIST = "actionsvc.action.distribution";
   public static final String ACTION_EXECUTION_LOCK = "actionsvc.action.execution";
+  public static final String REPORT_EXECUTION_LOCK = "actionsvc.report.execution";
 
   @Autowired
   private AppConfig appConfig;
@@ -75,6 +73,41 @@ public class ActionSvcApplication {
   public DistributedLockManager actionPlanExecutionLockManager(RedissonClient redissonClient) {
     return new DistributedLockManagerRedissonImpl(ActionSvcApplication.ACTION_EXECUTION_LOCK, redissonClient,
         appConfig.getDataGrid().getLockTimeToLiveSeconds());
+  }
+
+  /**
+   * Bean used to access Distributed Lock Manager
+   *
+   * @param redissonClient Redisson Client
+   * @return the Distributed Lock Manager
+   */
+  @Bean
+  public DistributedInstanceManager reportDistributedInstanceManager(RedissonClient redissonClient) {
+    return new DistributedInstanceManagerRedissonImpl(REPORT_EXECUTION_LOCK, redissonClient);
+  }
+
+  /**
+   * Bean used to access Distributed Latch Manager
+   *
+   * @param redissonClient Redisson Client
+   * @return the Distributed Lock Manager
+   */
+  @Bean
+  public DistributedLatchManager reportDistributedLatchManager(RedissonClient redissonClient) {
+    return new DistributedLatchManagerRedissonImpl(REPORT_EXECUTION_LOCK, redissonClient,
+            appConfig.getDataGrid().getReportLockTimeToLiveSeconds());
+  }
+
+  /**
+   * Bean used to access Distributed Execution Lock Manager
+   *
+   * @param redissonClient Redisson Client
+   * @return the Distributed Lock Manager
+   */
+  @Bean
+  public DistributedLockManager reportDistributedLockManager(RedissonClient redissonClient) {
+    return new DistributedLockManagerRedissonImpl(REPORT_EXECUTION_LOCK, redissonClient,
+            appConfig.getDataGrid().getReportLockTimeToLiveSeconds());
   }
 
   /**
