@@ -7,7 +7,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,7 +82,7 @@ public class ActionDistributorTest {
 
   @Mock
   private CaseSvcClientService caseSvcClientService;
-  
+
   @Mock
   private CollectionExerciseClientService collectionExerciseClientService;
 
@@ -134,7 +133,7 @@ public class ActionDistributorTest {
    * @throws Exception oops
    */
   @Test
-  public void testFailGetActionType() throws Exception {
+  public void testFailToGetActionType() throws Exception {
 
     Mockito.when(actionTypeRepo.findAll()).thenThrow(new RuntimeException("Database access failed"));
     // let it roll
@@ -149,18 +148,10 @@ public class ActionDistributorTest {
         eq("HouseholdUploadIAC"),
         anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
-    verify(caseSvcClientService, times(0)).getCase(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    verify(caseSvcClientService, times(0)).getCase(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+    verify(caseSvcClientService, times(0)).getCaseWithIACandCaseEvents(any(UUID.class));
 
     verify(partySvcClientService, times(0)).getParty(eq("B"),
         eq(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
-
-    verify(caseSvcClientService, times(0)).getCaseEvents(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    verify(caseSvcClientService, times(0)).getCaseEvents(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
     verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
@@ -179,7 +170,7 @@ public class ActionDistributorTest {
    * @throws Exception oops
    */
   @Test
-  public void testFailCaseGet() throws Exception {
+  public void testFailToGetAllCases() throws Exception {
 
     List<ActionType> actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
 
@@ -187,10 +178,11 @@ public class ActionDistributorTest {
     List<Action> actionsHHIC = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdInitialContact");
     List<Action> actionsHHIACLOAD = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdUploadIAC");
 
-    List<CaseEventDTO> caseEventDTOs = FixtureHelper.loadClassFixtures(CaseEventDTO[].class);
-
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
     List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
+
+    List<CaseDetailsDTO> caseDetailsDTOS = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
+    List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
 
     // wire up mock responses
     Mockito.when(actionPlanRepo.findOne(any(Integer.class))).thenReturn(actionPlans.get(0));
@@ -209,18 +201,10 @@ public class ActionDistributorTest {
             anyListOf(BigInteger.class), any(Pageable.class)))
         .thenReturn(actionsHHIACLOAD);
 
-    List<CaseDetailsDTO> caseDetailsDTOS = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
-    List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
-    
     Mockito.when(
         caseSvcClientService.getCaseWithIACandCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
         .thenReturn(
             caseDetailsDTOS.get(0));
-
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(2)}));
-    Mockito.when(caseSvcClientService.getCaseEvents(eq(UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4"))))
-        .thenReturn(Arrays.asList(new CaseEventDTO[] {caseEventDTOs.get(3)}));
 
     Mockito.when(
         caseSvcClientService.createNewCaseEvent(any(Action.class), eq(CategoryDTO.CategoryName.ACTION_CREATED)))
@@ -228,8 +212,9 @@ public class ActionDistributorTest {
 
     Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
         .thenReturn(partyDTOs.get(0));
-    
-    Mockito.when(collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
+
+    Mockito.when(
+        collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
         .thenReturn(collectionexerciseDTOS.get(0));
 
     // let it roll
@@ -269,7 +254,7 @@ public class ActionDistributorTest {
    * @throws Exception oops
    */
   @Test
-  public void testBlueSky() throws Exception {
+  public void testBlueSkyActionRequests() throws Exception {
 
     List<ActionType> actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
 
@@ -285,8 +270,7 @@ public class ActionDistributorTest {
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
     List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
-    
-    
+
     // wire up mock responses
     Mockito.when(
         actionSvcStateTransitionManager.transition(ActionState.SUBMITTED, ActionDTO.ActionEvent.REQUEST_DISTRIBUTED))
@@ -316,8 +300,9 @@ public class ActionDistributorTest {
 
     Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
         .thenReturn(partyDTOs.get(0));
-    
-    Mockito.when(collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
+
+    Mockito.when(
+        collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
         .thenReturn(collectionexerciseDTOS.get(0));
 
     // let it roll
@@ -343,7 +328,7 @@ public class ActionDistributorTest {
     verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
   }
-  
+
   /**
    * Test BlueSky scenario - two action types, four cases etc resulting in two
    * calls to publish
@@ -351,7 +336,7 @@ public class ActionDistributorTest {
    * @throws Exception oops
    */
   @Test
-  public void testDistributorForActionCancels() throws Exception {
+  public void testBlueSkyActionCancels() throws Exception {
 
     List<ActionType> actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
 
@@ -364,7 +349,8 @@ public class ActionDistributorTest {
 
     // wire up mock responses
     Mockito.when(
-        actionSvcStateTransitionManager.transition(ActionState.CANCEL_SUBMITTED, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED))
+        actionSvcStateTransitionManager.transition(ActionState.CANCEL_SUBMITTED,
+            ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED))
         .thenReturn(ActionState.CANCEL_PENDING);
 
     Mockito.when(actionTypeRepo.findAll()).thenReturn(actionTypes);
@@ -381,7 +367,6 @@ public class ActionDistributorTest {
     Mockito.when(
         caseSvcClientService.createNewCaseEvent(any(Action.class), eq(CategoryDTO.CategoryName.ACTION_CREATED)))
         .thenReturn(caseEventDTOsPost.get(2));
-
 
     // let it roll
     actionDistributor.distribute();
@@ -401,15 +386,15 @@ public class ActionDistributorTest {
     verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
   }
-  
+
   /**
-   * Test BlueSky scenario - two action types, four cases etc resulting in two
-   * calls to publish
+   * Test that when state is not in Cancelled or Submitted then no actions will
+   * be published
    * 
    * @throws Exception oops
    */
   @Test
-  public void testStateNotCancelledOrSubmitted() throws Exception {
+  public void testNoActionsPublishedWhenStateNotCancelledOrSubmitted() throws Exception {
 
     List<ActionType> actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
 
@@ -443,19 +428,22 @@ public class ActionDistributorTest {
         anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
     verify(actionRepo).findByActionTypeNameAndStateInAndActionPKNotIn(eq("HouseholdUploadIAC"),
         anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+    verify(caseSvcClientService, times(0)).createNewCaseEvent(any(), any());
+    verify(caseSvcClientService, times(0)).getCaseWithIACandCaseEvents(any());
+    verify(actionInstructionPublisher, times(0)).sendActionInstructions(any(), any(), any());
 
   }
-  
-  
+
   /**
-   * Test BlueSky scenario - two action types, four cases etc resulting in two
-   * calls to publish
+   * Test actions will be published when DistributionMax is reached and are not
+   * published multiple times - two action types, four cases etc resulting in
+   * two calls to publish
    * 
    * @throws Exception oops
    */
   @Test
-  public void testBlueSkyActionRequestSizeEqualDistributionMax() throws Exception {
-    
+  public void testEarlyPublishWhenDistributionMaxReached() throws Exception {
+
     CaseSvc caseSvcConfig = new CaseSvc();
     ActionDistribution actionDistributionConfig = new ActionDistribution();
     actionDistributionConfig.setDelayMilliSeconds(I_HATE_CHECKSTYLE_TEN);
@@ -482,8 +470,7 @@ public class ActionDistributorTest {
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
     List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
-    
-    
+
     // wire up mock responses
     Mockito.when(
         actionSvcStateTransitionManager.transition(ActionState.SUBMITTED, ActionDTO.ActionEvent.REQUEST_DISTRIBUTED))
@@ -513,8 +500,9 @@ public class ActionDistributorTest {
 
     Mockito.when(partySvcClientService.getParty("H", UUID.fromString("2e6add83-e43d-4f52-954f-4109be506c86")))
         .thenReturn(partyDTOs.get(0));
-    
-    Mockito.when(collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
+
+    Mockito.when(
+        collectionExerciseClientService.getCollectionExercise(UUID.fromString("c2124abc-10c6-4c7c-885a-779d185a03a4")))
         .thenReturn(collectionexerciseDTOS.get(0));
 
     // let it roll
@@ -540,20 +528,18 @@ public class ActionDistributorTest {
     verify(actionInstructionPublisher, times(1)).sendActionInstructions(eq("HHSurvey"), anyListOf(ActionRequest.class),
         anyListOf(ActionCancel.class));
   }
-  
-  
+
   /**
-   * Test that when we fail at first hurdle to load ActionTypes we do not go on
-   * to call anything else In reality the wakeup mathod would then be called
-   * again after a sleep interval by spring but we cannot test that here
+   * Test that when we fail to retrieve any actions nothing wil happen for that
+   * actionType
    *
    * @throws Exception oops
    */
   @Test
-  public void testActionsEmptyList() throws Exception {
+  public void testNoActionsPublishedForEmptyList() throws Exception {
 
     List<ActionType> actionTypes = FixtureHelper.loadClassFixtures(ActionType[].class);
-    
+
     Mockito.when(actionTypeRepo.findAll()).thenReturn(actionTypes);
     // let it roll
     actionDistributor.distribute();
@@ -567,18 +553,10 @@ public class ActionDistributorTest {
         eq("HouseholdUploadIAC"),
         anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
-    verify(caseSvcClientService, times(0)).getCase(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    verify(caseSvcClientService, times(0)).getCase(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
+    verify(caseSvcClientService, times(0)).getCaseWithIACandCaseEvents(any(UUID.class));
 
     verify(partySvcClientService, times(0)).getParty(eq("B"),
         eq(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
-
-    verify(caseSvcClientService, times(0)).getCaseEvents(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
-    verify(caseSvcClientService, times(0)).getCaseEvents(eq(
-        UUID.fromString("7fac359e-645b-487e-bb02-70536eae51d4")));
 
     verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
@@ -588,6 +566,5 @@ public class ActionDistributorTest {
     verify(actionInstructionPublisher, times(0)).sendActionInstructions(eq("HHSurvey"),
         anyListOf(ActionRequest.class), anyListOf(ActionCancel.class));
   }
-  
- 
+
 }
