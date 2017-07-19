@@ -16,6 +16,7 @@ public class ActionReportServiceImpl implements ActionReportService {
     @Override
     public void createReport() {
         log.debug("Entering createReport...");
-// TODO CTPA-1409        caseReportRepository.plus1inoutStoredProcedure();
+        boolean reportResult = actionReportRepository.miStoredProcedure();
+        log.debug("Just ran the mi report and result is {}", reportResult);
     }
 }
