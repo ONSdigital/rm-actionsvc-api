@@ -59,6 +59,9 @@ public class ReportScheduler {
                 DISTRIBUTED_OBJECT_KEY_INSTANCE_COUNT);
     }
 
+    /**
+     * The method triggering report creation.
+     */
     @Scheduled(cron = "#{appConfig.reportSettings.cronExpression}")
     public void createReport() {
         log.debug("Entering createReport...");

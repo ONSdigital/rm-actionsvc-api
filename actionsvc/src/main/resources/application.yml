@@ -10,11 +10,8 @@ info:
 # ie -Dlogging.level.org.springframework=DEBUG
 logging:
   level:
-    uk.gov.ons.ctp: DEBUG
-    org.springframework.retry: DEBUG
-    org.springframework.integration.handler.advice: DEBUG
-    org.springframework.cloud.sleuth.instrument.messaging.MessagingSpanExtractor: ERROR
-    org.springframework.context.annotation.ConfigurationClassPostProcessor: ERROR
+    uk.gov.ons.ctp: WARN
+    org.springframework: WARN
   profile: DEV
 
 liquibase:
