@@ -119,7 +119,7 @@ public class ActionDistributor {
   private CaseSvcClientService caseSvcClientService;
 
   @Autowired
-  private CollectionExerciseClientService CollectionSvcClientService;
+  private CollectionExerciseClientService collectionSvcClientService;
   
   @Autowired
   private PartySvcClientService partySvcClientService;
@@ -449,7 +449,7 @@ public class ActionDistributor {
     actionRequest.setCaseId(action.getCaseId().toString());
   
     UUID collectionId = caseDTO.getCaseGroup().getCollectionExerciseId();
-    CollectionExerciseDTO collectionExe =  CollectionSvcClientService.getCollectionExercise(collectionId);
+    CollectionExerciseDTO collectionExe =  collectionSvcClientService.getCollectionExercise(collectionId);
     actionRequest.setExerciseRef(collectionExe.getExerciseRef());
     
     Map<String, String> partyMap = partyDTO.getAttributes();
