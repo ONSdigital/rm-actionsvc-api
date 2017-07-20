@@ -395,7 +395,7 @@ public class ActionDistributor {
         : actionPlanRepo.findOne(action.getActionPlanFK());
     CaseDetailsDTO caseDTO = caseSvcClientService.getCaseWithIACandCaseEvents(action.getCaseId());
 
-    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getSampleUnitType(),caseDTO.getPartyId());
+    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getSampleUnitType(), caseDTO.getPartyId());
     log.debug("PARTYDTO: " + partyDTO.toString());
 
     //List<CaseEventDTO> caseEventDTOs = caseSvcClientService.getCaseEvents(action.getCaseId());

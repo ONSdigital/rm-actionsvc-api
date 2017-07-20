@@ -171,7 +171,7 @@ public class ActionPlanJobServiceImplTest {
     // set fixture actionplans to have run 10s ago
     Timestamp now = DateTimeUtil.nowUTC();
     Timestamp lastExecutionTime = new Timestamp(now.getTime() - 10000);
-    actionPlans.forEach(actionPlan->actionPlan.setLastRunDateTime(lastExecutionTime));
+    actionPlans.forEach(actionPlan-> actionPlan.setLastRunDateTime(lastExecutionTime));
 
     List<ActionPlanJob> actionPlanJobs = FixtureHelper.loadClassFixtures(ActionPlanJob[].class);
 
@@ -213,7 +213,7 @@ public class ActionPlanJobServiceImplTest {
     // set fixture actionplans to have run 1s ago
     Timestamp now = DateTimeUtil.nowUTC();
     Timestamp lastExecutionTime = new Timestamp(now.getTime() - 1000);
-    actionPlans.forEach(actionPlan->actionPlan.setLastRunDateTime(lastExecutionTime));
+    actionPlans.forEach(actionPlan-> actionPlan.setLastRunDateTime(lastExecutionTime));
 
     // wire up mock responses
     Mockito.when(actionPlanRepo.findAll()).thenReturn(actionPlans);
