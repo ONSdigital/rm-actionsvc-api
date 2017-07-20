@@ -50,7 +50,7 @@ public interface CaseSvcClientService {
    * @return the Case we fetched
    *
    */
-  CaseDetailsDTO getCaseWithIAC(final UUID caseId);
+  CaseDetailsDTO getCaseWithIAC(UUID caseId);
   
   /**
    * Call CaseSvc using REST to get the Case details MAY throw a

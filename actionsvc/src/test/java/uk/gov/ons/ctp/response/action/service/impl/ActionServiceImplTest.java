@@ -91,7 +91,7 @@ public class ActionServiceImplTest {
       }
     }
     List<Action> originalActions = FixtureHelper.loadClassFixtures(Action[].class);
-    
+
     verify(actionRepo, times(1)).findByCaseId(ACTION_CASEID);
     verify(actionSvcStateTransitionManager, times(1)).transition(originalActions.get(0).getState(), ActionEvent.REQUEST_CANCELLED);
     verify(actionSvcStateTransitionManager, times(1)).transition(originalActions.get(1).getState(), ActionEvent.REQUEST_CANCELLED);
