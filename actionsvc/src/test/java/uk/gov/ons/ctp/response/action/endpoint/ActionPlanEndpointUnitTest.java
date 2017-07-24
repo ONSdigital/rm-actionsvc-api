@@ -34,7 +34,6 @@ import static uk.gov.ons.ctp.common.MvcHelper.getJson;
 import static uk.gov.ons.ctp.common.MvcHelper.putJson;
 import static uk.gov.ons.ctp.common.TestHelper.createTestDate;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
-import static uk.gov.ons.ctp.common.error.RestExceptionHandler.INVALID_JSON;
 import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAdviceFor;
 import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanEndpoint.ACTION_PLAN_NOT_FOUND;
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
@@ -56,9 +55,9 @@ public class ActionPlanEndpointUnitTest {
   private static final String ACTION_PLAN_2_LAST_RUN_DATE_TIME = createTestDate("2016-04-15T16:03:26.644+0100");
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
-  private static final String ACTION_PLAN_JSON = "{\"id\":\"e71002ac-3575-47eb-b87f-cd9db92bf9a7\", \"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
+  private static final String ACTION_PLAN_JSON = "{\"description\":\"testing\",\"lastGoodRunDateTime\":null}";
   private static final String ACTION_PLAN_INCORRECT_JSON = "{\"some\":\"joke\"}";
-  private static final String ACTION_PLAN_INCORRECT_JSON2 = "{\"name\":\"HH\", \"description\":\"testing\", \"createdBy\":\"SYSTEM\", \"lastGoodRunDateTime\":null}";
+  private static final String ACTION_PLAN_INCORRECT_JSON2 = "{\"description\":\"testing\", \"lastGoodRunDateTime\":null}";
 
 
   @InjectMocks
@@ -245,17 +244,5 @@ public class ActionPlanEndpointUnitTest {
         .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
         .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
   }
-  
-  @Test
-  public void updateActionPlanIncorrectJson2() throws Exception {
-    ResultActions actions = mockMvc.perform(putJson(String.format("/actionplans/%s", ACTION_PLAN_1_ID),
-        ACTION_PLAN_INCORRECT_JSON2));
 
-    actions.andExpect(status().isBadRequest())
-        .andExpect(handler().handlerType(ActionPlanEndpoint.class))
-        .andExpect(handler().methodName("updateActionPlanByActionPlanId"))
-        .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
-        .andExpect(jsonPath("$.error.message", is(INVALID_JSON)))
-        .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-  }
 }
