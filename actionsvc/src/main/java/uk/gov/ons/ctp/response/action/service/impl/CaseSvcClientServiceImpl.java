@@ -1,24 +1,26 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseEventCreationRequestDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 
 /**
  * Impl of the service that centralizes all REST calls to the Case service
@@ -57,13 +59,12 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   }
 
   @Override
-  public CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory) {
+  public CreatedCaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory) {
     log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getId(),
         actionCategory);
-    CaseEventDTO caseEventDTO = new CaseEventDTO();
+    CaseEventCreationRequestDTO caseEventDTO = new CaseEventCreationRequestDTO();
     caseEventDTO.setCategory(actionCategory);
     caseEventDTO.setCreatedBy(action.getCreatedBy());
-    caseEventDTO.setCreatedDateTime(new Date());
     caseEventDTO.setSubCategory(action.getActionType().getName());
 
     if (!StringUtils.isEmpty(action.getSituation())) {
@@ -73,9 +74,9 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
       caseEventDTO.setDescription(action.getActionType().getDescription());
     }
 
-    CaseEventDTO returnedCaseEventDTO = caseSvcClient.postResource(
+    CreatedCaseEventDTO returnedCaseEventDTO = caseSvcClient.postResource(
         appConfig.getCaseSvc().getCaseEventsByCasePostPath(), caseEventDTO,
-        CaseEventDTO.class,
+        CreatedCaseEventDTO.class,
         action.getCaseId());
     return returnedCaseEventDTO;
   }
