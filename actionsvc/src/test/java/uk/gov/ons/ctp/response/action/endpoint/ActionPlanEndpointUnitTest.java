@@ -55,9 +55,9 @@ public class ActionPlanEndpointUnitTest {
   private static final String ACTION_PLAN_2_LAST_RUN_DATE_TIME = createTestDate("2016-04-15T16:03:26.644+0100");
   private static final String OUR_EXCEPTION_MESSAGE = "this is what we throw";
 
-  private static final String ACTION_PLAN_JSON = "{\"description\":\"testing\",\"lastGoodRunDateTime\":null}";
+  private static final String ACTION_PLAN_JSON = "{\"description\":\"testing\",\"lastRunDateTime\":null}";
   private static final String ACTION_PLAN_INCORRECT_JSON = "{\"some\":\"joke\"}";
-  private static final String ACTION_PLAN_INCORRECT_JSON2 = "{\"description\":\"testing\", \"lastGoodRunDateTime\":null}";
+  private static final String ACTION_PLAN_INCORRECT_JSON2 = "{\"description\":\"testing\", \"lastRunDateTime\":null}";
 
 
   @InjectMocks
@@ -141,7 +141,7 @@ public class ActionPlanEndpointUnitTest {
         .andExpect(jsonPath("$[*].name", containsInAnyOrder(ACTION_PLAN_1_NAME, ACTION_PLAN_2_NAME)))
         .andExpect(jsonPath("$[*].description", containsInAnyOrder(ACTION_PLAN_1_DESC, ACTION_PLAN_2_DESC)))
         .andExpect(jsonPath("$[*].createdBy", containsInAnyOrder(CREATED_BY_SYSTEM, CREATED_BY_SYSTEM)))
-        .andExpect(jsonPath("$[*].lastGoodRunDateTime", containsInAnyOrder(ACTION_PLAN_1_LAST_RUN_DATE_TIME,
+        .andExpect(jsonPath("$[*].lastRunDateTime", containsInAnyOrder(ACTION_PLAN_1_LAST_RUN_DATE_TIME,
             ACTION_PLAN_2_LAST_RUN_DATE_TIME)));
   }
 
@@ -201,7 +201,10 @@ public class ActionPlanEndpointUnitTest {
         .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
         .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
         .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
-        .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+        .andExpect(jsonPath("$.lastRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+
+    System.out.println(actions.andReturn().getResponse().getContentAsString());
+
   }
 
   /**
@@ -242,7 +245,7 @@ public class ActionPlanEndpointUnitTest {
         .andExpect(jsonPath("$.name", is(ACTION_PLAN_1_NAME)))
         .andExpect(jsonPath("$.description", is(ACTION_PLAN_1_DESC)))
         .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
-        .andExpect(jsonPath("$.lastGoodRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
+        .andExpect(jsonPath("$.lastRunDateTime", is(ACTION_PLAN_1_LAST_RUN_DATE_TIME)));
   }
 
 }

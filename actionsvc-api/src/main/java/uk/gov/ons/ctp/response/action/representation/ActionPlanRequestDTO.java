@@ -17,5 +17,5 @@ public class ActionPlanRequestDTO {
 
   private String description;
 
-  private Date lastGoodRunDateTime;
+  private Date lastRunDateTime;
 }
