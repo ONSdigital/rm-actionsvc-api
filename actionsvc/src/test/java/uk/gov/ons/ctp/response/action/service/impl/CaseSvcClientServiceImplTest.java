@@ -22,6 +22,7 @@ import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionType;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 
 import java.util.UUID;
 
@@ -106,7 +107,7 @@ public class CaseSvcClientServiceImplTest {
             + "\"description\":\"desc\""
             + "}", MediaType.APPLICATION_JSON));
 
-    CaseEventDTO caseEventDTO = caseSvcClientService.createNewCaseEvent(action,
+    CreatedCaseEventDTO caseEventDTO = caseSvcClientService.createNewCaseEvent(action,
         CategoryDTO.CategoryName.ACTION_COMPLETED);
     assertTrue(caseEventDTO != null);
     mockServer.verify();
