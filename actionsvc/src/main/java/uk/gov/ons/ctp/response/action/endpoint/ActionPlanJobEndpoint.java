@@ -18,6 +18,7 @@ import uk.gov.ons.ctp.common.error.InvalidRequestException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlanJob;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanJobDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionPlanJobRequestDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanJobService;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
@@ -92,7 +93,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
   /**
    * To create a new Action Plan Job having received an action plan id and some json
    * @param actionPlanId the given action plan id.
-   * @param actionPlanJobDTO the ActionPlanJobDTO representation of the provided json
+   * @param actionPlanJobRequestDTO the ActionPlanJobRequestDTO representation of the provided json
    * @param bindingResult collects errors thrown by update
    * @return the created ActionPlanJobDTO
    * @throws CTPException summats went wrong
@@ -100,7 +101,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionplanid}/jobs", method = RequestMethod.POST, consumes = "application/json")
   public final ResponseEntity<ActionPlanJobDTO> executeActionPlan(@PathVariable("actionplanid") final UUID actionPlanId,
-      final @RequestBody @Valid ActionPlanJobDTO actionPlanJobDTO, BindingResult bindingResult)
+          final @RequestBody @Valid ActionPlanJobRequestDTO actionPlanJobRequestDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
     log.info("Entering executeActionPlan with {}", actionPlanId);
 
@@ -112,7 +113,7 @@ public class ActionPlanJobEndpoint implements CTPEndpoint {
     if(actionPlan == null){
     	 throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
     }
-    ActionPlanJob job = mapperFacade.map(actionPlanJobDTO, ActionPlanJob.class);
+    ActionPlanJob job = mapperFacade.map(actionPlanJobRequestDTO, ActionPlanJob.class);
     job.setActionPlanFK(actionPlan.getActionPlanPK());
     job = actionPlanJobService.createAndExecuteActionPlanJob(job);
     if (job == null) {

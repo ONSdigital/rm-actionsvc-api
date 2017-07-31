@@ -205,7 +205,7 @@ An `HTTP 404 Not Found` status code is returned if the action with the specified
     "name": "C1O331D10E",
     "description": "Component 1 - England/online/field day ten/three reminders",
     "createdBy": "SYSTEM",
-    "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
+    "lastRunDateTime": "2017-06-15T10:00:00Z"
   }
 ]
 ```
@@ -222,7 +222,7 @@ An `HTTP 204 No Content` status code is returned if there are no action plans.
   "name": "C1O331D10E",
   "description": "Component 1 - England/online/field day ten/three reminders",
   "createdBy": "SYSTEM",
-  "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
+  "lastRunDateTime": "2017-06-15T10:00:00Z"
 }
 ```
 
@@ -231,7 +231,7 @@ An `HTTP 404 Not Found` status code is returned if the action plan with the spec
 ## Update Action Plan
 * `PUT /actionplans/5381731e-e386-41a1-8462-26373744db86` will update the details of the action plan with an ID of `5381731e-e386-41a1-8462-26373744db86`.
 
-*Optional parameters:* `description` as the action plan description, `lastGoodRunDateTime` as the date/time the action plan was last successfully run.
+*Optional parameters:* `description` as the action plan description, `lastRunDateTime` as the date/time the action plan was last successfully run.
 
 ### Example JSON Response
 ```json
@@ -240,7 +240,7 @@ An `HTTP 404 Not Found` status code is returned if the action plan with the spec
   "name": "C1O331D10E",
   "description": "Component 1 - England/online/field day ten/three reminders",
   "createdBy": "SYSTEM",
-  "lastGoodRunDateTime": "2017-06-15T10:00:00Z"
+  "lastRunDateTime": "2017-06-15T10:00:00Z"
 }
 ```
 

@@ -1,13 +1,13 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.UUID;
+import javax.validation.constraints.Size;
 
 /**
  * Domain model object for representation.
@@ -15,16 +15,13 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class ActionPlanDTO {
+public class ActionPlanJobRequestDTO {
+
+  private static final int CREATED_BY_MAX = 50;
+  private static final int CREATED_BY_MIN = 2;
 
   @NotNull
-  private UUID id;
-
-  private String name;
-
-  private String description;
-
+  @Size(min = CREATED_BY_MIN, max = CREATED_BY_MAX)
+  @ApiModelProperty(required = true)
   private String createdBy;
-
-  private Date lastRunDateTime;
 }

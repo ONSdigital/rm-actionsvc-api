@@ -21,7 +21,9 @@ import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
-import uk.gov.ons.ctp.response.action.representation.ActionFeedbackDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionFeedbackRequestDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionPostRequestDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionPutRequestDTO;
 import uk.gov.ons.ctp.response.action.service.ActionCaseService;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 import uk.gov.ons.ctp.response.action.service.ActionService;
@@ -136,7 +138,7 @@ public final class ActionEndpoint implements CTPEndpoint {
   /**
    * POST Create an Action.
    *
-   * @param actionDTO Incoming ActionDTO with details to validate and from which
+   * @param actionPostRequestDTO Incoming ActionDTO with details to validate and from which
    *          to create Action
    * @param bindingResult collects errors thrown by update
    * @return ActionDTO Created Action
@@ -144,14 +146,14 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public ResponseEntity<ActionDTO> createAction(final @RequestBody @Valid ActionDTO actionDTO, BindingResult bindingResult)
+  public ResponseEntity<ActionDTO> createAction(final @RequestBody @Valid ActionPostRequestDTO actionPostRequestDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
-    log.info("Entering createAction with Action {}", actionDTO);
+    log.info("Entering createAction with Action {}", actionPostRequestDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for create action: ", bindingResult);
     }
 
-    Action action = actionService.createAction(mapperFacade.map(actionDTO, Action.class));
+    Action action = actionService.createAction(mapperFacade.map(actionPostRequestDTO, Action.class));
     ActionDTO resultDTO = mapperFacade.map(action, ActionDTO.class);
     UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
     resultDTO.setActionPlanId(actionPlanUUID);
@@ -162,7 +164,7 @@ public final class ActionEndpoint implements CTPEndpoint {
    * PUT to update the specified Action.
    *
    * @param actionId Action Id of the Action to update
-   * @param actionDTO Incoming ActionDTO with details to update
+   * @param actionPutRequestDTO Incoming ActionDTO with details to update
    * @param bindingResult collects errors thrown by update
    * @return ActionDTO Returns the updated Action details
    * @throws CTPException if update operation fails
@@ -170,18 +172,18 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionid}", method = RequestMethod.PUT, consumes = "application/json")
   public ActionDTO updateAction(@PathVariable("actionid") final UUID actionId,
-                                @RequestBody @Valid final ActionDTO actionDTO, BindingResult bindingResult)
+                                @RequestBody(required = false) @Valid final ActionPutRequestDTO actionPutRequestDTO, BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
-    log.info("Updating Action with {} - {}", actionId, actionDTO);
+    log.info("Updating Action with {} - {}", actionId, actionPutRequestDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action: ", bindingResult);
     }
 
-    actionDTO.setId(actionId);
-    Action action = actionService.updateAction(mapperFacade.map(actionDTO, Action.class));
+    Action action = actionService.updateAction(mapperFacade.map(actionPutRequestDTO, Action.class));
     if (action == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_NOT_UPDATED, actionId);
     }
+    action.setId(actionId);
 
     ActionDTO resultDTO = mapperFacade.map(action, ActionDTO.class);
     UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();
@@ -217,7 +219,7 @@ public final class ActionEndpoint implements CTPEndpoint {
   /**
    * Allow feedback otherwise sent via JMS to be sent via endpoint
    * @param actionId the action
-   * @param actionFeedbackDTO the feedback
+   * @param actionFeedbackRequestDTO the feedback
    * @param bindingResult the bindingResult
    * @return the modified action
    * @throws CTPException oops
@@ -225,18 +227,18 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionid}/feedback", method = RequestMethod.PUT, consumes = {"application/json"})
   public ActionDTO feedbackAction(@PathVariable("actionid") final UUID actionId,
-                                  @RequestBody @Valid final ActionFeedbackDTO actionFeedbackDTO, BindingResult bindingResult)
-          throws CTPException, InvalidRequestException {
-    log.info("Feedback for Action {} - {}", actionId, actionFeedbackDTO);
+                                  @RequestBody @Valid final ActionFeedbackRequestDTO actionFeedbackRequestDTO,
+                                  BindingResult bindingResult) throws CTPException, InvalidRequestException {
+    log.info("Feedback for Action {} - {}", actionId, actionFeedbackRequestDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for feedback action: ", bindingResult);
     }
 
-    actionFeedbackDTO.setActionId(actionId.toString());
-    Action action = actionService.feedBackAction(mapperFacade.map(actionFeedbackDTO, ActionFeedback.class));
+    Action action = actionService.feedBackAction(mapperFacade.map(actionFeedbackRequestDTO, ActionFeedback.class));
     if (action == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, "Action not found for id %s", actionId);
     }
+    action.setId(UUID.fromString(actionId.toString()));
 
     ActionDTO resultDTO = mapperFacade.map(action, ActionDTO.class);
     UUID actionPlanUUID = actionPlanService.findActionPlan(action.getActionPlanFK()).getId();

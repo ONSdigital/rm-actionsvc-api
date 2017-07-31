@@ -47,8 +47,8 @@ import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.action.service.CollectionExerciseClientService;
 import uk.gov.ons.ctp.response.action.service.impl.PartySvcClientServiceImpl;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
@@ -179,7 +179,7 @@ public class ActionDistributorTest {
     List<Action> actionsHHIACLOAD = FixtureHelper.loadClassFixtures(Action[].class, "HouseholdUploadIAC");
 
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
-    List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
+    List<CreatedCaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CreatedCaseEventDTO[].class, "post");
 
     List<CaseDetailsDTO> caseDetailsDTOS = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
     List<CollectionExerciseDTO> collectionexerciseDTOS = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
@@ -265,7 +265,7 @@ public class ActionDistributorTest {
 
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
 
-    List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
+    List<CreatedCaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CreatedCaseEventDTO[].class, "post");
 
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
@@ -345,7 +345,7 @@ public class ActionDistributorTest {
 
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
 
-    List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
+    List<CreatedCaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CreatedCaseEventDTO[].class, "post");
 
     // wire up mock responses
     Mockito.when(
@@ -465,7 +465,7 @@ public class ActionDistributorTest {
 
     List<ActionPlan> actionPlans = FixtureHelper.loadClassFixtures(ActionPlan[].class);
 
-    List<CaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CaseEventDTO[].class, "post");
+    List<CreatedCaseEventDTO> caseEventDTOsPost = FixtureHelper.loadClassFixtures(CreatedCaseEventDTO[].class, "post");
 
     List<PartyDTO> partyDTOs = FixtureHelper.loadClassFixtures(PartyDTO[].class);
 
