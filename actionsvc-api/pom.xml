@@ -42,20 +42,8 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.compiler.plugin.version}</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>
         <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.13.1</version>
-
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -85,7 +73,7 @@
                 <plugin>
                   <groupId>net.codesup.util</groupId>
                   <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                  <version>1.15.0</version>
+                  <version>1.18.0</version>
                 </plugin>
                 <plugin>
                   <groupId>org.jvnet.jaxb2_commons</groupId>
@@ -95,7 +83,6 @@
               </plugins>
             </configuration>
           </execution>
-
           <execution>
             <phase>generate-sources</phase>
             <id>outbound</id>
@@ -124,7 +111,7 @@
                 <plugin>
                   <groupId>net.codesup.util</groupId>
                   <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                  <version>1.15.0</version>
+                  <version>1.18.0</version>
                 </plugin>
                 <plugin>
                   <groupId>org.jvnet.jaxb2_commons</groupId>
@@ -137,6 +124,5 @@
         </executions>
       </plugin>
     </plugins>
-
   </build>
 </project>
