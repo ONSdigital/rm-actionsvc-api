@@ -26,7 +26,7 @@ public class ActionFeedbackReceiverImpl implements ActionFeedbackReceiver {
 
   @Autowired
   private FeedbackService feedbackService;
-  
+
   @Override
   @ServiceActivator(inputChannel = "actionFeedbackTransformed", adviceChain = "actionFeedbackRetryAdvice")
   public void acceptFeedback(ActionFeedback feedback) throws CTPException {

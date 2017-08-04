@@ -99,6 +99,14 @@ public class CsvIngester extends CsvToBean<CsvLine> {
   @Autowired
   private Tracer tracer;
 
+  @Autowired
+  private AppConfig appConfig;
+
+  @Autowired
+  private ActionInstructionPublisher actionInstructionPublisher;
+
+  private ColumnPositionMappingStrategy<CsvLine> columnPositionMappingStrategy;
+
   /**
    * Inner class to encapsulate the request and cancel data as they do not have
    * common parentage
@@ -109,14 +117,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
     private List<ActionRequest> actionRequests = new ArrayList<>();
     private List<ActionCancel> actionCancels = new ArrayList<>();
   }
-
-  @Autowired
-  private AppConfig appConfig;
-
-  @Autowired
-  private ActionInstructionPublisher actionInstructionPublisher;
-
-  private ColumnPositionMappingStrategy<CsvLine> columnPositionMappingStrategy;
 
   /**
    * Lazy create a reusable validator
