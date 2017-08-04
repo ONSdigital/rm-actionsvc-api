@@ -219,29 +219,4 @@
       </resource>
     </resources>
   </build>
-  
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <configuration>
-          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <configuration>
-          <instrumentation>
-            <ignoreTrivial>true</ignoreTrivial>
-          </instrumentation>
-          <quiet>true</quiet>
-          <formats>
-            <format>html</format>
-          </formats>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
