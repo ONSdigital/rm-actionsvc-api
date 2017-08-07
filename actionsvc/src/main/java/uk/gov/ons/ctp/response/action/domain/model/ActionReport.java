@@ -5,7 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -23,7 +29,8 @@ import java.util.UUID;
                 procedureName = "action.generate_action_mi",
                 parameters = {@StoredProcedureParameter(mode = ParameterMode.OUT, type = Boolean.class)})
 public class ActionReport {
-    @Id @Column(name = "id")
+    @Id
+    @Column(name = "id")
     private UUID id;
 
     @Column(name = "reportPK")

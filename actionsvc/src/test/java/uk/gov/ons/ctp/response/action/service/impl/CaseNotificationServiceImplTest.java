@@ -46,7 +46,7 @@ public class CaseNotificationServiceImplTest {
   @Mock
   private ActionPlanRepository actionPlanRepo;
 
-  @Mock 
+  @Mock
   private ActionService actionService;
 
   @Mock
@@ -87,7 +87,8 @@ public class CaseNotificationServiceImplTest {
       when(actionPlanRepo.findById(any())).thenReturn(actionPlan);
 
       List<CaseDetailsDTO> caseJson = FixtureHelper.loadClassFixtures(CaseDetailsDTO[].class);
-      List<CollectionExerciseDTO> collectionExerciseJson = FixtureHelper.loadClassFixtures(CollectionExerciseDTO[].class);
+      List<CollectionExerciseDTO> collectionExerciseJson = FixtureHelper.loadClassFixtures(
+              CollectionExerciseDTO[].class);
 
 
       when(caseSvcClientServiceImpl.getCase(UUID.fromString(DUMMY_UUID))).thenReturn(caseJson.get(0));
@@ -96,7 +97,7 @@ public class CaseNotificationServiceImplTest {
 
       caseNotificationService.acceptNotification(caseNotification);
 
-      ArgumentCaptor <ActionCase> actionCase = ArgumentCaptor.forClass(ActionCase.class);
+      ArgumentCaptor<ActionCase> actionCase = ArgumentCaptor.forClass(ActionCase.class);
 
       verify(actionCaseRepo, times(1)).save(actionCase.capture());
 

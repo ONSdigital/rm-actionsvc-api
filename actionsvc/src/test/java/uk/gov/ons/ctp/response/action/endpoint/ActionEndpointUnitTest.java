@@ -36,8 +36,12 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static uk.gov.ons.ctp.common.MvcHelper.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.ons.ctp.common.MvcHelper.getJson;
+import static uk.gov.ons.ctp.common.MvcHelper.postJson;
+import static uk.gov.ons.ctp.common.MvcHelper.putJson;
 import static uk.gov.ons.ctp.common.TestHelper.createTestDate;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.INVALID_JSON;
 import static uk.gov.ons.ctp.common.error.RestExceptionHandler.PROVIDED_JSON_INCORRECT;
@@ -155,6 +159,10 @@ public final class ActionEndpointUnitTest {
           + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
 
 
+  /**
+   * Initialises Mockito and loads Class Fixtures
+   * @throws Exception exception thrown
+   */
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
@@ -232,8 +240,7 @@ public final class ActionEndpointUnitTest {
                     ALL_ACTIONS_CREATEDDATE_VALUE, ALL_ACTIONS_CREATEDDATE_VALUE)))
             .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(ALL_ACTIONS_UPDATEDDATE_VALUE,
                     ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE,
-                    ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE)))
-    ;
+                    ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE)));
   }
 
   /**
@@ -246,8 +253,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_TYPE_NOTFOUND,
             ActionDTO.ActionState.COMPLETED)).thenReturn(new ArrayList<>());
 
-    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_TYPE_NOTFOUND,
-            ActionDTO.ActionState.COMPLETED)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s",
+            ACTION_TYPE_NOTFOUND, ActionDTO.ActionState.COMPLETED)));
 
     resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -350,7 +357,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByState(ActionDTO.ActionState.COMPLETED)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?state=%s", ActionDTO.ActionState.COMPLETED.name())));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?state=%s",
+            ActionDTO.ActionState.COMPLETED.name())));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -505,7 +513,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
             .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_UPDATED, NON_EXISTING_ID))))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-    
   }
 
   /**

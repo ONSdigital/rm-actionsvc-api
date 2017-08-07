@@ -1,15 +1,6 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.math.BigInteger;
-import java.util.List;
-import java.util.UUID;
-
+import ma.glasnost.orika.MapperFacade;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +15,6 @@ import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
@@ -52,6 +41,14 @@ import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
+import java.math.BigInteger;
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 /**
  * Test the action distributor
  */
@@ -75,7 +72,8 @@ public class ActionDistributorTest {
   private DistributedListManager<BigInteger> actionDistributionListManager;
 
   @Mock
-  private StateTransitionManager<ActionState, uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent> actionSvcStateTransitionManager;
+  private StateTransitionManager<ActionState, uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent>
+          actionSvcStateTransitionManager;
 
   @Mock
   private MapperFacade mapperFacade;
@@ -108,10 +106,10 @@ public class ActionDistributorTest {
   private ActionDistributor actionDistributor;
 
   /**
-   * A Test
+   * Initialises Mockito and loads Class Fixtures
    */
   @Before
-  public void setup() {
+  public void setUp() {
     CaseSvc caseSvcConfig = new CaseSvc();
     ActionDistribution actionDistributionConfig = new ActionDistribution();
     actionDistributionConfig.setDelayMilliSeconds(I_HATE_CHECKSTYLE_TEN);
@@ -166,7 +164,7 @@ public class ActionDistributorTest {
    * Test that when we momentarily fail to call casesvc to GET two cases we
    * carry on trying and successfully deal with the actions/cases we can
    * retrieve
-   * 
+   *
    * @throws Exception oops
    */
   @Test

@@ -1,16 +1,12 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import java.util.List;
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.ctp.common.rest.RestClient;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -21,6 +17,9 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Impl of the service that centralizes all REST calls to the Case service
@@ -83,10 +82,10 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
 
 @Override
 public CaseDetailsDTO getCaseWithIAC(UUID caseId) {
-	MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-	queryParams.add("iac", "true");
-	CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
-	    CaseDetailsDTO.class, null, queryParams, caseId);
+  MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+  queryParams.add("iac", "true");
+  CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+      CaseDetailsDTO.class, null, queryParams, caseId);
     return caseDTO;
 }
 

@@ -105,9 +105,9 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @return List<ActionDTO> Actions for the specified filters
    */
   @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<ActionDTO>> findActions(@RequestParam(value = "actiontype", required = false) final String actionType,
-                                       @RequestParam(value = "state", required = false) final ActionDTO.ActionState
-                                               actionState) {
+  public ResponseEntity<List<ActionDTO>> findActions(@RequestParam(value = "actiontype", required = false)
+                final String actionType, @RequestParam(value = "state", required = false)
+                final ActionDTO.ActionState actionState) {
     List<Action> actions = null;
 
     if (actionType != null) {
@@ -146,8 +146,8 @@ public final class ActionEndpoint implements CTPEndpoint {
    * @throws InvalidRequestException if binding errors
    */
   @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-  public ResponseEntity<ActionDTO> createAction(final @RequestBody @Valid ActionPostRequestDTO actionPostRequestDTO, BindingResult bindingResult)
-          throws CTPException, InvalidRequestException {
+  public ResponseEntity<ActionDTO> createAction(final @RequestBody @Valid ActionPostRequestDTO actionPostRequestDTO,
+              BindingResult bindingResult) throws CTPException, InvalidRequestException {
     log.info("Entering createAction with Action {}", actionPostRequestDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for create action: ", bindingResult);
@@ -172,8 +172,8 @@ public final class ActionEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionid}", method = RequestMethod.PUT, consumes = "application/json")
   public ActionDTO updateAction(@PathVariable("actionid") final UUID actionId,
-                                @RequestBody(required = false) @Valid final ActionPutRequestDTO actionPutRequestDTO, BindingResult bindingResult)
-          throws CTPException, InvalidRequestException {
+            @RequestBody(required = false) @Valid final ActionPutRequestDTO actionPutRequestDTO,
+            BindingResult bindingResult) throws CTPException, InvalidRequestException {
     log.info("Updating Action with {} - {}", actionId, actionPutRequestDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action: ", bindingResult);

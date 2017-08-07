@@ -1,23 +1,25 @@
 package uk.gov.ons.ctp.response.action.message.impl;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
 import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+/**
+ * Tests for ActionInstructionPublisherImpl
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class ActionInstructionPublisherImplTest {
 
@@ -54,7 +56,7 @@ public class ActionInstructionPublisherImplTest {
 
     verify(rabbitTemplate, times(1)).convertAndSend(any(String.class), any(Object.class));
   }
-  
+
   @Test
   public void verifySendActionInstructionsWithNoActionsSendsNothingToQueue() throws Exception {
     List<ActionRequest> actionRequests = new ArrayList<>();

@@ -46,6 +46,9 @@ import static uk.gov.ons.ctp.response.action.endpoint.ActionPlanJobEndpoint.ACTI
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.NO_ACTIONPLAN_MSG;
 
+/**
+ * ActionPlanJobEndpoint Unit tests
+ */
 public class ActionPlanJobEndpointUnitTest {
 
   private static final UUID ACTIONPLANID = UUID.fromString("e71002ac-3575-47eb-b87f-cd9db92bf9a7");
@@ -84,6 +87,10 @@ public class ActionPlanJobEndpointUnitTest {
   private List<ActionPlanJob> actionPlanJobs;
   private List<ActionPlan> actionPlans;
 
+  /**
+   * Initialises Mockito and loads Class Fixtures
+   * @throws Exception exception thrown
+   */
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
@@ -158,8 +165,12 @@ public class ActionPlanJobEndpointUnitTest {
             .andExpect(jsonPath("$[*].state", containsInAnyOrder(ActionPlanJobDTO.ActionPlanJobState.COMPLETED.name(),
                     ActionPlanJobDTO.ActionPlanJobState.STARTED.name(),
                     ActionPlanJobDTO.ActionPlanJobState.SUBMITTED.name())))
-            .andExpect(jsonPath("$[*].createdDateTime", containsInAnyOrder(CREATED_DATE_TIME_ACTION_PLAN_JOB_ID_1, CREATED_DATE_TIME_ACTION_PLAN_JOB_ID_2, CREATED_DATE_TIME_ACTION_PLAN_JOB_ID_3)))
-            .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(UPDATED_DATE_TIME_ACTION_PLAN_JOB_ID_1, UPDATED_DATE_TIME_ACTION_PLAN_JOB_ID_2, UPDATED_DATE_TIME_ACTION_PLAN_JOB_ID_3)));
+            .andExpect(jsonPath("$[*].createdDateTime",
+                    containsInAnyOrder(CREATED_DATE_TIME_ACTION_PLAN_JOB_ID_1, CREATED_DATE_TIME_ACTION_PLAN_JOB_ID_2,
+                            CREATED_DATE_TIME_ACTION_PLAN_JOB_ID_3)))
+            .andExpect(jsonPath("$[*].updatedDateTime",
+                    containsInAnyOrder(UPDATED_DATE_TIME_ACTION_PLAN_JOB_ID_1, UPDATED_DATE_TIME_ACTION_PLAN_JOB_ID_2,
+                            UPDATED_DATE_TIME_ACTION_PLAN_JOB_ID_3)));
   }
 
   /**
@@ -229,7 +240,8 @@ public class ActionPlanJobEndpointUnitTest {
    */
   @Test
   public void executeActionPlanIncorrectJsonProvided() throws Exception {
-    ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID), ACTION_PLAN_JOB_INCORRECT_JSON));
+    ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID),
+            ACTION_PLAN_JOB_INCORRECT_JSON));
 
     actions.andExpect(status().isBadRequest())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
@@ -266,13 +278,11 @@ public class ActionPlanJobEndpointUnitTest {
   public void executeActionPlanGoodJsonProvided() throws Exception {
     when(actionPlanJobService.createAndExecuteActionPlanJob(any(ActionPlanJob.class))).thenReturn(
             actionPlanJobs.get(0));
-    when(actionPlanService.findActionPlanById(ACTIONPLANID)).thenReturn(actionPlans.get(0));;
-    
+    when(actionPlanService.findActionPlanById(ACTIONPLANID)).thenReturn(actionPlans.get(0));
+
     ResultActions actions = mockMvc.perform(postJson(String.format("/actionplans/%s/jobs", ACTIONPLANID),
             ACTION_PLAN_JOB_JSON));
 
-    
-    
     actions.andExpect(status().isCreated())
             .andExpect(handler().handlerType(ActionPlanJobEndpoint.class))
             .andExpect(handler().methodName("executeActionPlan"))

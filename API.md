@@ -7,12 +7,12 @@ This page documents the Action service API endpoints. These endpoints will be se
 ### Example JSON Response
 ```json
 {
-    "name": "actionsvc",
-    "version": "10.42.0",
-    "origin": "git@github.com:ONSdigital/rm-action-service.git",
-    "commit": "06752afbf05f27c923ddf42d3cd2ec9eeafd3362",
-    "branch": "master",
-    "built": "2017-07-12T08:38:34Z"
+  "name": "actionsvc",
+  "version": "10.42.0",
+  "origin": "git@github.com:ONSdigital/rm-action-service.git",
+  "commit": "06752afbf05f27c923ddf42d3cd2ec9eeafd3362",
+  "branch": "master",
+  "built": "2017-07-12T08:38:34Z"
 }
 ```
 

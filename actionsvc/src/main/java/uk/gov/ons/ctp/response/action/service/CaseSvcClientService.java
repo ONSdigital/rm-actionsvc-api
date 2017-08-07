@@ -52,7 +52,7 @@ public interface CaseSvcClientService {
    *
    */
   CaseDetailsDTO getCaseWithIAC(UUID caseId);
-  
+
   /**
    * Call CaseSvc using REST to get the Case details MAY throw a
    * RuntimeException if the call fails

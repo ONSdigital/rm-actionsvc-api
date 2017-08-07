@@ -29,7 +29,9 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.ons.ctp.common.MvcHelper.getJson;
 import static uk.gov.ons.ctp.common.MvcHelper.putJson;
 import static uk.gov.ons.ctp.common.TestHelper.createTestDate;
@@ -57,8 +59,6 @@ public class ActionPlanEndpointUnitTest {
 
   private static final String ACTION_PLAN_JSON = "{\"description\":\"testing\",\"lastRunDateTime\":null}";
   private static final String ACTION_PLAN_INCORRECT_JSON = "{\"some\":\"joke\"}";
-  private static final String ACTION_PLAN_INCORRECT_JSON2 = "{\"description\":\"testing\", \"lastRunDateTime\":null}";
-
 
   @InjectMocks
   private ActionPlanEndpoint actionPlanEndpoint;
@@ -73,6 +73,10 @@ public class ActionPlanEndpointUnitTest {
 
   private List<ActionPlan> actionPlans;
 
+  /**
+   * Initialises Mockito and loads Class Fixtures
+   * @throws Exception exception thrown
+   */
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
@@ -88,7 +92,7 @@ public class ActionPlanEndpointUnitTest {
 
   /**
    * A Test to retrieve all action plans BUT none found
-   * 
+   *
    * @throws Exception exception thrown when getJson does
    */
   @Test
