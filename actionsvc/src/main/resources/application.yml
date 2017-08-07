@@ -78,10 +78,7 @@ spring:
       enabled: never
   application:
     name: ONS ActionService
-  sleuth:
-    sampler:
-      percentage: 10
-
+    
   datasource:
     url: jdbc:postgresql://localhost:6432/postgres
     username: actionsvc

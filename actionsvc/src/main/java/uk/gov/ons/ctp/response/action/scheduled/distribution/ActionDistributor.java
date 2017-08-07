@@ -9,8 +9,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -95,9 +93,6 @@ public class ActionDistributor {
   private DistributedListManager<BigInteger> actionDistributionListManager;
 
   @Autowired
-  private Tracer tracer;
-
-  @Autowired
   private AppConfig appConfig;
 
   @Autowired
@@ -146,7 +141,6 @@ public class ActionDistributor {
    * @return the info for the health endpoint regarding the distribution just performed
    */
   public final DistributionInfo distribute() {
-    Span distribSpan = tracer.createSpan(ACTION_DISTRIBUTOR_SPAN);
     log.info("ActionDistributor is in the house");
     DistributionInfo distInfo = new DistributionInfo();
 
@@ -217,7 +211,6 @@ public class ActionDistributor {
       // we will be back after a short snooze
     }
     log.info("ActionDistributor going back to sleep");
-    tracer.close(distribSpan);
     return distInfo;
   }
 

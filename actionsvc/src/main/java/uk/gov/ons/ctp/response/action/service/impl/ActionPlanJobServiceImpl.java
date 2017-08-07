@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.cobertura.CoverageIgnore;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +41,6 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
   private DistributedLockManager actionPlanExecutionLockManager;
 
   @Autowired
-  private Tracer tracer;
-
-  @Autowired
   private AppConfig appConfig;
 
   @Autowired
@@ -78,7 +73,6 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
 
   @Override
   public List<ActionPlanJob> createAndExecuteAllActionPlanJobs() {
-    Span span = tracer.createSpan(ACTION_PLAN_SPAN);
     List<ActionPlanJob> executedJobs = new ArrayList<>();
     actionPlanRepo.findAll().forEach(actionPlan -> {
       ActionPlanJob job = new ActionPlanJob();
@@ -89,7 +83,6 @@ public class ActionPlanJobServiceImpl implements ActionPlanJobService {
         executedJobs.add(job);
       }
     });
-    tracer.close(span);
     return executedJobs;
   }
 

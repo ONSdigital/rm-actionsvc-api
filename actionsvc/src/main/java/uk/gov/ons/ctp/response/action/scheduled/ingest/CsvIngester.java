@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
@@ -96,9 +94,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
           LONGITUDE, UPRN, CASE_ID, CASE_REF, PRIORITY, IAC, EVENTS, ACTION_PLAN, QUESTION_SET, TITLE, FORENAME,
           SURNAME, EMAIL, TELEPHONE};
 
-  @Autowired
-  private Tracer tracer;
-
   /**
    * Inner class to encapsulate the request and cancel data as they do not have
    * common parentage
@@ -147,7 +142,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
   @ServiceActivator(inputChannel = CHANNEL)
   public void ingest(File csvFile) {
     log.debug("INGESTED {}", csvFile.toString());
-    Span ingestSpan = tracer.createSpan(CSV_INGESTER_SPAN);
     CSVReader reader = null;
     Map<String, InstructionBucket> handlerInstructionBuckets = new HashMap<>();
 
@@ -200,7 +194,6 @@ public class CsvIngester extends CsvToBean<CsvLine> {
     } catch (Exception e) {
       log.error("Problem reading ingest file {} because : ", csvFile.getPath(), e);
     }
-    tracer.close(ingestSpan);
   }
 
   /**
