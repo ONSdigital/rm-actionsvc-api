@@ -1,7 +1,7 @@
 ---
 applications:
 - name: actionsvc-ci
-  instances: 1
+  instances: 2
   host: actionsvc-ci
   memory: 1024M
   path: actionsvc/target/actionsvc.jar
