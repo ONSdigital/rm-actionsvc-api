@@ -7,7 +7,7 @@ applications:
   path: actionsvc/target/actionsvc.jar
   timeout: 180
   services:
-    - action-db
+    - rm-action-db
     - rm-redis
     - rm-rabbitmq
   env:
