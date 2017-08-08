@@ -1,0 +1,22 @@
+---
+applications:
+- name: actionsvc-preprod
+  instances: 1
+  host: actionsvc-preprod
+  memory: 1024M
+  path: actionsvc/target/actionsvc.jar
+  timeout: 180
+  services:
+    - action-db
+    - rm-redis
+    - rm-rabbitmq
+  env:
+    partySvc_connectionConfig_host: ras-party-service-preprod.apps.devtest.onsclofo.uk
+    partySvc_connectionConfig_port: "80"
+    partySvc_connectionConfig_scheme: http
+    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-preprod.apps.devtest.onsclofo.uk
+    collectionExerciseSvc_connectionConfig_port: "80"
+    collectionExerciseSvc_connectionConfig_scheme: http
+    caseSvc_connectionConfig_host: casesvc-preprod.apps.devtest.onsclofo.uk
+    caseSvc_connectionConfig_port: "80"
+    caseSvc_connectionConfig_scheme: http
