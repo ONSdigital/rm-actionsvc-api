@@ -1,5 +1,35 @@
 package uk.gov.ons.ctp.response.action.endpoint;
 
+import ma.glasnost.orika.MapperFacade;
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import uk.gov.ons.ctp.common.FixtureHelper;
+import uk.gov.ons.ctp.common.error.CTPException;
+import uk.gov.ons.ctp.common.error.RestExceptionHandler;
+import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
+import uk.gov.ons.ctp.response.action.ActionBeanMapper;
+import uk.gov.ons.ctp.response.action.domain.model.Action;
+import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
+import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
+import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
+import uk.gov.ons.ctp.response.action.representation.ActionDTO;
+import uk.gov.ons.ctp.response.action.service.ActionCaseService;
+import uk.gov.ons.ctp.response.action.service.ActionPlanService;
+import uk.gov.ons.ctp.response.action.service.ActionService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -19,37 +49,6 @@ import static uk.gov.ons.ctp.common.utility.MockMvcControllerAdviceHelper.mockAd
 import static uk.gov.ons.ctp.response.action.endpoint.ActionEndpoint.ACTION_NOT_FOUND;
 import static uk.gov.ons.ctp.response.action.endpoint.ActionEndpoint.ACTION_NOT_UPDATED;
 import static uk.gov.ons.ctp.response.action.service.impl.ActionPlanJobServiceImpl.CREATED_BY_SYSTEM;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import ma.glasnost.orika.MapperFacade;
-import uk.gov.ons.ctp.common.FixtureHelper;
-import uk.gov.ons.ctp.common.error.CTPException;
-import uk.gov.ons.ctp.common.error.RestExceptionHandler;
-import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
-import uk.gov.ons.ctp.response.action.ActionBeanMapper;
-import uk.gov.ons.ctp.response.action.domain.model.Action;
-import uk.gov.ons.ctp.response.action.domain.model.ActionCase;
-import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
-import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
-import uk.gov.ons.ctp.response.action.representation.ActionDTO;
-import uk.gov.ons.ctp.response.action.service.ActionCaseService;
-import uk.gov.ons.ctp.response.action.service.ActionPlanService;
-import uk.gov.ons.ctp.response.action.service.ActionService;
 
 /**
  * ActionEndpoint Unit tests
@@ -121,26 +120,15 @@ public final class ActionEndpointUnitTest {
   private static final String UPDATED_OUTCOME = "REQUEST_COMPLETED";
   private static final String UPDATED_SITUATION =  "new situation";
 
-  private static final String ACTION_VALID_JSON = "{"
-          + "\"id\": \"" + ACTIONID_1 + "\","
-          + "\"caseId\": \"" + ACTION_ID_1_CASE_ID + "\","
-          + "\"actionTypeName\": \"" + ACTION_ACTIONTYPENAME_1 + "\","
-          + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
-          + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
+  private static final String ACTION_UPDATE_VALID_JSON = "{"
           + "\"priority\": " + ACTION1_PRIORITY + ","
-          + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
-          + "\"situation\": \"" + ACTION1_SITUATION + "\","
-          + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
-  
-  private static final String ACTION_INVALID_JSON_MISSING_CASEID = "{"
-      + "\"id\": \"" + ACTIONID_1 + "\","
-      + "\"actionTypeName\": \"" + ACTION_ACTIONTYPENAME_1 + "\","
-      + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
-      + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
-      + "\"priority\": " + ACTION1_PRIORITY + ","
-      + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
-      + "\"situation\": \"" + ACTION1_SITUATION + "\","
-      + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
+          + "\"situation\": \"" + ACTION1_SITUATION + "\"}";
+
+  private static final String ACTION_CREATE_VALID_JSON = "{"
+          + "\"caseId\": \"" + ACTION_ID_2_CASE_ID + "\","
+          + "\"priority\": " + ACTION1_PRIORITY + ","
+          + "\"createdBy\": \"" + CREATED_BY_SYSTEM + "\","
+          + "\"actionTypeName\": \"" + ACTION_ACTIONTYPENAME_1 + "\"}";
 
   // Note actionTypename instead of actionTypeName
   private static final String ACTION_INVALID_JSON_BAD_PROP = "{"
@@ -156,17 +144,12 @@ public final class ActionEndpointUnitTest {
 
   // Note actionTypeName is missing
   private static final String ACTION_INVALID_JSON_MISSING_PROP = "{"
-          + "\"id\": \"" + ACTIONID_1 + "\","
           + "\"caseId\": \"" + ACTION_ID_1_CASE_ID + "\","
           + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
-          + "\"manuallyCreated\": \"" + ACTION1_MANUALLY_CREATED + "\","
           + "\"priority\": " + ACTION1_PRIORITY + ","
-          + "\"createdBy\": \"" + ACTION_CREATEDBY + "\","
-          + "\"situation\": \"" + ACTION1_SITUATION + "\","
-          + "\"state\": \"" + ActionDTO.ActionState.ACTIVE.name() + "\"}";
+          + "\"createdBy\": \"" + ACTION_CREATEDBY + "\"}";
 
   private static final String ACTION_FEEDBACK_VALID_JSON = "{"
-          + "\"actionId\": \"" + ACTIONID_1 + "\","
           + "\"situation\": \"" + UPDATED_SITUATION + "\","
           + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
 
@@ -174,11 +157,12 @@ public final class ActionEndpointUnitTest {
           + "\"actionId\": \"" + ACTIONID_1 + "\","
           + "\"badsituation\": \"" + UPDATED_SITUATION + "\","
           + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
-  
-  private static final String ACTION_FEEDBACK_INVALID_JSON2 = "{"
-      + "\"actionId\": \"" + ACTIONID_1 + "\","
-      + "\"outcome\": \"" + UPDATED_OUTCOME + "\"}";
 
+
+  /**
+   * Initialises Mockito and loads Class Fixtures
+   * @throws Exception exception thrown
+   */
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
@@ -256,8 +240,7 @@ public final class ActionEndpointUnitTest {
                     ALL_ACTIONS_CREATEDDATE_VALUE, ALL_ACTIONS_CREATEDDATE_VALUE)))
             .andExpect(jsonPath("$[*].updatedDateTime", containsInAnyOrder(ALL_ACTIONS_UPDATEDDATE_VALUE,
                     ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE,
-                    ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE)))
-    ;
+                    ALL_ACTIONS_UPDATEDDATE_VALUE, ALL_ACTIONS_UPDATEDDATE_VALUE)));
   }
 
   /**
@@ -270,8 +253,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByTypeAndStateOrderedByCreatedDateTimeDescending(ACTION_TYPE_NOTFOUND,
             ActionDTO.ActionState.COMPLETED)).thenReturn(new ArrayList<>());
 
-    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s", ACTION_TYPE_NOTFOUND,
-            ActionDTO.ActionState.COMPLETED)));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?actiontype=%s&state=%s",
+            ACTION_TYPE_NOTFOUND, ActionDTO.ActionState.COMPLETED)));
 
     resultActions.andExpect(status().isNoContent())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -374,7 +357,8 @@ public final class ActionEndpointUnitTest {
     when(actionService.findActionsByState(ActionDTO.ActionState.COMPLETED)).thenReturn(result);
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?state=%s", ActionDTO.ActionState.COMPLETED.name())));
+    ResultActions resultActions = mockMvc.perform(getJson(String.format("/actions?state=%s",
+            ActionDTO.ActionState.COMPLETED.name())));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -521,7 +505,7 @@ public final class ActionEndpointUnitTest {
   @Test
   public void updateActionByActionIdNotFound() throws Exception {
     ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", NON_EXISTING_ID),
-            ACTION_VALID_JSON));
+            ACTION_UPDATE_VALID_JSON));
 
     resultActions.andExpect(status().isNotFound())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -529,7 +513,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.RESOURCE_NOT_FOUND.name())))
             .andExpect(jsonPath("$.error.message", is(String.format(ACTION_NOT_UPDATED, NON_EXISTING_ID))))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-    
   }
 
   /**
@@ -542,7 +525,7 @@ public final class ActionEndpointUnitTest {
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
     ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
-            ACTION_VALID_JSON));
+            ACTION_UPDATE_VALID_JSON));
 
     resultActions.andExpect(status().isOk())
             .andExpect(handler().handlerType(ActionEndpoint.class))
@@ -580,26 +563,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
-  
-  /**
-   * Test updating action with invalid json
-   * @throws Exception when putJson does
-   */
-  @Test
-  public void updateActionByActionIdWithInvalidJson2() throws Exception {
-    when(actionService.updateAction(any(Action.class))).thenReturn(actions.get(0));
-    when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
-
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s", ACTION_ID_1),
-        ACTION_INVALID_JSON_MISSING_CASEID));
-
-    resultActions.andExpect(status().isBadRequest())
-            .andExpect(handler().handlerType(ActionEndpoint.class))
-            .andExpect(handler().methodName("updateAction"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
-            .andExpect(jsonPath("$.error.message", is(INVALID_JSON)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-  }
 
   /**
    * Test updating action feedback for action not found
@@ -632,23 +595,6 @@ public final class ActionEndpointUnitTest {
             .andExpect(handler().methodName("feedbackAction"))
             .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
             .andExpect(jsonPath("$.error.message", is(PROVIDED_JSON_INCORRECT)))
-            .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
-  }
-  
-  /**
-   * Test updating action feedback for action found BUT bad json
-   * @throws Exception when putJson does
-   */
-  @Test
-  public void updateActionFeedbackByActionIdFoundButBadJson2() throws Exception {
-    ResultActions resultActions = mockMvc.perform(putJson(String.format("/actions/%s/feedback", ACTION_ID_1),
-            ACTION_FEEDBACK_INVALID_JSON2));
-
-    resultActions.andExpect(status().isBadRequest())
-            .andExpect(handler().handlerType(ActionEndpoint.class))
-            .andExpect(handler().methodName("feedbackAction"))
-            .andExpect(jsonPath("$.error.code", is(CTPException.Fault.VALIDATION_FAILED.name())))
-            .andExpect(jsonPath("$.error.message", is(INVALID_JSON)))
             .andExpect(jsonPath("$.error.timestamp", isA(String.class)));
   }
 
@@ -690,23 +636,16 @@ public final class ActionEndpointUnitTest {
     when(actionService.createAction(any(Action.class))).thenReturn(actions.get(0));
     when(actionPlanService.findActionPlan(any(Integer.class))).thenReturn(actionPlans.get(0));
 
-    ResultActions resultActions = mockMvc.perform(postJson("/actions", ACTION_VALID_JSON));
+    ResultActions resultActions = mockMvc.perform(postJson("/actions", ACTION_CREATE_VALID_JSON));
 
     resultActions.andExpect(status().isCreated())
             .andExpect(handler().handlerType(ActionEndpoint.class))
             .andExpect(handler().methodName("createAction"))
             .andExpect(jsonPath("$.*", Matchers.hasSize(12)))
-            .andExpect(jsonPath("$.id", is(ACTION_ID_1.toString())))
             .andExpect(jsonPath("$.caseId", is(ACTION_ID_1_CASE_ID.toString())))
-            .andExpect(jsonPath("$.actionPlanId", is(ACTION_PLAN_ID_1.toString())))
             .andExpect(jsonPath("$.actionTypeName", is(ACTION_ACTIONTYPENAME_1)))
             .andExpect(jsonPath("$.createdBy", is(CREATED_BY_SYSTEM)))
-            .andExpect(jsonPath("$.manuallyCreated", is(false)))
-            .andExpect(jsonPath("$.priority", is(1)))
-            .andExpect(jsonPath("$.situation", is(ACTION_SITUATION_1)))
-            .andExpect(jsonPath("$.state", is(ActionDTO.ActionState.ACTIVE.name())))
-            .andExpect(jsonPath("$.createdDateTime", is(ALL_ACTIONS_CREATEDDATE_VALUE)))
-            .andExpect(jsonPath("$.updatedDateTime", is(ALL_ACTIONS_UPDATEDDATE_VALUE)));
+            .andExpect(jsonPath("$.priority", is(1)));
   }
 
   /**

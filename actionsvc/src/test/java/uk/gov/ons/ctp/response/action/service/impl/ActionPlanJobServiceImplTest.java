@@ -4,7 +4,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cloud.sleuth.Tracer;
 import uk.gov.ons.ctp.common.FixtureHelper;
@@ -56,10 +61,11 @@ public class ActionPlanJobServiceImplTest {
   private ActionPlanJobServiceImpl actionPlanJobServiceImpl;
 
   /**
-   * Before the test
+   * Initialises Mockito
+   * @throws Exception exception thrown
    */
   @Before
-  public void setup() throws Exception {
+  public void setUp() throws Exception {
     PlanExecution planExecution = new PlanExecution();
     planExecution.setDelayMilliSeconds(5000L);
     appConfig.setPlanExecution(planExecution);
@@ -92,7 +98,7 @@ public class ActionPlanJobServiceImplTest {
     verify(actionPlanRepo).findOne(1);
     verify(actionCaseRepo).countByActionPlanFK(1);
 
-    ArgumentCaptor <ActionPlanJob> actionPlanJob = ArgumentCaptor.forClass(ActionPlanJob.class);
+    ArgumentCaptor<ActionPlanJob> actionPlanJob = ArgumentCaptor.forClass(ActionPlanJob.class);
     verify(actionPlanJobRepo).save(actionPlanJob.capture());
     ActionPlanJob savedJob = actionPlanJob.getValue();
     assertEquals(actionPlanJobs.get(0), savedJob);
@@ -108,7 +114,7 @@ public class ActionPlanJobServiceImplTest {
    */
   @Test
   public void testCreateAndExecuteActionPlanJobForcedExecutionFailedLock() throws Exception {
-  
+
     // set up mock hazelcast with a lock that will fail
     Mockito.when(actionPlanExecutionLockManager.lock(any(String.class))).thenReturn(false);
 
@@ -159,7 +165,8 @@ public class ActionPlanJobServiceImplTest {
   }
 
   /**
-   * Test that the service method that execs ALL plans works when all plans require running due to expired last run times
+   * Test that the service method that execs ALL plans works when all plans require running due to expired
+   * last run times
    * @throws Exception oops
    */
   @Test
@@ -171,7 +178,7 @@ public class ActionPlanJobServiceImplTest {
     // set fixture actionplans to have run 10s ago
     Timestamp now = DateTimeUtil.nowUTC();
     Timestamp lastExecutionTime = new Timestamp(now.getTime() - 10000);
-    actionPlans.forEach(actionPlan->actionPlan.setLastRunDateTime(lastExecutionTime));
+    actionPlans.forEach(actionPlan-> actionPlan.setLastRunDateTime(lastExecutionTime));
 
     List<ActionPlanJob> actionPlanJobs = FixtureHelper.loadClassFixtures(ActionPlanJob[].class);
 
@@ -213,7 +220,7 @@ public class ActionPlanJobServiceImplTest {
     // set fixture actionplans to have run 1s ago
     Timestamp now = DateTimeUtil.nowUTC();
     Timestamp lastExecutionTime = new Timestamp(now.getTime() - 1000);
-    actionPlans.forEach(actionPlan->actionPlan.setLastRunDateTime(lastExecutionTime));
+    actionPlans.forEach(actionPlan -> actionPlan.setLastRunDateTime(lastExecutionTime));
 
     // wire up mock responses
     Mockito.when(actionPlanRepo.findAll()).thenReturn(actionPlans);

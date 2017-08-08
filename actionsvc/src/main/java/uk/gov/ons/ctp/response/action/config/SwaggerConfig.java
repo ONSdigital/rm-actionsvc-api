@@ -31,6 +31,10 @@ public class SwaggerConfig {
   @Autowired
   private AppConfig appConfig;
 
+  /**
+   * Initialises Swagger settings and set properties.
+   * @return Docket docket SwaggerUI object
+   */
   @Bean
   public Docket postsApi() {
 

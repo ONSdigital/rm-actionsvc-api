@@ -17,6 +17,7 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.common.error.InvalidRequestException;
 import uk.gov.ons.ctp.response.action.domain.model.ActionPlan;
 import uk.gov.ons.ctp.response.action.representation.ActionPlanDTO;
+import uk.gov.ons.ctp.response.action.representation.ActionPlanRequestDTO;
 import uk.gov.ons.ctp.response.action.service.ActionPlanService;
 
 import javax.validation.Valid;
@@ -50,8 +51,8 @@ public class ActionPlanEndpoint implements CTPEndpoint {
     log.info("Entering findActionPlans...");
     List<ActionPlan> actionPlans = actionPlanService.findActionPlans();
     List<ActionPlanDTO> actionPlanDTOs = mapperFacade.mapAsList(actionPlans, ActionPlanDTO.class);
-    return CollectionUtils.isEmpty(actionPlanDTOs) ?
-            ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanDTOs);
+    return CollectionUtils.isEmpty(actionPlanDTOs)
+            ? ResponseEntity.noContent().build() : ResponseEntity.ok(actionPlanDTOs);
   }
 
   /**
@@ -77,7 +78,8 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    * the lastGoodRunDatetime can be updated.
    *
    * @param actionPlanId This is the action plan id
-   * @param requestObject The object created by ActionPlanDTOMessageBodyReader from the json found in the request body
+   * @param actionPlanRequestDTO The object created by ActionPlanDTOMessageBodyReader from the json found in
+   *                             the request body
    * @param bindingResult collects errors thrown by update
    * @return ActionPlanDTO This returns the updated action plan.
    * @throws CTPException if the json provided is incorrect or if the action plan id does not exist.
@@ -85,16 +87,16 @@ public class ActionPlanEndpoint implements CTPEndpoint {
    */
   @RequestMapping(value = "/{actionplanid}", method = RequestMethod.PUT, consumes = "application/json")
   public final ActionPlanDTO updateActionPlanByActionPlanId(@PathVariable("actionplanid") final UUID actionPlanId,
-                                                            @RequestBody @Valid final ActionPlanDTO requestObject,
-                                                            BindingResult bindingResult)
+                                @RequestBody(required = false) @Valid final ActionPlanRequestDTO actionPlanRequestDTO,
+                                BindingResult bindingResult)
           throws CTPException, InvalidRequestException {
-    log.info("UpdateActionPlanByActionPlanId with actionplanid {} - actionPlan {}", actionPlanId, requestObject);
+    log.info("UpdateActionPlanByActionPlanId with actionplanid {} - actionPlan {}", actionPlanId, actionPlanRequestDTO);
     if (bindingResult.hasErrors()) {
       throw new InvalidRequestException("Binding errors for update action plan: ", bindingResult);
     }
 
     ActionPlan actionPlan = actionPlanService.updateActionPlan(actionPlanId,
-            mapperFacade.map(requestObject, ActionPlan.class));
+            mapperFacade.map(actionPlanRequestDTO, ActionPlan.class));
     if (actionPlan == null) {
       throw new CTPException(CTPException.Fault.RESOURCE_NOT_FOUND, ACTION_PLAN_NOT_FOUND, actionPlanId);
     }

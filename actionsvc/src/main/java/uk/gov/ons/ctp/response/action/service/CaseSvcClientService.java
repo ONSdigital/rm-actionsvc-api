@@ -5,6 +5,7 @@ import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,9 +20,9 @@ public interface CaseSvcClientService {
    *
    * @param action the action for which we need the event
    * @param actionCategory the category for the event
-   * @return the newly created caseeventdto
+   * @return the newly created CreatedCaseEventDTO
    */
-  CaseEventDTO createNewCaseEvent(Action action, CategoryDTO.CategoryName actionCategory);
+  CreatedCaseEventDTO createNewCaseEvent(Action action, CategoryDTO.CategoryName actionCategory);
 
   /**
    * Call CaseSvc using REST to get the CaseGroups details MAY throw a
@@ -50,8 +51,8 @@ public interface CaseSvcClientService {
    * @return the Case we fetched
    *
    */
-  CaseDetailsDTO getCaseWithIAC(final UUID caseId);
-  
+  CaseDetailsDTO getCaseWithIAC(UUID caseId);
+
   /**
    * Call CaseSvc using REST to get the Case details MAY throw a
    * RuntimeException if the call fails

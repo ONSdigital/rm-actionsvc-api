@@ -1,10 +1,14 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
-import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +18,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import uk.gov.ons.ctp.common.distributed.DistributedListManager;
 import uk.gov.ons.ctp.common.distributed.LockingException;
 import uk.gov.ons.ctp.common.error.CTPException;
@@ -28,22 +35,22 @@ import uk.gov.ons.ctp.response.action.domain.repository.ActionPlanRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionRepository;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionTypeRepository;
 import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
-import uk.gov.ons.ctp.response.action.message.instruction.*;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionContact;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionEvent;
+import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
+import uk.gov.ons.ctp.response.action.message.instruction.Priority;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
+import uk.gov.ons.ctp.response.action.service.CollectionExerciseClientService;
 import uk.gov.ons.ctp.response.action.service.PartySvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExerciseDTO;
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is the 'service' class that distributes actions to downstream services
@@ -86,9 +93,6 @@ public class ActionDistributor {
   private DistributedListManager<BigInteger> actionDistributionListManager;
 
   @Autowired
-  private Tracer tracer;
-
-  @Autowired
   private AppConfig appConfig;
 
   @Autowired
@@ -109,6 +113,9 @@ public class ActionDistributor {
   @Autowired
   private CaseSvcClientService caseSvcClientService;
 
+  @Autowired
+  private CollectionExerciseClientService collectionSvcClientService;
+  
   @Autowired
   private PartySvcClientService partySvcClientService;
 
@@ -134,7 +141,6 @@ public class ActionDistributor {
    * @return the info for the health endpoint regarding the distribution just performed
    */
   public final DistributionInfo distribute() {
-    Span distribSpan = tracer.createSpan(ACTION_DISTRIBUTOR_SPAN);
     log.info("ActionDistributor is in the house");
     DistributionInfo distInfo = new DistributionInfo();
 
@@ -205,7 +211,6 @@ public class ActionDistributor {
       // we will be back after a short snooze
     }
     log.info("ActionDistributor going back to sleep");
-    tracer.close(distribSpan);
     return distInfo;
   }
 
@@ -383,7 +388,7 @@ public class ActionDistributor {
         : actionPlanRepo.findOne(action.getActionPlanFK());
     CaseDetailsDTO caseDTO = caseSvcClientService.getCaseWithIACandCaseEvents(action.getCaseId());
 
-    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getSampleUnitType(),caseDTO.getPartyId());
+    PartyDTO partyDTO = partySvcClientService.getParty(caseDTO.getSampleUnitType(), caseDTO.getPartyId());
     log.debug("PARTYDTO: " + partyDTO.toString());
 
     //List<CaseEventDTO> caseEventDTOs = caseSvcClientService.getCaseEvents(action.getCaseId());
@@ -435,7 +440,11 @@ public class ActionDistributor {
 //    actionRequest.setQuestionSet(caseTypeDTO.getQuestionSet());
     actionRequest.setResponseRequired(action.getActionType().getResponseRequired());
     actionRequest.setCaseId(action.getCaseId().toString());
-
+  
+    UUID collectionId = caseDTO.getCaseGroup().getCollectionExerciseId();
+    CollectionExerciseDTO collectionExe =  collectionSvcClientService.getCollectionExercise(collectionId);
+    actionRequest.setExerciseRef(collectionExe.getExerciseRef());
+    
     Map<String, String> partyMap = partyDTO.getAttributes();
 
     ActionContact actionContact = new ActionContact();

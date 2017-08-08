@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import uk.gov.ons.ctp.response.action.domain.repository.ActionReportRepository;
 import uk.gov.ons.ctp.response.action.service.ActionReportService;
 
+/**
+ * Create report via stored procedure
+ */
 @Service
 @Slf4j
 public class ActionReportServiceImpl implements ActionReportService {
@@ -16,6 +19,7 @@ public class ActionReportServiceImpl implements ActionReportService {
     @Override
     public void createReport() {
         log.debug("Entering createReport...");
-// TODO CTPA-1409        caseReportRepository.plus1inoutStoredProcedure();
+        boolean reportResult = actionReportRepository.miStoredProcedure();
+        log.debug("Just ran the mi report and result is {}", reportResult);
     }
 }

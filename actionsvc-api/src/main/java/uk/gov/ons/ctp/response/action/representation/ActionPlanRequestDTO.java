@@ -5,9 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Domain model object for representation.
@@ -15,16 +13,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class ActionPlanDTO {
-
-  @NotNull
-  private UUID id;
-
-  private String name;
+public class ActionPlanRequestDTO {
 
   private String description;
-
-  private String createdBy;
 
   private Date lastRunDateTime;
 }

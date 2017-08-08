@@ -20,15 +20,17 @@ import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.config.CaseSvc;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.domain.model.ActionType;
-import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 
 import java.util.UUID;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
@@ -52,9 +54,12 @@ public class CaseSvcClientServiceImplTest {
   @InjectMocks
   private CaseSvcClientServiceImpl caseSvcClientService;
 
-  
+  /**
+   * Initialises Mockito and loads Class Fixtures
+   * @throws Exception exception thrown
+   */
   @Before
-  public void setup() {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
     Mockito.when(tracer.getCurrentSpan()).thenReturn(span);
     Mockito.when(tracer.createSpan(any(String.class))).thenReturn(span);
@@ -94,7 +99,8 @@ public class CaseSvcClientServiceImplTest {
             .string(containsString("\"category\":\"" + CategoryDTO.CategoryName.ACTION_COMPLETED.name() + "\"")))
         .andExpect(content().string(containsString("\"subCategory\":\"" + action.getActionType().getName() + "\"")))
         .andExpect(content().string(containsString("\"createdBy\":\"" + action.getCreatedBy() + "\"")))
-        .andExpect(content().string(containsString("\"description\":\"" + action.getActionType().getDescription() + " (" + action.getSituation() + ")\"")))
+        .andExpect(content().string(containsString("\"description\":\"" + action.getActionType().getDescription()
+                + " (" + action.getSituation() + ")\"")))
         .andRespond(withSuccess("{"
             + "\"createdDateTime\":1460736159699,"
             + "\"caseId\":\"7fac359e-645b-487e-bb02-70536eae51d4\","
@@ -104,7 +110,7 @@ public class CaseSvcClientServiceImplTest {
             + "\"description\":\"desc\""
             + "}", MediaType.APPLICATION_JSON));
 
-    CaseEventDTO caseEventDTO = caseSvcClientService.createNewCaseEvent(action,
+    CreatedCaseEventDTO caseEventDTO = caseSvcClientService.createNewCaseEvent(action,
         CategoryDTO.CategoryName.ACTION_COMPLETED);
     assertTrue(caseEventDTO != null);
     mockServer.verify();

@@ -12,11 +12,12 @@ import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
 import uk.gov.ons.ctp.response.action.service.CaseSvcClientService;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseDetailsDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CaseEventCreationRequestDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseEventDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CaseGroupDTO;
 import uk.gov.ons.ctp.response.casesvc.representation.CategoryDTO;
+import uk.gov.ons.ctp.response.casesvc.representation.CreatedCaseEventDTO;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,13 +58,12 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
   }
 
   @Override
-  public CaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory) {
+  public CreatedCaseEventDTO createNewCaseEvent(final Action action, CategoryDTO.CategoryName actionCategory) {
     log.debug("posting caseEvent for actionId {} to casesvc for category {} ", action.getId(),
         actionCategory);
-    CaseEventDTO caseEventDTO = new CaseEventDTO();
+    CaseEventCreationRequestDTO caseEventDTO = new CaseEventCreationRequestDTO();
     caseEventDTO.setCategory(actionCategory);
     caseEventDTO.setCreatedBy(action.getCreatedBy());
-    caseEventDTO.setCreatedDateTime(new Date());
     caseEventDTO.setSubCategory(action.getActionType().getName());
 
     if (!StringUtils.isEmpty(action.getSituation())) {
@@ -73,19 +73,19 @@ public class CaseSvcClientServiceImpl implements CaseSvcClientService {
       caseEventDTO.setDescription(action.getActionType().getDescription());
     }
 
-    CaseEventDTO returnedCaseEventDTO = caseSvcClient.postResource(
+    CreatedCaseEventDTO returnedCaseEventDTO = caseSvcClient.postResource(
         appConfig.getCaseSvc().getCaseEventsByCasePostPath(), caseEventDTO,
-        CaseEventDTO.class,
+        CreatedCaseEventDTO.class,
         action.getCaseId());
     return returnedCaseEventDTO;
   }
 
 @Override
 public CaseDetailsDTO getCaseWithIAC(UUID caseId) {
-	MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-	queryParams.add("iac", "true");
-	CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
-	    CaseDetailsDTO.class, null, queryParams, caseId);
+  MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+  queryParams.add("iac", "true");
+  CaseDetailsDTO caseDTO = caseSvcClient.getResource(appConfig.getCaseSvc().getCaseByCaseGetPath(),
+      CaseDetailsDTO.class, null, queryParams, caseId);
     return caseDTO;
 }
 

@@ -1,20 +1,5 @@
 package uk.gov.ons.ctp.response.action.service.impl;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.math.BigInteger;
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import uk.gov.ons.ctp.common.FixtureHelper;
 import uk.gov.ons.ctp.common.state.StateTransitionManager;
 import uk.gov.ons.ctp.response.action.domain.model.Action;
@@ -33,6 +17,17 @@ import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionEvent;
 import uk.gov.ons.ctp.response.action.representation.ActionDTO.ActionState;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.UUID;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for ActionServiceImpl
@@ -62,8 +57,12 @@ public class ActionServiceImplTest {
   private List<ActionFeedback> actionFeedback;
   private List<ActionType> actionType;
 
+  /**
+   * Initialises Mockito and loads Class Fixtures
+   * @throws Exception exception thrown
+   */
   @Before
-  public void setup() throws Exception {
+  public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     actions = FixtureHelper.loadClassFixtures(Action[].class);
     actionFeedback = FixtureHelper.loadClassFixtures(ActionFeedback[].class);
@@ -83,18 +82,19 @@ public class ActionServiceImplTest {
     List<Action> flushedActions = actionServiceImpl.cancelActions(ACTION_CASEID);
 
     for (Action action : actions) {
-      if (action.getActionType().getCanCancel() == true) {
+      if (action.getActionType().getCanCancel()) {
         assertThat(action.getState(), is(ActionState.CANCELLED));
-      }
-      else {
+      } else {
         assertThat(action.getState(), is(not(ActionState.CANCELLED)));
       }
     }
     List<Action> originalActions = FixtureHelper.loadClassFixtures(Action[].class);
-    
+
     verify(actionRepo, times(1)).findByCaseId(ACTION_CASEID);
-    verify(actionSvcStateTransitionManager, times(1)).transition(originalActions.get(0).getState(), ActionEvent.REQUEST_CANCELLED);
-    verify(actionSvcStateTransitionManager, times(1)).transition(originalActions.get(1).getState(), ActionEvent.REQUEST_CANCELLED);
+    verify(actionSvcStateTransitionManager, times(1)).transition(
+            originalActions.get(0).getState(), ActionEvent.REQUEST_CANCELLED);
+    verify(actionSvcStateTransitionManager, times(1)).transition(
+            originalActions.get(1).getState(), ActionEvent.REQUEST_CANCELLED);
     verify(actionRepo, times(1)).saveAndFlush(actions.get(0));
     verify(actionRepo, times(1)).saveAndFlush(actions.get(1));
 
@@ -112,10 +112,11 @@ public class ActionServiceImplTest {
 
     ActionDTO.ActionEvent event = ActionDTO.ActionEvent.valueOf(actionFeedback.get(0).getOutcome().name());
     Action originalAction = FixtureHelper.loadClassFixtures(Action[].class).get(0);
-    
+
     verify(actionRepo, times(1)).findById(ACTION_ID);
     verify(actionRepo, times(1)).saveAndFlush(actions.get(0));
-    verify(actionSvcStateTransitionManager, times(1)).transition(originalAction.getState(), event);
+    verify(actionSvcStateTransitionManager, times(1)).transition(originalAction.getState(),
+            event);
 
   }
 
