@@ -10,8 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -61,12 +59,6 @@ public class ActionDistributorTest {
 
   @Mock
   private ActionInstructionPublisher actionInstructionPublisher;
-
-  @Mock
-  Tracer tracer;
-
-  @Mock
-  Span span;
 
   @Mock
   private DistributedListManager<BigInteger> actionDistributionListManager;

@@ -97,9 +97,6 @@ spring:
       hibernate:
         ddl-auto: update
 
-  zipkin:
-    enabled: false
-
  # all about redis
 data-grid:
   # where is redis

@@ -99,9 +99,6 @@ spring:
         ddl-auto: update
         default_schema: action
 
-  zipkin:
-    enabled: false
-
  # all about redis
 data-grid:
   # where is redis

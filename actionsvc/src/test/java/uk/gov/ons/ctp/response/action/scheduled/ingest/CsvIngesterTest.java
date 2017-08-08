@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.cloud.sleuth.Tracer;
 import uk.gov.ons.ctp.response.action.config.ActionDistribution;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
@@ -35,9 +34,6 @@ public class CsvIngesterTest {
 
   @Mock
   private ActionInstructionPublisher actionInstructionPublisher;
-
-  @Mock
-  private Tracer tracer;
 
   @InjectMocks
   private CsvIngester csvIngester;
