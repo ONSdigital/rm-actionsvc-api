@@ -1,23 +1,17 @@
 package uk.gov.ons.ctp.response.action.message;
 
-import java.util.List;
-
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
+import uk.gov.ons.ctp.response.action.message.instruction.Action;
 
 /**
- * Interface for the publishing of ActionRequests to downstream handlers
- *
- * @author centos
- *
+ * Interface for the publishing of ActionInstruction to downstream handlers
  */
 public interface ActionInstructionPublisher {
+
   /**
-   * The implementation will be responsible for publishing ActionInstruction SpringIntegration outbound flow
+   * The implementation will be responsible for publishing ActionInstruction
    *
    * @param handler the handler that the outbound flow should send to - taken directly from the Actions ActionType
-   * @param actionRequests the requests to publish
-   * @param actionCancels the cancels to publish
+   * @param action the action to publish
    */
-  void sendActionInstructions(String handler, List<ActionRequest> actionRequests, List<ActionCancel> actionCancels);
+  void sendActionInstruction(String handler, Action action);
 }

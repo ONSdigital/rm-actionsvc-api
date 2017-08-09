@@ -18,6 +18,7 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import java.io.File;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
@@ -44,7 +45,6 @@ public class CsvIngesterTest {
   @Before
   public void setup() {
     ActionDistribution actionDistributionConfig = new ActionDistribution();
-    actionDistributionConfig.setDistributionMax(1);
     appConfig.setActionDistribution(actionDistributionConfig);
 
     MockitoAnnotations.initMocks(this);
@@ -94,8 +94,8 @@ public class CsvIngesterTest {
   public void testBlueSky() throws Exception {
     csvIngester.ingest(getTestFile("bluesky.csv"));
 
-    verify(actionInstructionPublisher, times(1)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(1)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
   }
 
   /**
@@ -124,8 +124,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-actionType.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_actionType");
   }
@@ -140,8 +140,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-instructionType.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_instructionType");
   }
@@ -156,8 +156,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-addressType.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_addressType");
   }
@@ -172,8 +172,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-estabType.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_estabType");
   }
@@ -188,8 +188,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-locality.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_locality");
   }
@@ -204,8 +204,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-organisationName.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_organisationName");
   }
@@ -220,8 +220,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-category.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_category");
   }
@@ -236,8 +236,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-line1.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_line1");
   }
@@ -252,8 +252,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-line2.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_line2");
   }
@@ -268,8 +268,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-townName.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_townName");
   }
@@ -284,8 +284,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-postcode-a.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
   }
@@ -300,8 +300,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-postcode-b.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
   }
@@ -316,8 +316,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-postcode-c.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_postcode");
   }
@@ -332,8 +332,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-latitude.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_latitude");
   }
@@ -348,8 +348,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-longitude.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_longitude");
   }
@@ -364,8 +364,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-uprn.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_uprn");
   }
@@ -380,8 +380,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-ladCode.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-            anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_ladCode");
   }
@@ -396,8 +396,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-title.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_title");
   }
@@ -412,8 +412,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-forename.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_forename");
   }
@@ -428,8 +428,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-surname.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_surname");
   }
@@ -444,8 +444,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-emailAddress.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_emailAddress");
   }
@@ -460,8 +460,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-telephoneNumber.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_telephoneNumber");
   }
@@ -493,8 +493,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-caseRef.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_caseRef");
   }
@@ -510,8 +510,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-iac.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_iac");
   }
@@ -526,8 +526,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-priority.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_priority");
   }
@@ -537,8 +537,8 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-actionPlan.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-            anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_actionPlan");
   }
@@ -548,10 +548,9 @@ public class CsvIngesterTest {
     File testFile = getTestFile("invalid-questionSet.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-            anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_questionSet");
   }
-
 }

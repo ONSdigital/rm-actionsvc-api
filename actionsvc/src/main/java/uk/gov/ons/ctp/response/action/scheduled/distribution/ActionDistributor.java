@@ -8,16 +8,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -53,15 +52,10 @@ import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExer
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
 /**
- * This is the 'service' class that distributes actions to downstream services
- * ie those services outside of response management It has a number of injected
- * beans, including a RestClient, Repositories and the ActionInstructionPublisher
+ * This is the 'service' class that distributes actions to downstream services, ie services outside of response
+ * management (ActionExporterSvc, NotifyGW, etc.).
  *
- * It cannot use the normal serviceimpl @Transaction pattern, as that will
- * rollback on a runtime exception (desired) but will then rethrow that
- * exception all the way up the stack. If we try and catch that exception, the
- * rollback does not happen. So - see the TransactionTemplate usage - that
- * allows both rollback and for us to catch the runtime exception and handle it.
+ * It has a number of injected beans, including a RestClient, Repositories and the ActionInstructionPublisher.
  *
  * This class has a self scheduled method wakeUp(), which looks for Actions in
  * SUBMITTED state to send to downstream handlers. On each wake cycle, it
@@ -82,12 +76,8 @@ import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 @Slf4j
 public class ActionDistributor {
 
-  private static final String ACTION_DISTRIBUTOR_SPAN = "actionDistributor";
-
   // WILL NOT WORK WITHOUT THIS NEXT LINE
   private static final long IMPOSSIBLE_ACTION_ID = 999999999999L;
-
-  private static final long MILLISECONDS = 1000L;
 
   @Autowired
   private DistributedListManager<BigInteger> actionDistributionListManager;
@@ -122,19 +112,6 @@ public class ActionDistributor {
   @Autowired
   private ActionTypeRepository actionTypeRepo;
 
-  // single TransactionTemplate shared amongst all methods in this instance
-  private final TransactionTemplate transactionTemplate;
-
-  /**
-   * Constructor into which the Spring PlatformTransactionManager is injected
-   *
-   * @param transactionManager provided by Spring
-   */
-  @Autowired
-  public ActionDistributor(final PlatformTransactionManager transactionManager) {
-    this.transactionTemplate = new TransactionTemplate(transactionManager);
-  }
-
   /**
    * wake up on schedule and check for submitted actions, enrich and distribute them to spring integration channels
    *
@@ -146,10 +123,10 @@ public class ActionDistributor {
 
     try {
       actionTypeRepo.findAll().forEach(actionType -> {
+        log.debug("Dealing with actionType {}", actionType.getName());
+        // TODO Substitute lists below with simple counter as per CaseDistributor
         List<ActionRequest> actionRequests = new ArrayList<>();
         List<ActionCancel> actionCancels = new ArrayList<>();
-
-        log.debug("Dealing with actionType {}", actionType.getName());
 
         List<Action> actions = null;
         try {
@@ -158,11 +135,10 @@ public class ActionDistributor {
           log.error(
               "Failed to obtain lock on actions - safely aborting this attempt but underlying problem may remain");
         }
-        if (actions != null && !actions.isEmpty()) {
-          log.debug("Dealing with actions {}",
-              actions.stream()
-                  .map(a -> a.getActionPK().toString())
-                  .collect(Collectors.joining(",")));
+
+        if (!CollectionUtils.isEmpty(actions)) {
+          log.debug("Dealing with actions {}", actions.stream().map(a -> a.getActionPK().toString()).collect(
+              Collectors.joining(",")));
 
           actions.forEach(action -> {
             try {
@@ -172,26 +148,18 @@ public class ActionDistributor {
                 actionCancels.add(processActionCancel(action));
               }
             } catch (Exception e) {
-              // db changes rolled back
               log.error(
                   "Exception {} thrown processing action {}. Processing will be retried at next scheduled distribution",
-                  e.getMessage(), action.getActionPK());
-            }
-            if ((actionRequests.size() + actionCancels.size()) == appConfig.getActionDistribution()
-                .getDistributionMax()) {
-              publishActions(actionType, actionRequests, actionCancels);
-              actionRequests.clear();
-              actionCancels.clear();
+                  e.getMessage(), action.getId());
             }
           });
 
-          publishActions(actionType, actionRequests, actionCancels);
           try {
             actionDistributionListManager.deleteList(actionType.getName(), true);
           } catch (LockingException e) {
             log.error(
-                "Failed to remove the list of actions just processed from distributed list - "
-                        + "actions distributed OK, but underlying problem may remain");
+                "Failed to remove the list of actions just processed from distributed list - actions distributed OK, "
+                    + "but underlying problem may remain");
           }
         }
 
@@ -200,6 +168,7 @@ public class ActionDistributor {
         } catch (LockingException e) {
           // oh well - it will unlock soon enough
         }
+
         distInfo.getInstructionCounts().add(new InstructionCount(actionType.getName(),
             DistributionInfo.Instruction.REQUEST, actionRequests.size()));
         distInfo.getInstructionCounts().add(new InstructionCount(actionType.getName(),
@@ -208,47 +177,10 @@ public class ActionDistributor {
     } catch (Exception e) {
       // something went wrong retrieving action types or actions
       log.error("Failed to process actions because {}", e.getMessage());
-      // we will be back after a short snooze
     }
+
     log.info("ActionDistributor going back to sleep");
     return distInfo;
-  }
-
-  /**
-   * publish actions using the inject publisher - try and try and try ...
-   *
-   * @param actionRequests requests
-   * @param actionType the type
-   * @param actionCancels cancels
-   * @throws InterruptedException our pause was interrupted
-   */
-  private void publishActions(ActionType actionType, List<ActionRequest> actionRequests,
-      List<ActionCancel> actionCancels) {
-    boolean published = false;
-    if (actionRequests.size() > 0 || actionCancels.size() > 0) {
-      do {
-        try {
-          // send the list of requests for this action type to the handler
-          log.info("Publishing {} requests and {} cancels", actionRequests.size(), actionCancels.size());
-          actionInstructionPublisher.sendActionInstructions(actionType.getHandler(), actionRequests, actionCancels);
-          published = true;
-        } catch (Exception e) {
-          // broker not there ? sleep then retry
-          log.warn("Failed to send requests {}", actionRequests.stream().map(a -> a.getActionId().toString())
-              .collect(Collectors.joining(",")));
-          log.warn("Failed to send cancels {}", actionCancels.stream().map(a -> a.getActionId().toString())
-              .collect(Collectors.joining(",")));
-          log.warn("Problem sending action instruction for preceeding ids to handler {} due to {}",
-              actionType, e.getMessage());
-          log.warn("ActionDistibution will sleep and retry publish");
-          try {
-            Thread.sleep(appConfig.getActionDistribution().getRetrySleepSeconds() * MILLISECONDS);
-          } catch (InterruptedException ie) {
-            log.warn("Retry sleep was interrupted");
-          }
-        }
-      } while (!published);
-    }
   }
 
   /**
@@ -260,8 +192,6 @@ public class ActionDistributor {
    * @throws LockingException LockingException thrown
    */
   private List<Action> retrieveActions(ActionType actionType) throws LockingException {
-    List<Action> actions = new ArrayList<>();
-
     Pageable pageable = new PageRequest(0, appConfig.getActionDistribution().getRetrievalMax(), new Sort(
         new Sort.Order(Direction.ASC, "updatedDateTime")));
 
@@ -272,10 +202,10 @@ public class ActionDistributor {
     // DO NOT REMOVE THIS NEXT LINE
     excludedActionIds.add(BigInteger.valueOf(IMPOSSIBLE_ACTION_ID));
 
-    actions = actionRepo
+    List<Action> actions = actionRepo
         .findByActionTypeNameAndStateInAndActionPKNotIn(actionType.getName(),
             Arrays.asList(ActionState.SUBMITTED, ActionState.CANCEL_SUBMITTED), excludedActionIds, pageable);
-    if (!actions.isEmpty()) {
+    if (!CollectionUtils.isEmpty(actions)) {
       log.debug("RETRIEVED action ids {}", actions.stream().map(a -> a.getActionPK().toString())
           .collect(Collectors.joining(",")));
       // try and save our list to the distributed store
@@ -287,72 +217,55 @@ public class ActionDistributor {
   }
 
   /**
-   * Deal with a single action - the transaction boundary is here. The
-   * processing requires numerous calls to Case service and to write to our own
-   * action table. The rollback most likely to be triggered by either failing to
-   * find the Case service, or if it sends back an http error status code.
+   * Deal with a single action - the transaction boundary is here.
+   *
+   * The processing requires numerous calls to Case service, to write to our own action table and to publish to queue.
    *
    * @param action the action to deal with
-   * @return The resulting ActionRequest that will be added to the outbound
-   *         ActionInstruction
+   * @return The resulting ActionRequest that has ben added to the outbound ActionInstruction
    */
-  private ActionRequest processActionRequest(final Action action) {
-    log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionPK(),
+  @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  private ActionRequest processActionRequest(final Action action) throws CTPException {
+    log.info("processing actionRequest with actionid {} caseid {} actionplanFK {}", action.getId(),
         action.getCaseId(), action.getActionPlanFK());
-    return transactionTemplate.execute(new TransactionCallback<ActionRequest>() {
-      // the code in this method executes in a transactional context
-      public ActionRequest doInTransaction(final TransactionStatus status) {
-        ActionRequest actionRequest = null;
-        // update our actions state in db
-        ActionDTO.ActionEvent event = action.getActionType().getResponseRequired()
-            ? ActionDTO.ActionEvent.REQUEST_DISTRIBUTED : ActionDTO.ActionEvent.REQUEST_COMPLETED;
-        try {
-          transitionAction(action, event);
-        } catch (CTPException e) {
-          String msg = String.format("message = %s - cause = %s", e.getMessage(), e.getCause());
-          log.error(msg);
-          throw new RuntimeException(msg);
-        }
-        // create the request, filling in details by GETs from casesvc
-        actionRequest = prepareActionRequest(action);
-        // advise casesvc to create a corresponding caseevent for our action
-        caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CREATED);
-        return actionRequest;
-      }
-    });
+
+    ActionDTO.ActionEvent event = action.getActionType().getResponseRequired() ?
+        ActionDTO.ActionEvent.REQUEST_DISTRIBUTED : ActionDTO.ActionEvent.REQUEST_COMPLETED;
+
+    transitionAction(action, event);
+
+    // create the request, filling in details by GETs from casesvc
+    ActionRequest actionRequest = prepareActionRequest(action);
+
+    // advise casesvc to create a corresponding caseevent for our action
+    caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CREATED);
+
+    actionInstructionPublisher.sendActionInstruction(action.getActionType().getHandler(), actionRequest);
+
+    return actionRequest;
   }
 
   /**
-   * Deal with a single action cancel- the transaction boundary is here
+   * Deal with a single action cancel - the transaction boundary is here
    *
    * @param action the action to deal with
-   * @return The resulting ActionCancel that will be added to the outbound
-   *         ActionInstruction
+   * @return The resulting ActionCancel that has been added to the outbound ActionInstruction
    */
-  private ActionCancel processActionCancel(final Action action) {
+  @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  private ActionCancel processActionCancel(final Action action) throws CTPException {
     log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionPK(),
         action.getCaseId(), action.getActionPlanFK());
-    return transactionTemplate.execute(new TransactionCallback<ActionCancel>() {
-      // the code in this method executes in a transactional context
-      public ActionCancel doInTransaction(final TransactionStatus status) {
-        ActionCancel actionCancel = null;
-        log.debug("Preparing action {} for distribution", action.getActionPK());
 
-        // update our actions state in db
-        try {
-          transitionAction(action, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
-        } catch (CTPException e) {
-          String msg = String.format("message = %s - cause = %s", e.getMessage(), e.getCause());
-          log.error(msg);
-          throw new RuntimeException(msg);
-        }
-        // create the request, filling in details by GETs from casesvc
-        actionCancel = prepareActionCancel(action);
-        // advise casesvc to create a corresponding caseevent for our action
-        caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CANCELLATION_CREATED);
-        return actionCancel;
-      }
-    });
+    transitionAction(action, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
+
+    ActionCancel actionCancel = prepareActionCancel(action);
+
+    // advise casesvc to create a corresponding caseevent for our action
+    caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CANCELLATION_CREATED);
+
+    actionInstructionPublisher.sendActionInstruction(action.getActionType().getHandler(), actionCancel);
+
+    return actionCancel;
   }
 
   /**

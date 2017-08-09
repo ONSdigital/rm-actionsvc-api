@@ -1,6 +1,5 @@
 package uk.gov.ons.ctp.response.action.scheduled.ingest;
 
-import com.google.common.collect.Lists;
 import liquibase.util.csv.CSVReader;
 import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
 import liquibase.util.csv.opencsv.bean.CsvToBean;
@@ -286,20 +285,18 @@ public class CsvIngester extends CsvToBean<CsvLine> {
   }
 
   /**
-   * takes the map of buckets for all handlers, and splits the diff action
-   * instructions into messages of the configured max size
+   * Takes the map of buckets for all handlers, and splits into messages
    *
    * @param buckets the map of buckets keyed by handler
    */
   private void publishBuckets(Map<String, InstructionBucket> buckets) {
     buckets.forEach((handler, handlerInstructionBucket) -> {
-      for (List<ActionRequest> partition : Lists.partition(handlerInstructionBucket.actionRequests,
-          appConfig.getActionDistribution().getDistributionMax())) {
-        actionInstructionPublisher.sendActionInstructions(handler, partition, null);
+      for (ActionRequest actionRequest : handlerInstructionBucket.actionRequests) {
+        actionInstructionPublisher.sendActionInstruction(handler, actionRequest);
       }
-      for (List<ActionCancel> partition : Lists.partition(handlerInstructionBucket.actionCancels,
-          appConfig.getActionDistribution().getDistributionMax())) {
-        actionInstructionPublisher.sendActionInstructions(handler, null, partition);
+
+      for (ActionCancel actionCancel :handlerInstructionBucket.actionCancels) {
+        actionInstructionPublisher.sendActionInstruction(handler, actionCancel);
       }
     });
   }
