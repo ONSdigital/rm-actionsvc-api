@@ -23,8 +23,8 @@ public class ActionInstructionPublisherImpl implements ActionInstructionPublishe
   @Autowired
   private RabbitTemplate rabbitTemplate;
 
-  private static final String ACTION = "Action.";
-  private static final String BINDING = ".binding";
+  public static final String ACTION = "Action.";
+  public static final String BINDING = ".binding";
 
   public void sendActionInstruction(@Header("HANDLER") String handler, Action action) {
     log.debug("Entering sendActionInstruction with handler {} and action {}", handler, action);
