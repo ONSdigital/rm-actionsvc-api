@@ -103,7 +103,7 @@ public class ActionDistributor {
   private CaseSvcClientService caseSvcClientService;
 
   @Autowired
-  private CollectionExerciseClientService collectionSvcClientService;
+  private CollectionExerciseClientService collectionExerciseClientService;
   
   @Autowired
   private PartySvcClientService partySvcClientService;
@@ -131,9 +131,8 @@ public class ActionDistributor {
           List<Action> actions = null;
           try {
             actions = retrieveActions(actionType);
-          } catch (LockingException le) {
-            log.error(
-                "Failed to obtain lock on actions - safely aborting this attempt but underlying problem may remain");
+          } catch (Exception e) {
+            log.error("Failed to obtain actions - error msg {} - cause {}", e.getMessage(), e.getCause());
           }
 
           if (!CollectionUtils.isEmpty(actions)) {
@@ -344,7 +343,7 @@ public class ActionDistributor {
     actionRequest.setCaseId(action.getCaseId().toString());
   
     UUID collectionId = caseDTO.getCaseGroup().getCollectionExerciseId();
-    CollectionExerciseDTO collectionExe =  collectionSvcClientService.getCollectionExercise(collectionId);
+    CollectionExerciseDTO collectionExe =  collectionExerciseClientService.getCollectionExercise(collectionId);
     actionRequest.setExerciseRef(collectionExe.getExerciseRef());
     
     Map<String, String> partyMap = partyDTO.getAttributes();
