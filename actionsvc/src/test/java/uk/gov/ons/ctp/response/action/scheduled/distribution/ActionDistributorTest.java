@@ -37,6 +37,7 @@ import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExer
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,8 +55,14 @@ public class ActionDistributorTest {
 
   private static final int TEN = 10;
 
+  private static final String CONNECTIVITY_ISSUE = "Connectivity issue";
   private static final String HOUSEHOLD_INITIAL_CONTACT = "HouseholdInitialContact";
   private static final String HOUSEHOLD_UPLOAD_IAC = "HouseholdUploadIAC";
+
+  private static final UUID CASE_ID_1_ISSUE_WITH_CASESVC = UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c81");
+  private static final UUID CASE_ID_2_ISSUE_WITH_CASESVC = UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c83");
+  private static final UUID CASE_ID_1 = UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c82");
+  private static final UUID CASE_ID_2 = UUID.fromString("3382981d-3df0-464e-9c95-aea7aee80c84");
 
   private List<ActionType> actionTypes;
   private List<Action> householdInitialContactActions;
@@ -175,14 +182,17 @@ public class ActionDistributorTest {
     DistributionInfo info = actionDistributor.distribute();
     List<InstructionCount> countList = info.getInstructionCounts();
     assertEquals(4, countList.size());
-    assertTrue(countList.get(0).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.REQUEST, 0)));
-    assertTrue(countList.get(1).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
-    assertTrue(countList.get(2).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.REQUEST, 0)));
-    assertTrue(countList.get(3).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
+
+    List<InstructionCount> expectedCountList = new ArrayList<>();
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.REQUEST, 0));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.REQUEST, 0));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+    assertTrue(countList.equals(expectedCountList));
 
     verify(actionTypeRepo).findAll();
     verify(actionDistributionListManager).findList(eq(HOUSEHOLD_INITIAL_CONTACT), eq(false));
@@ -226,14 +236,16 @@ public class ActionDistributorTest {
     DistributionInfo info = actionDistributor.distribute();
     List<InstructionCount> countList = info.getInstructionCounts();
     assertEquals(4, countList.size());
-    assertTrue(countList.get(0).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.REQUEST, 2)));
-    assertTrue(countList.get(1).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
-    assertTrue(countList.get(2).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.REQUEST, 2)));
-    assertTrue(countList.get(3).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
+    List<InstructionCount> expectedCountList = new ArrayList<>();
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.REQUEST, 2));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.REQUEST, 2));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+    assertTrue(countList.equals(expectedCountList));
 
     verify(actionTypeRepo).findAll();
     verify(actionDistributionListManager).findList(eq(HOUSEHOLD_INITIAL_CONTACT), eq(false));
@@ -249,6 +261,66 @@ public class ActionDistributorTest {
     verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
     verify(actionInstructionPublisher, times(4)).sendActionInstruction(any(String.class),
+        any(ActionRequest.class));
+  }
+
+  /**
+   * Scenario where an exception is thrown when calling the CaseService for 2 of our 4 actions (case with id
+   * 3382981d-3df0-464e-9c95-aea7aee80c81 and case with id 3382981d-3df0-464e-9c95-aea7aee80c83)
+   *
+   * @throws Exception oops
+   */
+  @Test
+  public void testCaseServiceIssue() throws Exception {
+    Mockito.when(actionTypeRepo.findAll()).thenReturn(actionTypes);
+    Mockito.when(actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq(HOUSEHOLD_INITIAL_CONTACT),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class))).thenReturn(
+        householdInitialContactActions);
+    Mockito.when(actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(eq(HOUSEHOLD_UPLOAD_IAC),
+        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class))).thenReturn(
+        householdUploadIACActions);
+    Mockito.when(actionSvcStateTransitionManager.transition(ActionState.SUBMITTED,
+        ActionDTO.ActionEvent.REQUEST_DISTRIBUTED)).thenReturn(ActionState.PENDING);
+
+    Mockito.when(caseSvcClientService.getCaseWithIACandCaseEvents(CASE_ID_1)).thenReturn(caseDetailsDTOs.get(0));
+    Mockito.when(caseSvcClientService.getCaseWithIACandCaseEvents(CASE_ID_2)).thenReturn(caseDetailsDTOs.get(0));
+    Mockito.when(caseSvcClientService.getCaseWithIACandCaseEvents(CASE_ID_1_ISSUE_WITH_CASESVC))
+        .thenThrow(new RuntimeException(CONNECTIVITY_ISSUE));
+    Mockito.when(caseSvcClientService.getCaseWithIACandCaseEvents(CASE_ID_2_ISSUE_WITH_CASESVC))
+        .thenThrow(new RuntimeException(CONNECTIVITY_ISSUE));
+
+    Mockito.when(partySvcClientService.getParty(any(String.class), any(UUID.class))).thenReturn(partyDTOs.get(0));
+    Mockito.when(collectionExerciseClientService.getCollectionExercise(any(UUID.class))).
+        thenReturn(collectionExerciseDTOs.get(0));
+
+    DistributionInfo info = actionDistributor.distribute();
+    List<InstructionCount> countList = info.getInstructionCounts();
+    assertEquals(4, countList.size());
+    List<InstructionCount> expectedCountList = new ArrayList<>();
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.REQUEST, 1));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.REQUEST, 1));
+    expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+    assertTrue(countList.equals(expectedCountList));
+
+    verify(actionTypeRepo).findAll();
+    verify(actionDistributionListManager).findList(eq(HOUSEHOLD_INITIAL_CONTACT), eq(false));
+    verify(actionDistributionListManager).findList(eq(HOUSEHOLD_UPLOAD_IAC), eq(false));
+
+    verify(actionRepo, times(1)).findByActionTypeNameAndStateInAndActionPKNotIn(
+        eq(HOUSEHOLD_INITIAL_CONTACT), anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+    verify(actionRepo, times(1)).findByActionTypeNameAndStateInAndActionPKNotIn(
+        eq(HOUSEHOLD_UPLOAD_IAC), anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+
+    verify(actionSvcStateTransitionManager, times(4)).transition(ActionState.SUBMITTED,
+        ActionDTO.ActionEvent.REQUEST_DISTRIBUTED);
+    verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
+        eq(CategoryDTO.CategoryName.ACTION_CREATED));
+    verify(actionInstructionPublisher, times(2)).sendActionInstruction(any(String.class),
         any(ActionRequest.class));
   }
 }
