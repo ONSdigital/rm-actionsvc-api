@@ -39,7 +39,7 @@
     },
     "priority":1,
     "situation":"cool",
-    "state":"SUBMITTED",
+    "state":"CANCEL_SUBMITTED",
     "createdDateTime":1460719498196,
     "updatedDateTime":1460719498196
   }

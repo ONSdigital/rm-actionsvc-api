@@ -122,6 +122,7 @@ public class ActionDistributor {
 
     try {
       List<ActionType> actionTypes = actionTypeRepo.findAll();
+
       if (!CollectionUtils.isEmpty(actionTypes)) {
         for (ActionType actionType : actionTypes) {
           log.debug("Dealing with actionType {}", actionType.getName());
@@ -174,7 +175,6 @@ public class ActionDistributor {
         }
       }
     } catch (Exception e) {
-      // something went wrong retrieving action types or actions
       log.error("Failed to process actions because {}", e.getMessage());
     }
 

@@ -48,7 +48,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
- * Test the action distributor
+ * Test the ActionDistributor
+ *
+ * Important reminder on the standing data held in json files:
+ *  - case 3382981d-3df0-464e-9c95-aea7aee80c81 is linked with a SUBMITTED action so expect 1 ActionRequest
+ *  - case 3382981d-3df0-464e-9c95-aea7aee80c82 is linked with a CANCEL_SUBMITTED action so expect 1 ActionCancel
+ *  - case 3382981d-3df0-464e-9c95-aea7aee80c83 is linked with a SUBMITTED action so expect 1 ActionRequest
+ *  - case 3382981d-3df0-464e-9c95-aea7aee80c84 is linked with a CANCEL_SUBMITTED action so expect 1 ActionCancel
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ActionDistributorTest {
@@ -228,6 +234,8 @@ public class ActionDistributorTest {
         householdUploadIACActions);
     Mockito.when(actionSvcStateTransitionManager.transition(ActionState.SUBMITTED,
         ActionDTO.ActionEvent.REQUEST_DISTRIBUTED)).thenReturn(ActionState.PENDING);
+    Mockito.when(actionSvcStateTransitionManager.transition(ActionState.CANCEL_SUBMITTED,
+        ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED)).thenReturn(ActionState.CANCEL_PENDING);
     Mockito.when(caseSvcClientService.getCaseWithIACandCaseEvents(any(UUID.class))).thenReturn(caseDetailsDTOs.get(0));
     Mockito.when(partySvcClientService.getParty(any(String.class), any(UUID.class))).thenReturn(partyDTOs.get(0));
     Mockito.when(collectionExerciseClientService.getCollectionExercise(any(UUID.class))).
@@ -238,13 +246,13 @@ public class ActionDistributorTest {
     assertEquals(4, countList.size());
     List<InstructionCount> expectedCountList = new ArrayList<>();
     expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.REQUEST, 2));
+        DistributionInfo.Instruction.REQUEST, 1));
     expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+        DistributionInfo.Instruction.CANCEL_REQUEST, 1));
     expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.REQUEST, 2));
+        DistributionInfo.Instruction.REQUEST, 1));
     expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+        DistributionInfo.Instruction.CANCEL_REQUEST, 1));
     assertTrue(countList.equals(expectedCountList));
 
     verify(actionTypeRepo).findAll();
@@ -256,9 +264,11 @@ public class ActionDistributorTest {
     verify(actionRepo, times(1)).findByActionTypeNameAndStateInAndActionPKNotIn(
         eq(HOUSEHOLD_UPLOAD_IAC), anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
-    verify(actionSvcStateTransitionManager, times(4)).transition(ActionState.SUBMITTED,
+    verify(actionSvcStateTransitionManager, times(2)).transition(ActionState.SUBMITTED,
         ActionDTO.ActionEvent.REQUEST_DISTRIBUTED);
-    verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
+    verify(actionSvcStateTransitionManager, times(2)).transition(ActionState.CANCEL_SUBMITTED,
+        ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
+    verify(caseSvcClientService, times(2)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
     verify(actionInstructionPublisher, times(4)).sendActionInstruction(any(String.class),
         any(ActionRequest.class));
@@ -298,13 +308,13 @@ public class ActionDistributorTest {
     assertEquals(4, countList.size());
     List<InstructionCount> expectedCountList = new ArrayList<>();
     expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.REQUEST, 1));
+        DistributionInfo.Instruction.REQUEST, 0));
     expectedCountList.add(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+        DistributionInfo.Instruction.CANCEL_REQUEST, 1));
     expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.REQUEST, 1));
+        DistributionInfo.Instruction.REQUEST, 0));
     expectedCountList.add(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
-        DistributionInfo.Instruction.CANCEL_REQUEST, 0));
+        DistributionInfo.Instruction.CANCEL_REQUEST, 1));
     assertTrue(countList.equals(expectedCountList));
 
     verify(actionTypeRepo).findAll();
@@ -316,9 +326,11 @@ public class ActionDistributorTest {
     verify(actionRepo, times(1)).findByActionTypeNameAndStateInAndActionPKNotIn(
         eq(HOUSEHOLD_UPLOAD_IAC), anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
-    verify(actionSvcStateTransitionManager, times(4)).transition(ActionState.SUBMITTED,
+    verify(actionSvcStateTransitionManager, times(2)).transition(ActionState.SUBMITTED,
         ActionDTO.ActionEvent.REQUEST_DISTRIBUTED);
-    verify(caseSvcClientService, times(4)).createNewCaseEvent(any(Action.class),
+    verify(actionSvcStateTransitionManager, times(2)).transition(ActionState.CANCEL_SUBMITTED,
+        ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
+    verify(caseSvcClientService, times(2)).createNewCaseEvent(any(Action.class),
         eq(CategoryDTO.CategoryName.ACTION_CREATED));
     verify(actionInstructionPublisher, times(2)).sendActionInstruction(any(String.class),
         any(ActionRequest.class));
