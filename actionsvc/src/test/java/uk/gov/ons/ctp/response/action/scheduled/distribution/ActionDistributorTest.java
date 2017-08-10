@@ -40,6 +40,8 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -139,7 +141,9 @@ public class ActionDistributorTest {
   public void testFailToGetAnyActionType() throws Exception {
     Mockito.when(actionTypeRepo.findAll()).thenThrow(new RuntimeException("Database access failed"));
 
-    actionDistributor.distribute();
+    DistributionInfo info = actionDistributor.distribute();
+    List<InstructionCount> countList = info.getInstructionCounts();
+    assertTrue(countList.isEmpty());
 
     verify(actionTypeRepo).findAll();
 
@@ -168,7 +172,17 @@ public class ActionDistributorTest {
     Mockito.when(actionRepo.findByActionTypeNameAndStateInAndActionPKNotIn(any(String.class), any(List.class),
         any(List.class), any(Pageable.class))).thenThrow(new RuntimeException("Database access failed"));
 
-    actionDistributor.distribute();
+    DistributionInfo info = actionDistributor.distribute();
+    List<InstructionCount> countList = info.getInstructionCounts();
+    assertEquals(4, countList.size());
+    assertTrue(countList.get(0).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.REQUEST, 0)));
+    assertTrue(countList.get(1).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
+    assertTrue(countList.get(2).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.REQUEST, 0)));
+    assertTrue(countList.get(3).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
 
     verify(actionTypeRepo).findAll();
     verify(actionDistributionListManager).findList(eq(HOUSEHOLD_INITIAL_CONTACT), eq(false));
@@ -209,7 +223,17 @@ public class ActionDistributorTest {
     Mockito.when(collectionExerciseClientService.getCollectionExercise(any(UUID.class))).
             thenReturn(collectionExerciseDTOs.get(0));
 
-    actionDistributor.distribute();
+    DistributionInfo info = actionDistributor.distribute();
+    List<InstructionCount> countList = info.getInstructionCounts();
+    assertEquals(4, countList.size());
+    assertTrue(countList.get(0).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.REQUEST, 2)));
+    assertTrue(countList.get(1).equals(new InstructionCount(HOUSEHOLD_INITIAL_CONTACT,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
+    assertTrue(countList.get(2).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.REQUEST, 2)));
+    assertTrue(countList.get(3).equals(new InstructionCount(HOUSEHOLD_UPLOAD_IAC,
+        DistributionInfo.Instruction.CANCEL_REQUEST, 0)));
 
     verify(actionTypeRepo).findAll();
     verify(actionDistributionListManager).findList(eq(HOUSEHOLD_INITIAL_CONTACT), eq(false));

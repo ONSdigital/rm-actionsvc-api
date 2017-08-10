@@ -119,14 +119,14 @@ public class ActionDistributor {
   public final DistributionInfo distribute() {
     log.debug("ActionDistributor awoken...");
     DistributionInfo distInfo = new DistributionInfo();
-    int successesForActionRequests = 0;
-    int successesForActionCancels = 0;
 
     try {
       List<ActionType> actionTypes = actionTypeRepo.findAll();
       if (!CollectionUtils.isEmpty(actionTypes)) {
         for (ActionType actionType : actionTypes) {
           log.debug("Dealing with actionType {}", actionType.getName());
+          int successesForActionRequests = 0;
+          int successesForActionCancels = 0;
 
           List<Action> actions = null;
           try {
