@@ -45,7 +45,6 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-// TODO Revisit after the refactoring
 /**
  * Test the action distributor
  */
@@ -114,39 +113,30 @@ public class ActionDistributorTest {
   }
 
   /**
-   * Test that when we fail at first hurdle to load ActionTypes we do not go on
-   * to call anything else In reality the wakeup mathod would then be called
-   * again after a sleep interval by spring but we cannot test that here
+   * Test that when we fail at first hurdle to load ActionTypes we do not go on to call anything else. In reality, the
+   * wakeup method would then be called again after a sleep interval by Spring but we cannot test that here.
    *
    * @throws Exception oops
    */
   @Test
   public void testFailToGetActionType() throws Exception {
-
     Mockito.when(actionTypeRepo.findAll()).thenThrow(new RuntimeException("Database access failed"));
-    // let it roll
+
     actionDistributor.distribute();
 
-    // assert the right calls were made
     verify(actionTypeRepo).findAll();
-    verify(actionRepo, times(0)).findByActionTypeNameAndStateInAndActionPKNotIn(
-        eq("HouseholdInitialContact"),
-        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
-    verify(actionRepo, times(0)).findByActionTypeNameAndStateInAndActionPKNotIn(
-        eq("HouseholdUploadIAC"),
-        anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
 
-    verify(caseSvcClientService, times(0)).getCaseWithIACandCaseEvents(any(UUID.class));
-
-    verify(partySvcClientService, times(0)).getParty(eq("B"),
-        eq(UUID.fromString("7bc5d41b-0549-40b3-ba76-42f6d4cf3992")));
+    verify(appConfig, times(0)).getActionDistribution();
+    verify(actionDistributionListManager, times(0)).findList(any(String.class),
+        any(Boolean.class));
+    verify(actionRepo, times(0)).findByActionTypeNameAndStateInAndActionPKNotIn(
+        any(String.class), anyListOf(ActionState.class), anyListOf(BigInteger.class), any(Pageable.class));
+    verify(actionDistributionListManager, times(0)).saveList(any(String.class), any(List.class),
+        any(Boolean.class));
 
     verify(caseSvcClientService, times(0)).createNewCaseEvent(any(Action.class),
-        eq(CategoryDTO.CategoryName.ACTION_CREATED));
-
-    verify(actionInstructionPublisher, times(0)).sendActionInstruction(eq("Printer"),
-        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
-    verify(actionInstructionPublisher, times(0)).sendActionInstruction(eq("HHSurvey"),
+        any(CategoryDTO.CategoryName.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(any(String.class),
         any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
   }
 

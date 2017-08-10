@@ -1,7 +1,6 @@
 package uk.gov.ons.ctp.response.action.scheduled.distribution;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +51,8 @@ import uk.gov.ons.ctp.response.collection.exercise.representation.CollectionExer
 import uk.gov.ons.ctp.response.party.representation.PartyDTO;
 
 /**
- * This is the 'service' class that distributes actions to downstream services, ie services outside of response
- * management (ActionExporterSvc, NotifyGW, etc.).
+ * This is the 'service' class that distributes actions to downstream services, ie services outside of Response
+ * Management (ActionExporterSvc, NotifyGW, etc.).
  *
  * It has a number of injected beans, including a RestClient, Repositories and the ActionInstructionPublisher.
  *
@@ -118,68 +117,69 @@ public class ActionDistributor {
    * @return the info for the health endpoint regarding the distribution just performed
    */
   public final DistributionInfo distribute() {
-    log.info("ActionDistributor is in the house");
+    log.debug("ActionDistributor awoken...");
     DistributionInfo distInfo = new DistributionInfo();
+    int successesForActionRequests = 0;
+    int successesForActionCancels = 0;
 
     try {
-      actionTypeRepo.findAll().forEach(actionType -> {
-        log.debug("Dealing with actionType {}", actionType.getName());
-        // TODO Substitute lists below with simple counter as per CaseDistributor
-        List<ActionRequest> actionRequests = new ArrayList<>();
-        List<ActionCancel> actionCancels = new ArrayList<>();
+      List<ActionType> actionTypes = actionTypeRepo.findAll();
+      if (!CollectionUtils.isEmpty(actionTypes)) {
+        for (ActionType actionType : actionTypes) {
+          log.debug("Dealing with actionType {}", actionType.getName());
 
-        List<Action> actions = null;
-        try {
-          actions = retrieveActions(actionType);
-        } catch (LockingException le) {
-          log.error(
-              "Failed to obtain lock on actions - safely aborting this attempt but underlying problem may remain");
-        }
+          List<Action> actions = null;
+          try {
+            actions = retrieveActions(actionType);
+          } catch (LockingException le) {
+            log.error(
+                "Failed to obtain lock on actions - safely aborting this attempt but underlying problem may remain");
+          }
 
-        if (!CollectionUtils.isEmpty(actions)) {
-          log.debug("Dealing with actions {}", actions.stream().map(a -> a.getActionPK().toString()).collect(
-              Collectors.joining(",")));
-
-          actions.forEach(action -> {
-            try {
-              if (action.getState().equals(ActionDTO.ActionState.SUBMITTED)) {
-                actionRequests.add(processActionRequest(action));
-              } else if (action.getState().equals(ActionDTO.ActionState.CANCEL_SUBMITTED)) {
-                actionCancels.add(processActionCancel(action));
+          if (!CollectionUtils.isEmpty(actions)) {
+            log.debug("Dealing with actions {}", actions.stream().map(a -> a.getActionPK().toString()).collect(
+                Collectors.joining(",")));
+            for (Action action : actions) {
+              try {
+                if (action.getState().equals(ActionDTO.ActionState.SUBMITTED)) {
+                  processActionRequest(action);
+                  successesForActionRequests++;
+                } else if (action.getState().equals(ActionDTO.ActionState.CANCEL_SUBMITTED)) {
+                  processActionCancel(action);
+                  successesForActionCancels++;
+                }
+              } catch (Exception e) {
+                log.error("Exception {} thrown processing action {}. Processing will be retried at next scheduled "
+                        + "distribution", e.getMessage(), action.getId());
               }
-            } catch (Exception e) {
-              log.error(
-                  "Exception {} thrown processing action {}. Processing will be retried at next scheduled distribution",
-                  e.getMessage(), action.getId());
             }
-          });
+
+            try {
+              actionDistributionListManager.deleteList(actionType.getName(), true);
+            } catch (LockingException e) {
+              log.error("Failed to remove the list of actions just processed from distributed list - actions distributed"
+                  + " OK, but underlying problem may remain");
+            }
+          }
 
           try {
-            actionDistributionListManager.deleteList(actionType.getName(), true);
+            actionDistributionListManager.unlockContainer();
           } catch (LockingException e) {
-            log.error(
-                "Failed to remove the list of actions just processed from distributed list - actions distributed OK, "
-                    + "but underlying problem may remain");
+            // oh well - it will unlock soon enough
           }
-        }
 
-        try {
-          actionDistributionListManager.unlockContainer();
-        } catch (LockingException e) {
-          // oh well - it will unlock soon enough
+          distInfo.getInstructionCounts().add(new InstructionCount(actionType.getName(),
+              DistributionInfo.Instruction.REQUEST, successesForActionRequests));
+          distInfo.getInstructionCounts().add(new InstructionCount(actionType.getName(),
+              DistributionInfo.Instruction.CANCEL_REQUEST, successesForActionCancels));
         }
-
-        distInfo.getInstructionCounts().add(new InstructionCount(actionType.getName(),
-            DistributionInfo.Instruction.REQUEST, actionRequests.size()));
-        distInfo.getInstructionCounts().add(new InstructionCount(actionType.getName(),
-            DistributionInfo.Instruction.CANCEL_REQUEST, actionCancels.size()));
-      });
+      }
     } catch (Exception e) {
       // something went wrong retrieving action types or actions
       log.error("Failed to process actions because {}", e.getMessage());
     }
 
-    log.info("ActionDistributor going back to sleep");
+    log.debug("ActionDistributor going back to sleep");
     return distInfo;
   }
 
@@ -222,11 +222,10 @@ public class ActionDistributor {
    * The processing requires numerous calls to Case service, to write to our own action table and to publish to queue.
    *
    * @param action the action to deal with
-   * @return The resulting ActionRequest that has ben added to the outbound ActionInstruction
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  private ActionRequest processActionRequest(final Action action) throws CTPException {
-    log.info("processing actionRequest with actionid {} caseid {} actionplanFK {}", action.getId(),
+  private void processActionRequest(final Action action) throws CTPException {
+    log.debug("processing actionRequest with actionid {} caseid {} actionplanFK {}", action.getId(),
         action.getCaseId(), action.getActionPlanFK());
 
     ActionDTO.ActionEvent event = action.getActionType().getResponseRequired() ?
@@ -234,38 +233,28 @@ public class ActionDistributor {
 
     transitionAction(action, event);
 
-    // create the request, filling in details by GETs from casesvc
-    ActionRequest actionRequest = prepareActionRequest(action);
-
     // advise casesvc to create a corresponding caseevent for our action
     caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CREATED);
 
-    actionInstructionPublisher.sendActionInstruction(action.getActionType().getHandler(), actionRequest);
-
-    return actionRequest;
+    actionInstructionPublisher.sendActionInstruction(action.getActionType().getHandler(), prepareActionRequest(action));
   }
 
   /**
    * Deal with a single action cancel - the transaction boundary is here
    *
    * @param action the action to deal with
-   * @return The resulting ActionCancel that has been added to the outbound ActionInstruction
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  private ActionCancel processActionCancel(final Action action) throws CTPException {
+  private void processActionCancel(final Action action) throws CTPException {
     log.info("processing action REQUEST actionid {} caseid {} actionplanid {}", action.getActionPK(),
         action.getCaseId(), action.getActionPlanFK());
 
     transitionAction(action, ActionDTO.ActionEvent.CANCELLATION_DISTRIBUTED);
 
-    ActionCancel actionCancel = prepareActionCancel(action);
-
     // advise casesvc to create a corresponding caseevent for our action
     caseSvcClientService.createNewCaseEvent(action, CategoryDTO.CategoryName.ACTION_CANCELLATION_CREATED);
 
-    actionInstructionPublisher.sendActionInstruction(action.getActionType().getHandler(), actionCancel);
-
-    return actionCancel;
+    actionInstructionPublisher.sendActionInstruction(action.getActionType().getHandler(), prepareActionCancel(action));
   }
 
   /**
