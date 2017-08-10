@@ -12,14 +12,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.ons.ctp.response.action.config.ActionDistribution;
 import uk.gov.ons.ctp.response.action.config.AppConfig;
 import uk.gov.ons.ctp.response.action.message.ActionInstructionPublisher;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionCancel;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 
 import java.io.File;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -100,19 +97,18 @@ public class CsvIngesterTest {
 
   /**
    * Test ...
-   * TODO: Gives .NeverWantedButInvoked error
    * @throws Exception oops
    */
-/*  @Test
+  @Test
   public void testInvalidHandler() throws Exception {
     File testFile = getTestFile("invalid-handler.csv");
     csvIngester.ingest(testFile);
 
-    verify(actionInstructionPublisher, times(0)).sendActionInstructions(anyString(), anyListOf(ActionRequest.class),
-        anyListOf(ActionCancel.class));
+    verify(actionInstructionPublisher, times(0)).sendActionInstruction(anyString(),
+        any(uk.gov.ons.ctp.response.action.message.instruction.Action.class));
 
     verifyErrorFileExists(testFile, ".error_LINE_2_COLUMN_handler");
-  }*/
+  }
 
   /**
    * Test ...

@@ -32,8 +32,6 @@ import java.util.UUID;
 @Slf4j
 public class ActionPlanJobServiceImpl implements ActionPlanJobService {
 
-  private static final String ACTION_PLAN_SPAN = "automatedActionPlanExecution";
-
   public static final String CREATED_BY_SYSTEM = "SYSTEM";
   public static final String NO_ACTIONPLAN_MSG = "ActionPlan not found for id %s";
 

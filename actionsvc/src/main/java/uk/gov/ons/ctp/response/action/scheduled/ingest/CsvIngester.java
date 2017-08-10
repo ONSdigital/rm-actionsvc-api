@@ -48,14 +48,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CsvIngester extends CsvToBean<CsvLine> {
 
-  private static final String CSV_INGESTER_SPAN = "csvIngesterSpan";
-
   private static final String CHANNEL = "csvIngest";
 
   private static final String REQUEST_INSTRUCTION = "Request";
   private static final String CANCEL_INSTRUCTION = "Cancel";
-
-  private static final String DATE_FORMAT = "yyMMddHHmm";
 
   private static final String REASON = "Cancelled by Response Management CSV Ingest";
 
