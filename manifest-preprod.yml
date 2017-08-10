@@ -11,12 +11,12 @@ applications:
     - rm-redis
     - rm-rabbitmq
   env:
-    partySvc_connectionConfig_host: ras-party-service-preprod.apps.devtest.onsclofo.uk
+    partySvc_connectionConfig_host: ras-party-service-preprod.apps.prod.cf5.onsclofo.uk
     partySvc_connectionConfig_port: "80"
-    partySvc_connectionConfig_scheme: http
-    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-preprod.apps.devtest.onsclofo.uk
+    partySvc_connectionConfig_scheme: https
+    collectionExerciseSvc_connectionConfig_host: collectionexercisesvc-preprod.apps.prod.cf5.onsclofo.uk
     collectionExerciseSvc_connectionConfig_port: "80"
-    collectionExerciseSvc_connectionConfig_scheme: http
-    caseSvc_connectionConfig_host: casesvc-preprod.apps.devtest.onsclofo.uk
+    collectionExerciseSvc_connectionConfig_scheme: https
+    caseSvc_connectionConfig_host: casesvc-preprod.apps.prod.cf5.onsclofo.uk
     caseSvc_connectionConfig_port: "80"
-    caseSvc_connectionConfig_scheme: http
+    caseSvc_connectionConfig_scheme: https
