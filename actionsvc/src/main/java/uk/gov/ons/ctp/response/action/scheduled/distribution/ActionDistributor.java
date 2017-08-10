@@ -350,6 +350,7 @@ public class ActionDistributor {
 
     ActionContact actionContact = new ActionContact();
     //actionContact.setTitle(partyMap.get("title")); //TODO Not in Party Swagger Spec.
+    // TODO Bad practice to have the string below hardcoded
     actionContact.setForename(partyMap.get("surname"));
     actionContact.setPhoneNumber(partyMap.get("phonenumber"));
     actionContact.setEmailAddress(partyMap.get("emailAddress"));
