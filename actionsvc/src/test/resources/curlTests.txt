@@ -1,2 +1,0 @@
-curl http://localhost:8151/info/ -v -X GET
-200 {"name":"actionsvc","version":"10.45.0-SNAPSHOT","origin":"git@github.com:ONSdigital/rm-action-service.git/actionsvc","commit":"03b3fc3a1bf893289d71e81b4302561f783ed527","branch":"master","built":"2017-08-09T17:22:34Z"}

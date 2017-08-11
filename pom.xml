@@ -3,12 +3,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.gov.ons.ctp.product</groupId>
-  <artifactId>actionservice</artifactId>
-  <version>10.45.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <artifactId>actionsvc-api</artifactId>
+  <version>10.46.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-  <name>CTP : ActionService</name>
-  <description>CTP : ActionService</description>
+  <name>CTP : ActionSvcApi</name>
+  <description>CTP : ActionSvcApi</description>
 
   <properties>
     <commonbom.version>10.45.0-SNAPSHOT</commonbom.version>
@@ -22,11 +22,6 @@
     <artifactId>rm-common-config</artifactId>
     <version>10.45.0-SNAPSHOT</version>
   </parent>
-
-  <modules>
-    <module>actionsvc</module>
-    <module>actionsvc-api</module>
-  </modules>
 
   <scm>
     <connection>scm:git:git@github.com:ONSdigital/rm-action-service.git</connection>
@@ -46,6 +41,23 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>uk.gov.ons.ctp.common</groupId>
+      <artifactId>framework</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.codesup.util</groupId>
+      <artifactId>jaxb2-rich-contract-plugin</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <defaultGoal>clean install</defaultGoal>
 
@@ -56,42 +68,89 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
-        <configuration>
-          <properties>
-            <property>
-              <name>junit</name>
-              <value>false</value>
-            </property>
-          </properties>
-          <threadCount>1</threadCount>
-        </configuration>
-        <!-- REQUIRED for unit tests to run -->
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-junit47</artifactId>
-            <version>${surefire.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-testng</artifactId>
-            <version>${surefire.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <id>inbound</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
+              <bindingIncludes>
+                <include>actionFeedback.xjb</include>
+              </bindingIncludes>
+              <bindingExcludes>
+                <include>actionInstruction.xjb</include>
+              </bindingExcludes>
+              <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
+              <schemaIncludes>
+                <include>actionFeedback.xsd</include>
+              </schemaIncludes>
+              <generateDirectory>${project.build.directory}/generated-sources/xjc/inbound</generateDirectory>
+              <args>
+                <arg>-Xvalue-constructor</arg>
+                <arg>-Xfluent-builder</arg>
+                <arg>-generateTools=n</arg>
+              </args>
+              <plugins>
+                <plugin>
+                  <groupId>net.codesup.util</groupId>
+                  <artifactId>jaxb2-rich-contract-plugin</artifactId>
+                  <version>1.18.0</version>
+                </plugin>
+                <plugin>
+                  <groupId>org.jvnet.jaxb2_commons</groupId>
+                  <artifactId>jaxb2-value-constructor</artifactId>
+                  <version>3.0</version>
+                </plugin>
+              </plugins>
+            </configuration>
+          </execution>
+          <execution>
+            <phase>generate-sources</phase>
+            <id>outbound</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
+              <bindingIncludes>
+                <include>actionInstruction.xjb</include>
+              </bindingIncludes>
+              <bindingExcludes>
+                <include>actionFeedback.xjb</include>
+              </bindingExcludes>
+              <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
+              <schemaIncludes>
+                <include>actionInstruction.xsd</include>
+              </schemaIncludes>
+              <generateDirectory>${project.build.directory}/generated-sources/xjc/outbound</generateDirectory>
+              <args>
+                <arg>-Xvalue-constructor</arg>
+                <arg>-Xfluent-builder</arg>
+                <arg>-generateTools=n</arg>
+              </args>
+              <plugins>
+                <plugin>
+                  <groupId>net.codesup.util</groupId>
+                  <artifactId>jaxb2-rich-contract-plugin</artifactId>
+                  <version>1.18.0</version>
+                </plugin>
+                <plugin>
+                  <groupId>org.jvnet.jaxb2_commons</groupId>
+                  <artifactId>jaxb2-value-constructor</artifactId>
+                  <version>3.0</version>
+                </plugin>
+              </plugins>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
