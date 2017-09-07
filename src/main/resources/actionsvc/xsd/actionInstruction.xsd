@@ -26,6 +26,10 @@
 				maxOccurs="1" />
 			<xs:element name="emailAddress" type="xs:string"
 				minOccurs="0" maxOccurs="1" />
+			<xs:element name="ruName" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
+			<xs:element name="tradingStyle" type="xs:string"
+						minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -84,6 +88,7 @@
 					<xs:element name="exerciseRef" type="xs:string" minOccurs="0" maxOccurs="1" />
 					<xs:element name="surveyName" type="xs:string" minOccurs="0" maxOccurs="1" />
 					<xs:element name="surveyRef" type="xs:string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="returnByDate" type="xs:string" minOccurs="0" maxOccurs="1" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
