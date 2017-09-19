@@ -20,6 +20,10 @@
       <phoneNumber>string</phoneNumber>
       <!--Optional:-->
       <emailAddress>string</emailAddress>
+      <!--Optional:-->
+      <ruName>string</ruName>
+      <!--Optional:-->
+      <tradingStyle>string</tradingStyle>
     </contact>
     <address>
       <sampleUnitRef>string</sampleUnitRef>
@@ -61,6 +65,12 @@
     </events>
     <!--Optional:-->
     <exerciseRef>string</exerciseRef>
+    <!--Optional:-->
+    <surveyName>string</surveyName>
+    <!--Optional:-->
+    <surveyRef>string</surveyRef>
+    <!--Optional:-->
+    <returnByDate>string</returnByDate>
   </actionRequest>
   <actionUpdate>
     <actionId>string</actionId>
