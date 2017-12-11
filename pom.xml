@@ -23,9 +23,9 @@
   </parent>
 
   <scm>
-    <connection>scm:git:git@github.com:ONSdigital/rm-action-service.git</connection>
-    <developerConnection>scm:git:git@github.com:ONSdigital/rm-action-service.git</developerConnection>
-    <url>git@github.com:ONSdigital/rm-action-service.git</url>
+    <connection>scm:git:https://github.com/ONSdigital/rm-actionsvc-api</connection>
+    <developerConnection>scm:git:https://github.com/ONSdigital/rm-actionsvc-api</developerConnection>
+    <url>https://github.com/ONSdigital/rm-actionsvc-api</url>
   </scm>
 
   <dependencies>
