@@ -2,7 +2,6 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.gov.ons.ctp.product</groupId>
   <artifactId>actionsvc-api</artifactId>
   <version>10.49.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -19,7 +18,7 @@
   <parent>
     <groupId>uk.gov.ons.ctp.product</groupId>
     <artifactId>rm-common-config</artifactId>
-    <version>10.49.2</version>
+    <version>10.49.6</version>
   </parent>
 
   <scm>
