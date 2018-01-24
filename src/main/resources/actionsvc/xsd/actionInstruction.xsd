@@ -65,22 +65,6 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<!-- a complex type for classifiers-->
-	<xs:complexType name="CommsTypeClassifiers">
-		<xs:sequence>
-			<xs:element name="legalBasis" type="xs:string" minOccurs="0" maxOccurs="1" />
-			<xs:element name="region" type="xs:string" minOccurs="0" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="Statuses">
-		<xs:sequence>
-		<xs:element name="respondentStatus" type="xs:string" minOccurs="0" maxOccurs="1" />
-		<xs:element name="enrolmentStatus" type="xs:string" minOccurs="0" maxOccurs="1"/>
-		<xs:element name="caseGroupStatus" type="xs:string" minOccurs="0" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
-
 	<!-- a complex type for request instructions -->
 	<xs:complexType name="ActionRequest">
 		<xs:complexContent>
@@ -91,8 +75,11 @@
 					<xs:element name="questionSet" type="xs:string" minOccurs="0" maxOccurs="1" />
 					<xs:element name="contact" type="ActionContact" minOccurs="0" maxOccurs="1" />
 					<xs:element name="address" type="ActionAddress" minOccurs="1" />
-					<xs:element name="commsTypeClassifiers" type="CommsTypeClassifiers" minOccurs="0" maxOccurs="1" />
-					<xs:element name="statuses" type="Statuses" minOccurs="1"/>
+					<xs:element name="legalBasis" type="xs:string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="region" type="xs:string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="respondentStatus" type="xs:string" minOccurs="0" maxOccurs="1" />
+					<xs:element name="enrolmentStatus" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="caseGroupStatus" type="xs:string" minOccurs="0" maxOccurs="1" />
 					<xs:element name="caseId" type="xs:string" minOccurs="0"/>
 					<xs:element name="priority" type="Priority" minOccurs="0" maxOccurs="1" />
 					<xs:element name="caseRef" type="xs:string" minOccurs="0" maxOccurs="1"/>
