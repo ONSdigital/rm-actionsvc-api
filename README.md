@@ -1,5 +1,6 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0321706d267b40f68c56d731cc103045)](https://www.codacy.com/app/sdcplatform/rm-actionsvc-api?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ONSdigital/rm-actionsvc-api&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/ONSdigital/rm-actionsvc-api.svg?branch=master)](https://travis-ci.org/ONSdigital/rm-actionsvc-api)
+[![codecov](https://codecov.io/gh/ONSdigital/rm-actionsvc-api/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/rm-actionsvc-api)
 
 This is the ActionService public API model project.
 
