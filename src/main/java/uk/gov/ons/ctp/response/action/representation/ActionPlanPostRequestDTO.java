@@ -18,15 +18,15 @@ import javax.validation.constraints.Size;
 public class ActionPlanPostRequestDTO {
 
     @NotNull
-    @Size(max=100)
+    @Size(max = 100)
     private String name;
 
     @NotNull
-    @Size(max=250)
+    @Size(max = 250)
     private String description;
 
     @NotNull
-    @Size(max=20)
+    @Size(max = 20)
     private String createdBy;
 
 }
