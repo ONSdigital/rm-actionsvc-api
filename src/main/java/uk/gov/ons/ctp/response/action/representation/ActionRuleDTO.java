@@ -24,4 +24,6 @@ public class ActionRuleDTO {
   private Integer daysOffset;
 
   private Integer priority;
+
+  private String actionTypeName;
 }
