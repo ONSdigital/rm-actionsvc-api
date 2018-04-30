@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class ActionPlanRequestDTO {
+public class ActionPlanPutRequestDTO {
 
   private String description;
 
