@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashMap;
 
 /**
  * Domain model object for representation.
@@ -28,5 +29,7 @@ public class ActionPlanPostRequestDTO {
     @NotNull
     @Size(max = 20)
     private String createdBy;
+
+    private HashMap<String, String> selectors;
 
 }
