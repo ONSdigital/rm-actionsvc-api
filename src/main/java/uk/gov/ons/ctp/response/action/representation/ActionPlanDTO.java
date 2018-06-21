@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
-import java.util.HashMap;
 
 /**
  * Domain model object for representation.
