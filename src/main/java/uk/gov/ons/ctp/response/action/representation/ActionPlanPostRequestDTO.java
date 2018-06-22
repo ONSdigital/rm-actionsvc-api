@@ -18,18 +18,18 @@ import java.util.HashMap;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ActionPlanPostRequestDTO {
 
-    @NotNull
-    @Size(max = 100)
-    private String name;
+  @NotNull
+  @Size(max = 100)
+  private String name;
 
-    @NotNull
-    @Size(max = 250)
-    private String description;
+  @NotNull
+  @Size(max = 250)
+  private String description;
 
-    @NotNull
-    @Size(max = 20)
-    private String createdBy;
+  @NotNull
+  @Size(max = 20)
+  private String createdBy;
 
-    private HashMap<String, String> selectors;
+  private HashMap<String, String> selectors;
 
 }

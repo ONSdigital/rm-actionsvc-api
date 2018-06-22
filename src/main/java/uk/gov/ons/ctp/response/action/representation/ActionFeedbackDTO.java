@@ -16,12 +16,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ActionFeedbackDTO {
 
-    @NotNull
-    private String actionId;
+  @NotNull
+  private String actionId;
 
-    @NotNull
-    private String situation;
+  @NotNull
+  private String situation;
 
-    @NotNull
-    private Outcome outcome;
+  @NotNull
+  private Outcome outcome;
 }

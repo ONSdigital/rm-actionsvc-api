@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ActionFeedbackRequestDTO {
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private String situation;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private String situation;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private Outcome outcome;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private Outcome outcome;
 }

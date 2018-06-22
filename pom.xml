@@ -2,7 +2,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>actionsvc-api</artifactId>
-  <version>10.49.13</version>
+  <version>10.49.14-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>CTP : ActionSvcApi</name>
@@ -17,14 +17,14 @@
   <parent>
     <groupId>uk.gov.ons.ctp.product</groupId>
     <artifactId>rm-common-config</artifactId>
-    <version>10.49.6</version>
+    <version>10.49.11</version>
   </parent>
 
   <scm>
     <connection>scm:git:https://github.com/ONSdigital/rm-actionsvc-api</connection>
     <developerConnection>scm:git:https://github.com/ONSdigital/rm-actionsvc-api</developerConnection>
     <url>https://github.com/ONSdigital/rm-actionsvc-api</url>
-    <tag>actionsvc-api-10.49.13</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
