@@ -1,13 +1,14 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Domain model object for representation.
@@ -27,4 +28,6 @@ public class ActionPlanDTO {
   private String createdBy;
 
   private Date lastRunDateTime;
+
+  private HashMap<String, String> selectors;
 }
