@@ -1,15 +1,12 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
-/**
- * Domain model object for representation.
- */
+/** Domain model object for representation. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
