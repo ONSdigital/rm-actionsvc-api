@@ -17,7 +17,7 @@
   <parent>
     <groupId>uk.gov.ons.ctp.product</groupId>
     <artifactId>rm-common-config</artifactId>
-    <version>10.49.11</version>
+    <version>10.49.12</version>
   </parent>
 
   <scm>
@@ -71,6 +71,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+          <groupId>com.coveo</groupId>
+          <artifactId>fmt-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.jvnet.jaxb2.maven2</groupId>

@@ -1,17 +1,14 @@
 package uk.gov.ons.ctp.response.action.representation;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import java.util.UUID;
-
-/**
- * Domain model object for representation.
- */
+/** Domain model object for representation. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -30,5 +27,4 @@ public class ActionPostRequestDTO {
   private String createdBy;
 
   private Integer priority;
-
 }

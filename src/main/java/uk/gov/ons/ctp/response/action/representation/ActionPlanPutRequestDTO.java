@@ -1,16 +1,13 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import java.util.Date;
+import java.util.HashMap;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.HashMap;
-
-/**
- * Domain model object for representation.
- */
+/** Domain model object for representation. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
