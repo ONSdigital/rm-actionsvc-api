@@ -11,9 +11,9 @@ import static uk.gov.ons.ctp.response.action.representation.Situation.MAXIMUM_LE
 
 public class SituationTest {
 
-  public static final String VALID = "Notify Sms Not Sent";
-  public static final String TOO_LONG = StringUtils.repeat("a", MAXIMUM_LENGTH + 1);
-  public static final String MAX_LENGTH = StringUtils.repeat("x", MAXIMUM_LENGTH);
+  private static final String VALID = "Notify Sms Not Sent";
+  private static final String TOO_LONG = StringUtils.repeat("a", MAXIMUM_LENGTH + 1);
+  private static final String MAX_LENGTH = StringUtils.repeat("x", MAXIMUM_LENGTH);
 
   @Rule public ExpectedException expectedEx = ExpectedException.none();
 

@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
 
 public class ActionFeedbackFactoryTest {
 
-  public static final String ACTION_ID = "08073f47-1d8d-44cf-b035-31c398ec46bf";
-  public static final String SITUATION_STRING = "NotifyGateway";
-  public static final Outcome OUTCOME = Outcome.CANCELLATION_ACCEPTED;
+  private static final String ACTION_ID = "08073f47-1d8d-44cf-b035-31c398ec46bf";
+  private static final String SITUATION_STRING = "NotifyGateway";
+  private static final Outcome OUTCOME = Outcome.CANCELLATION_ACCEPTED;
 
   @Test
   public void testItCreatesAnActionFeedbackInstance() {

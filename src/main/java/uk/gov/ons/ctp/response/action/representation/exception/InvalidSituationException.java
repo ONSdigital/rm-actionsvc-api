@@ -7,7 +7,7 @@ public class InvalidSituationException extends RuntimeException {
   private static final String TOO_LONG_MESSAGE =
       "Situation can have a maximum length of %d; got \"%s\"";
 
-  public InvalidSituationException(String message) {
+  private InvalidSituationException(String message) {
     super(message);
   }
 
