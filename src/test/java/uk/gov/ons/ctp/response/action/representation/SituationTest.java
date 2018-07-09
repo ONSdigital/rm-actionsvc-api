@@ -1,13 +1,13 @@
 package uk.gov.ons.ctp.response.action.representation;
 
-import static org.junit.Assert.assertEquals;
-import static uk.gov.ons.ctp.response.action.representation.Situation.MAXIMUM_LENGTH;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import uk.gov.ons.ctp.response.action.representation.exception.InvalidSituationException;
+
+import static org.junit.Assert.assertEquals;
+import static uk.gov.ons.ctp.response.action.representation.Situation.MAXIMUM_LENGTH;
 
 public class SituationTest {
 
@@ -18,14 +18,14 @@ public class SituationTest {
   @Rule public ExpectedException expectedEx = ExpectedException.none();
 
   @Test
-  public void testToStringReturnsTheValue() throws InvalidSituationException {
+  public void testToStringReturnsTheValue() {
     Situation situation = new Situation(VALID);
 
     assertEquals(situation.toString(), VALID);
   }
 
   @Test
-  public void testItThrowsAnExceptionIfSituationIsTooLong() throws InvalidSituationException {
+  public void testItThrowsAnExceptionIfSituationIsTooLong() {
     expectedEx.expect(InvalidSituationException.class);
     expectedEx.expectMessage(InvalidSituationException.tooLong(TOO_LONG).getMessage());
 
@@ -33,8 +33,7 @@ public class SituationTest {
   }
 
   @Test
-  public void testItDoesNotThrowAnExceptionIfTheSituationIsTheMaximumLength()
-      throws InvalidSituationException {
+  public void testItDoesNotThrowAnExceptionIfTheSituationIsTheMaximumLength() {
     new Situation(MAX_LENGTH);
   }
 }

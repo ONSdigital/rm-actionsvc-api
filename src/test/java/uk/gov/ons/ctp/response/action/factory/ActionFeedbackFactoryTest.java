@@ -4,7 +4,6 @@ import org.junit.Test;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.message.feedback.Outcome;
 import uk.gov.ons.ctp.response.action.representation.Situation;
-import uk.gov.ons.ctp.response.action.representation.exception.InvalidSituationException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,8 +14,7 @@ public class ActionFeedbackFactoryTest {
   public static final Outcome OUTCOME = Outcome.CANCELLATION_ACCEPTED;
 
   @Test
-  public void
-  testItCreatesAnActionFeedbackInstance() throws InvalidSituationException {
+  public void testItCreatesAnActionFeedbackInstance() {
     final Situation situation = new Situation(SITUATION_STRING);
 
     ActionFeedback actionFeedback = ActionFeedbackFactory.create(ACTION_ID, situation, OUTCOME);

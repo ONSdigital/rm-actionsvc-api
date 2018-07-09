@@ -6,7 +6,7 @@ public class Situation {
   public static final int MAXIMUM_LENGTH = 100;
   private final String situation;
 
-  public Situation(String situation) throws InvalidSituationException {
+  public Situation(String situation) {
     if (situation.length() > MAXIMUM_LENGTH) {
       throw InvalidSituationException.tooLong(situation);
     }
