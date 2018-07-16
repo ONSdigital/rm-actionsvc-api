@@ -1,13 +1,13 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import static org.junit.Assert.assertEquals;
+import static uk.gov.ons.ctp.response.action.representation.Situation.MAXIMUM_LENGTH;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import uk.gov.ons.ctp.response.action.representation.exception.InvalidSituationException;
-
-import static org.junit.Assert.assertEquals;
-import static uk.gov.ons.ctp.response.action.representation.Situation.MAXIMUM_LENGTH;
 
 public class SituationTest {
 
