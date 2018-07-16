@@ -1,11 +1,11 @@
 package uk.gov.ons.ctp.response.action.factory;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import uk.gov.ons.ctp.response.action.message.feedback.ActionFeedback;
 import uk.gov.ons.ctp.response.action.message.feedback.Outcome;
 import uk.gov.ons.ctp.response.action.representation.Situation;
-
-import static org.junit.Assert.assertEquals;
 
 public class ActionFeedbackFactoryTest {
 

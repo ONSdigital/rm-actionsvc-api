@@ -1,8 +1,8 @@
 package uk.gov.ons.ctp.response.action.representation.exception;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class InvalidSituationExceptionTest {
   @Test
