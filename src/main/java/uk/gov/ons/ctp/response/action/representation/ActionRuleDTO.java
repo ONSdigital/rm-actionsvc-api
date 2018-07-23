@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ public class ActionRuleDTO {
   private UUID id;
   private String name;
   private String description;
-  private Integer daysOffset;
+  private OffsetDateTime triggerDateTime;
   private Integer priority;
   private String actionTypeName;
 }

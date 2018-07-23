@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -30,7 +31,7 @@ public class ActionRulePostRequestDTO {
   @Size(max = 250)
   private String description;
 
-  @NotNull private Integer daysOffset;
+  @NotNull private OffsetDateTime triggerDateTime;
 
   @Min(value = 1)
   @Max(value = 5)
