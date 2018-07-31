@@ -1,5 +1,6 @@
 package uk.gov.ons.ctp.response.action.representation;
 
+import java.time.OffsetDateTime;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -20,7 +21,7 @@ public class ActionRulePutRequestDTO {
   @Size(max = 250)
   private String description;
 
-  private Integer daysOffset;
+  private OffsetDateTime triggerDateTime;
 
   @Min(value = 1)
   @Max(value = 5)
