@@ -18,5 +18,5 @@ public class ActionRuleDTO {
   private String description;
   private OffsetDateTime triggerDateTime;
   private Integer priority;
-  private String actionTypeName;
+  private ActionTypes actionTypeName;
 }
