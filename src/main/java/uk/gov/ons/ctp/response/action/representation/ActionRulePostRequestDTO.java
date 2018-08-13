@@ -21,7 +21,7 @@ public class ActionRulePostRequestDTO {
 
   @NotNull
   @Size(max = 100)
-  private ActionTypes actionTypeName;
+  private ActionType actionTypeName;
 
   @NotNull
   @Size(max = 100)
