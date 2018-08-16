@@ -19,9 +19,7 @@ public class ActionRulePostRequestDTO {
 
   @NotNull private UUID actionPlanId;
 
-  @NotNull
-  @Size(max = 100)
-  private ActionType actionTypeName;
+  @NotNull private ActionType actionTypeName;
 
   @NotNull
   @Size(max = 100)
