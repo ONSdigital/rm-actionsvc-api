@@ -1,6 +1,6 @@
 package uk.gov.ons.ctp.response.action.representation;
 
-public enum ActionType {
+public enum ActionTypes {
   BSNOT("BSNOT"),
   BSREM("BSREM"),
   BSSNE("BSSNE"),
@@ -15,7 +15,7 @@ public enum ActionType {
 
   private String name;
 
-  ActionType(String name) {
+  ActionTypes(String name) {
     this.name = name;
   }
 
