@@ -14,7 +14,6 @@ public enum ActionType {
   SOCIALPRENOT("SOCIALPRENOT"),
   SOCIALICF("SOCIALICF");
 
-
   private String name;
 
   ActionType(String name) {
