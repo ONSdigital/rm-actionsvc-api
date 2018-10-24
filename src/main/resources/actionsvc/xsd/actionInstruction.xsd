@@ -124,6 +124,7 @@
             <xs:extension base="Action">
                 <xs:sequence>
                     <xs:element name="reason" type="xs:string"/>
+                    <xs:element name="caseId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="caseRef" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
