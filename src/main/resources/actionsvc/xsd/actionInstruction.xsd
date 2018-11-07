@@ -36,8 +36,6 @@
     <!-- a complex type for addresses - no statistical geography info -->
     <xs:complexType name="ActionAddress">
         <xs:sequence>
-            <xs:element name="sampleUnitRef" type="xs:string"
-                        minOccurs="1" maxOccurs="1"/>
             <xs:element name="type" type="xs:string" minOccurs="0"
                         maxOccurs="1"/>
             <xs:element name="estabType" type="xs:string" minOccurs="0"
@@ -92,6 +90,7 @@
                     <xs:element name="surveyName" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="surveyRef" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="returnByDate" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="sampleUnitRef" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
