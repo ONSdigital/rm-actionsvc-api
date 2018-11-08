@@ -25,6 +25,7 @@
       <!--Optional:-->
       <tradingStyle>string</tradingStyle>
     </contact>
+    <!--Optional:-->
     <address>
       <!--Optional:-->
       <type>string</type>
