@@ -25,8 +25,8 @@
       <!--Optional:-->
       <tradingStyle>string</tradingStyle>
     </contact>
+    <!--Optional:-->
     <address>
-      <sampleUnitRef>string</sampleUnitRef>
       <!--Optional:-->
       <type>string</type>
       <!--Optional:-->
@@ -71,6 +71,7 @@
     <surveyRef>string</surveyRef>
     <!--Optional:-->
     <returnByDate>string</returnByDate>
+    <sampleUnitRef>string</sampleUnitRef>
   </actionRequest>
   <actionUpdate>
     <actionId>string</actionId>

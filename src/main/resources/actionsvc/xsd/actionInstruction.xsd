@@ -36,8 +36,6 @@
     <!-- a complex type for addresses - no statistical geography info -->
     <xs:complexType name="ActionAddress">
         <xs:sequence>
-            <xs:element name="sampleUnitRef" type="xs:string"
-                        minOccurs="1" maxOccurs="1"/>
             <xs:element name="type" type="xs:string" minOccurs="0"
                         maxOccurs="1"/>
             <xs:element name="estabType" type="xs:string" minOccurs="0"
@@ -76,7 +74,7 @@
                     <xs:element name="actionType" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="questionSet" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="contact" type="ActionContact" minOccurs="0" maxOccurs="1"/>
-                    <xs:element name="address" type="ActionAddress" minOccurs="1"/>
+                    <xs:element name="address" type="ActionAddress" minOccurs="0"/>
                     <xs:element name="legalBasis" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="region" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="respondentStatus" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -92,6 +90,7 @@
                     <xs:element name="surveyName" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="surveyRef" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="returnByDate" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="sampleUnitRef" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -147,7 +146,7 @@
     <xs:complexType name="Action">
         <xs:sequence>
             <xs:element name="actionId" type="xs:string"/>
-            <xs:element name="responseRequired" type="xs:boolean"></xs:element>
+            <xs:element name="responseRequired" type="xs:boolean"/>
         </xs:sequence>
     </xs:complexType>
 
